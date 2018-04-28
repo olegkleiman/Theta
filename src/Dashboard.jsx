@@ -66,7 +66,7 @@ class Dashboard extends React.Component {
           <div className='container'>
 
             <Switch>
-              <Route exact path='/dashboard' component={Instructions} />
+              <Route exact path='/dashboard' render={ (props) => <Instructions userName={this.props.userName} /> } />
               <Route path={this.props.match.path + '/lists'} component={Lists} />
               <Route path={this.props.match.path + '/users'} component={UserList} />
               <Route path={this.props.match.path + '/import'} component={ImportData} />
