@@ -1,6 +1,9 @@
 // Flow
 import React from 'react';
-import { GoogleLogin, GoogleLogout } from 'react-google-login';
+import { connect } from 'react-redux';
+import { GoogleLogin } from 'react-google-login';
+
+import Dashboard from './Dashboard';
 
 type Props = {
 
@@ -21,29 +24,29 @@ class App extends React.Component<Props,State> {
     console.log(response);
 
     if( response.profileObj ) {
+
+      this.props.dispatch({
+        type: 'LOGIN',
+        data: {
+          userName: response.profileObj.name,
+          userPictureUrl: response.profileObj.imageUrl
+        }
+      });
+
       this.setState({
         userName: response.profileObj.name
       });
     }
-
   }
 
-  logout = () => {
-    this.setState({
-      userName: ''
-    });
-  }
+
 
   render() {
 
     if( this.state.userName ) {
-      return <React.Fragment>
-                <GoogleLogout
-                    buttonText="Logout"
-                    onLogoutSuccess={::this.logout}>
-                  </GoogleLogout>
-                  <div className='loginText'>{this.state.userName}</div>
-              </React.Fragment>
+
+      return <Dashboard />
+
     } else {
 
       return (<GoogleLogin
@@ -60,4 +63,4 @@ class App extends React.Component<Props,State> {
 
 }
 
-export default App;
+export default connect()(App);
