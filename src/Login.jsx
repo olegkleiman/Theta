@@ -25,14 +25,18 @@ class Login extends React.Component {
 
   render() {
 
-    return (<GoogleLogin
-              clientId="110875185211-0d0fu4nji6ph5jkvqf14eafb8u6lvime.apps.googleusercontent.com"
-              buttonText="Login"
-              onSuccess={::this.responseGoogle}
-              onFailure={::this.responseGoogle}>
-                <i className='fab fa-google'></i>
-                <span className='loginText'> Login with Google</span>
-           </GoogleLogin>)
+    return (<div className='raw loginCtrl'>
+              <div className='col text-center'>
+                <GoogleLogin
+                  clientId="110875185211-0d0fu4nji6ph5jkvqf14eafb8u6lvime.apps.googleusercontent.com"
+                  buttonText="Login"
+                  onSuccess={::this.responseGoogle}
+                  onFailure={::this.responseGoogle}>
+                    <i className='fab fa-google'></i>
+                    <span className='loginText'> Login with Google</span>
+                </GoogleLogin>
+              </div>
+            </div>)
 
   }
 };
