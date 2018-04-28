@@ -14,6 +14,8 @@ class Dashboard extends React.Component {
       type: 'LOGOUT'
     });
 
+    this.props.history.push('');
+
   }
 
   render() {
