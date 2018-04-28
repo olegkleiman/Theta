@@ -2,10 +2,12 @@ import React from 'react';
 import { GoogleLogout } from 'react-google-login';
 import { connect } from 'react-redux';
 import { Switch, Route, Link } from 'react-router-dom';
-import { List, Datagrid, TextField } from 'react-admin';
 
+import Instructions from './Instructions';
+import Lists from './Lists';
 import UserList from './UserList';
 import ImportData from './ImportData';
+import Reports from './Reports';
 import Footer from './Footer';
 
 class Dashboard extends React.Component {
@@ -36,16 +38,18 @@ class Dashboard extends React.Component {
               <div className="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul className="navbar-nav mr-auto">
                   <li className="nav-item">
-                    <a className="nav-link" href="#">Lists <span className="sr-only">(current)</span></a>
+                    <Link className='nav-link' to='/dashboard/lists'>
+                      Lists <span className="sr-only">(current)</span>
+                    </Link>
                   </li>
                   <li className="nav-item">
-                    <a className="nav-link" href="#">Import Data</a>
+                    <Link className='nav-link' to='/dashboard/import'>Import Data</Link>
                   </li>
                   <li className="nav-item">
-                    <a className="nav-link" href="#">Reports</a>
+                    <Link className='nav-link' to='/dashboard/reports'>Reports</Link>
                   </li>
                   <li className="nav-item">
-                    <Link className="nav-link active" to='dashboard/users'>Users</Link>
+                    <Link className="nav-link active" to='/dashboard/users'>Users</Link>
                   </li>
                 </ul>
                 <div className="form-inline my-2 my-lg-0">
@@ -61,17 +65,18 @@ class Dashboard extends React.Component {
           </nav>
           <div className='container'>
 
-            <div id="headerwrap">Welcome, {this.props.userName}.
-            <br></br>
-                <p>Please use top menu to accomplish your tasks.</p>
-            </div>
+            <Switch>
+              <Route exact path='/dashboard' component={Instructions} />
+              <Route path={this.props.match.path + '/lists'} component={Lists} />
+              <Route path={this.props.match.path + '/users'} component={UserList} />
+              <Route path={this.props.match.path + '/import'} component={ImportData} />
+              <Route path={this.props.match.path + '/reports'} component={Reports} />
+            </Switch>
 
           </div>
 
           <Footer />
-
-
-        </React.Fragment>)
+        </React.Fragment>);
   }
 
 };
