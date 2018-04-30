@@ -1,42 +1,47 @@
 // @flow
 import React from 'react';
 import { connect } from 'react-redux';
-import { GoogleLogin } from 'react-google-login';
 
-class Login extends React.Component {
+import firebaseApp from './firebase.js';
 
-  responseGoogle = (response) => {
+class Login extends React.PureComponent {
 
-    console.log(response);
+  googleLogin() {
 
-    if( response.profileObj ) {
+    var provider = new firebase.auth.GoogleAuthProvider();
+
+    provider.addScope('profile');
+    provider.addScope('email');
+    provider.addScope('https://www.googleapis.com/auth/plus.me');
+    firebaseApp.auth().signInWithPopup(provider)
+    .then(result => {
 
       this.props.dispatch({
         type: 'LOGIN',
         data: {
-          userName: response.profileObj.name,
-          userPictureUrl: response.profileObj.imageUrl
+          userName: result.additionalUserInfo.profile.name,
+          userPictureUrl: result.additionalUserInfo.profile.picture,
+          accessToken: result.credential.accessToken,
+          jwt: result.credential.idToken
         }
       });
 
       this.props.history.push('dashboard');
-    }
+
+    });
+
   }
 
   render() {
 
-    return (<div className='raw loginCtrl'>
+    return <div className='raw loginCtrl'>
               <div className='col text-center'>
-                <GoogleLogin
-                  clientId="110875185211-0d0fu4nji6ph5jkvqf14eafb8u6lvime.apps.googleusercontent.com"
-                  buttonText="Login"
-                  onSuccess={::this.responseGoogle}
-                  onFailure={::this.responseGoogle}>
-                    <i className='fab fa-google'></i>
-                    <span className='loginText'> Login with Google</span>
-                </GoogleLogin>
-              </div>
-            </div>)
+              <button className='btn btn-gplus'
+                onClick={::this.googleLogin}>
+                <i className="fa fa-google-plus pr-1"></i> Google +
+              </button>
+            </div>
+          </div>
 
   }
 };
