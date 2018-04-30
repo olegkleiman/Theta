@@ -1,7 +1,8 @@
 import React from 'react';
-import { GoogleLogout } from 'react-google-login';
 import { connect } from 'react-redux';
 import { Switch, Route, Link } from 'react-router-dom';
+
+import firebaseApp from './firebase.js';
 
 import Instructions from './Instructions';
 import Lists from './Lists';
@@ -18,6 +19,8 @@ class Dashboard extends React.Component {
 
   logout = () => {
 
+    firebaseApp.auth().signOut();
+
     this.props.dispatch({
       type: 'LOGOUT'
     });
@@ -30,7 +33,7 @@ class Dashboard extends React.Component {
       return (
         <React.Fragment>
           <nav className="navbar fixed-top navbar-expand-lg navbar-light bg-light">
-            <a className="navbar-brand" href="#">Theta</a>
+              <a className="navbar-brand" href="#">Theta</a>
               <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span className="navbar-toggler-icon"></span>
               </button>
@@ -55,10 +58,10 @@ class Dashboard extends React.Component {
                 <div className="form-inline my-2 my-lg-0">
                     <img src={this.props.userPictureUrl}
                       className="img-fluid rounded-circle avatar" alt="User avatar" />
-                    <GoogleLogout
-                      buttonText="Logout"
-                      onLogoutSuccess={::this.logout}>
-                    </GoogleLogout>
+                    <button className='btn'
+                       onClick={::this.logout}>
+                      <i className="fa fa-google-plus pr-1"></i> Logout
+                    </button>
 
                 </div>
               </div>
