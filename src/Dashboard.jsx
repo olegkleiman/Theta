@@ -40,10 +40,18 @@ class Dashboard extends React.Component {
 
               <div className="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul className="navbar-nav mr-auto">
-                  <li className="nav-item">
-                    <Link className='nav-link' to='/dashboard/lists'>
-                      Lists <span className="sr-only">(current)</span>
+                  <li className="nav-item dropdown">
+                    <Link className='nav-link' className='dropdown-toggle' data-toggle='dropdown' to='/dashboard/lists'>
+                      Lists <span className="sr-only caret">(current)</span>
                     </Link>
+                    <ul className='dropdown-menu' role='menu'>
+                      <li>
+                        <a href='#'>One</a>
+                      </li>
+                      <li>
+                        <a href='#'>Two</a>
+                      </li>
+                    </ul>
                   </li>
                   <li className="nav-item">
                     <Link className='nav-link' to='/dashboard/import'>Import Data</Link>
@@ -52,7 +60,7 @@ class Dashboard extends React.Component {
                     <Link className='nav-link' to='/dashboard/reports'>Reports</Link>
                   </li>
                   <li className="nav-item">
-                    <Link className="nav-link active" to='/dashboard/users'>Users</Link>
+                    <Link className="nav-link" to='/dashboard/users'>Users</Link>
                   </li>
                 </ul>
                 <div className="form-inline my-2 my-lg-0">
