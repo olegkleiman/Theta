@@ -11,10 +11,19 @@ import {
   TableEditColumn
 } from '@devexpress/dx-react-grid-bootstrap4';
 
+
 import {
   generateRows,
   defaultColumnValues,
 } from './generator';
+
+const editColumnMessages = {
+  addCommand: 'משתמש חדש',
+  editCommand: 'שנה',
+  deleteCommand: 'מחק',
+  commitCommand: 'שמירה',
+  cancelCommand: 'ביטול',
+};
 
 const getRowId = row => row.id;
 
@@ -23,43 +32,27 @@ class UserList extends React.PureComponent {
   constructor(props) {
     super(props);
 
-     this.state = {
+    let _rows = generateRows({
+        columnValues: { id: ({ index }) => index, ...defaultColumnValues },
+        length: 8,
+      });
+    console.log(_rows);
+
+    this.state = {
        columns: [
-         { name: 'name', title: 'Name' },
-         { name: 'sex', title: 'Sex' },
-         { name: 'city', title: 'City' },
-         { name: 'car', title: 'Car' },
+         { name: 'first_name', title: 'שם פרטי' },
+         { name: 'last_name', title: 'שם משפחה' },
+         { name: 'role', title: 'תפקיד' },
+         { name: 'email', title: 'אי-מייל' },
        ],
-       rows: generateRows({
-         columnValues: { id: ({ index }) => index, ...defaultColumnValues },
-         length: 8,
-       }),
-       users: {}
-   };
+       rows: _rows,
+       users: []
+    };
 
     this.commitChanges = this.commitChanges.bind(this);
   }
 
   componentDidMount() {
-
-    // var provider = new firebase.auth.GoogleAuthProvider();
-    // firebase.auth().languageCode = 'he';
-    // firebase.auth().signInWithPopup(provider).then(function(result) {
-    //       // This gives you a Google Access Token. You can use it to access the Google API.
-    //       var token = result.credential.accessToken;
-    //       // The signed-in user info.
-    //       var user = result.user;
-    //       // ...
-    //     }).catch(function(error) {
-    //       // Handle Errors here.
-    //       var errorCode = error.code;
-    //       var errorMessage = error.message;
-    //       // The email of the user's account used.
-    //       var email = error.email;
-    //       // The firebase.auth.AuthCredential type that was used.
-    //       var credential = error.credential;
-    //       // ...
-    //     });
 
     firebase.auth().signInAndRetrieveDataWithCustomToken(this.props.accessToken)
                     .catch( error => {
@@ -67,13 +60,6 @@ class UserList extends React.PureComponent {
                       var errorMessage = error.message;
                     });
 
-    // firebase.auth().signInAnonymously()
-    //                 .then( result => {
-    //                   console.log(result)
-    //                 })
-    //                 .catch( error => {
-    //                   var errorMessage = error.message;
-    //                 });
     firebase.auth().onAuthStateChanged( (user) => {
       if( user ) {
         var isAnonymous = user.isAnonymous;
@@ -83,8 +69,23 @@ class UserList extends React.PureComponent {
 
     this.firebaseRef = firebase.database().ref('/users');
     this.firebaseCallback = this.firebaseRef.on('value', (snap) => {
+
+      let id = 0;
+      let val = snap.val().filter( el => el != undefined );
+      const _users = val.map( (user) => {
+        return {
+          id: id++,
+          first_name: user.first_name,
+          last_name: user.last_name,
+          email: user.email,
+          role: user.role
+        }
+      });
+
+      console.log(_users);
+
       this.setState({
-        users: snap.val()
+        users: _users
       })
     });
 
@@ -131,12 +132,12 @@ class UserList extends React.PureComponent {
 
   render() {
 
-    const { rows, columns } = this.state;
+    const { users, columns } = this.state;
 
     return (
       <Card>
         <Grid
-          rows={rows}
+          rows={users}
           columns={columns}
           getRowId={getRowId}
         >
@@ -150,6 +151,7 @@ class UserList extends React.PureComponent {
             showAddCommand
             showEditCommand
             showDeleteCommand
+            messages={editColumnMessages}
           />
         </Grid>
       </Card>
