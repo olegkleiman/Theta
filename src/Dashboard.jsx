@@ -54,13 +54,13 @@ class Dashboard extends React.Component {
                     </ul>
                   </li>
                   <li className="nav-item">
-                    <Link className='nav-link' to='/dashboard/import'>Import Data</Link>
+                    <Link className='nav-link' to='/dashboard/import'>ייבוא נתונים</Link>
                   </li>
                   <li className="nav-item">
-                    <Link className='nav-link' to='/dashboard/reports'>Reports</Link>
+                    <Link className='nav-link' to='/dashboard/reports'>דו״חות</Link>
                   </li>
                   <li className="nav-item">
-                    <Link className="nav-link" to='/dashboard/users'>Users</Link>
+                    <Link className="nav-link" to='/dashboard/users'>משתמשים</Link>
                   </li>
                 </ul>
                 <div className="form-inline my-2 my-lg-0">
