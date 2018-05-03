@@ -2,10 +2,15 @@ import React from 'react';
 import { connect } from 'react-redux';
 import firebase from './firebase.js';
 import { Card } from 'reactstrap';
-import { EditingState } from '@devexpress/dx-react-grid';
+import {
+  EditingState,
+  IntegratedFiltering,
+  SearchState } from '@devexpress/dx-react-grid';
 import {
   Grid,
   Table,
+  Toolbar,
+  SearchPanel,
   TableHeaderRow,
   TableEditRow,
   TableEditColumn
@@ -146,6 +151,8 @@ class UserList extends React.PureComponent {
           columns={columns}
           getRowId={getRowId}
         >
+          <SearchState defaultValue="Admin" />
+          <IntegratedFiltering />
           <EditingState
             onCommitChanges={this.commitChanges}
           />
@@ -158,6 +165,8 @@ class UserList extends React.PureComponent {
             showDeleteCommand
             messages={editColumnMessages}
           />
+          <Toolbar />
+          <SearchPanel />
         </Grid>
       </Card>
     );
