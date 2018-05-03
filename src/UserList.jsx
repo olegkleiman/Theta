@@ -67,42 +67,31 @@ class UserList extends React.PureComponent {
       }
     });
 
-    this.firebaseRef = firebase.database().ref('/users');
-    this.firebaseCallback = this.firebaseRef.on('value', (snap) => {
+    this.unregisterCollectionObserver = firebase.firestore().collection('users').onSnapshot( (snap) => {
 
-      let id = 0;
-      let val = snap.val().filter( el => el != undefined );
-      const _users = val.map( (user) => {
-        return {
-          id: id++,
-          first_name: user.first_name,
-          last_name: user.last_name,
-          email: user.email,
-          role: user.role
-        }
+      const _users = [];
+
+      snap.forEach( (docSnapshot) => {
+        let _data = docSnapshot.data();
+
+        _users.push({
+          id: docSnapshot.id,
+          first_name: _data.first_name,
+          last_name: _data.last_name,
+          email: _data.email,
+          role: _data.role
+        });
+
       });
-
-      console.log(_users);
 
       this.setState({
         users: _users
       })
-    });
 
-    this.unregisterCollectionObserver = firebase.firestore().collection('users').onSnapshot( (snap) => {
-
-      const collection = {};
-
-      snap.forEach( (docSnapshot) => {
-        collection[docSnapshot.id] = docSnapshot.data();
-      });
     });
   }
 
   componentWillUnmount() {
-    // Unregister the listener on '/users'.
-    this.firebaseRef.off('value', this.firebaseCallback);
-
     if( this.unregisterCollectionObserver ) {
       this.unregisterCollectionObserver();
     }
@@ -111,21 +100,37 @@ class UserList extends React.PureComponent {
   commitChanges({ added, changed, deleted }) {
       let { rows } = this.state;
       if (added) {
-        const startingAddedId = rows.length > 0 ? rows[rows.length - 1].id + 1 : 0;
-        rows = [
-          ...rows,
-          ...added.map((row, index) => ({
-            id: startingAddedId + index,
-            ...row,
-          })),
-        ];
+
+        added.map((user, index) => (
+          firebase.firestore().collection('users').add({
+              first_name: user.first_name,
+              last_name: user.last_name,
+              role: user.role,
+              email: user.email
+          })
+          .then( _ => {
+            console.log('Document successfully written!');
+          })
+        ));
+
       }
       if (changed) {
-        rows = rows.map(row => (changed[row.id] ? { ...row, ...changed[row.id] } : row));
+        let changedIds = Object.keys(changed);
+        let docId = changedIds[0];
+        const changedDoc = changed[docId];
+        firebase.firestore().collection("users").doc(docId).set(
+          changedDoc, {
+            merge: true
+          });
       }
       if (deleted) {
-        const deletedSet = new Set(deleted);
-        rows = rows.filter(row => !deletedSet.has(row.id));
+
+        let docId = deleted[0];
+        firebase.firestore().collection("users").doc(docId).delete().then(function() {
+            console.log("Document successfully deleted!");
+        }).catch(function(error) {
+            console.error("Error removing document: ", error);
+        });
       }
       this.setState({ rows });
   }
