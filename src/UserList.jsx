@@ -5,6 +5,9 @@ import { Card } from 'reactstrap';
 import {
   EditingState,
   IntegratedFiltering,
+  PagingState,
+  IntegratedPaging,
+  SortingState,
   SearchState } from '@devexpress/dx-react-grid';
 import {
   Grid,
@@ -13,7 +16,8 @@ import {
   SearchPanel,
   TableHeaderRow,
   TableEditRow,
-  TableEditColumn
+  TableEditColumn,
+  PagingPanel
 } from '@devexpress/dx-react-grid-bootstrap4';
 
 
@@ -51,7 +55,8 @@ class UserList extends React.PureComponent {
          { name: 'email', title: 'אי-מייל' },
        ],
        rows: _rows,
-       users: []
+       users: [],
+       sorting: [{ columnName: 'first_name', direction: 'asc' }]
     };
 
     this.commitChanges = this.commitChanges.bind(this);
@@ -142,7 +147,7 @@ class UserList extends React.PureComponent {
 
   render() {
 
-    const { users, columns } = this.state;
+    const { users, columns, sorting } = this.state;
 
     return (
       <Card>
@@ -151,13 +156,20 @@ class UserList extends React.PureComponent {
           columns={columns}
           getRowId={getRowId}
         >
-          <SearchState defaultValue="Admin" />
+          <PagingState
+            defaultCurrentPage={0}
+            pageSize={3}
+          />
+          <SearchState />
           <IntegratedFiltering />
+          <IntegratedPaging />
           <EditingState
             onCommitChanges={this.commitChanges}
           />
+          <SortingState
+            sorting={sorting} />
           <Table />
-          <TableHeaderRow />
+          <TableHeaderRow showSortingControls />
           <TableEditRow />
           <TableEditColumn
             showAddCommand
@@ -167,6 +179,7 @@ class UserList extends React.PureComponent {
           />
           <Toolbar />
           <SearchPanel />
+          <PagingPanel />
         </Grid>
       </Card>
     );
