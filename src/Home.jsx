@@ -38,7 +38,7 @@ class Home extends React.Component<State, Props> {
 
         _activities.push({
           name: _activity.name,
-          description: _activity.decription,
+          description: _activity.description,
         });
 
       });
