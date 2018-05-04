@@ -1,3 +1,4 @@
+// @flow
 import React from 'react';
 import { connect } from 'react-redux';
 import firebase from './firebase.js';
@@ -20,7 +21,6 @@ import {
   PagingPanel
 } from '@devexpress/dx-react-grid-bootstrap4';
 
-
 import {
   generateRows,
   defaultColumnValues,
@@ -41,11 +41,11 @@ class UserList extends React.PureComponent {
   constructor(props) {
     super(props);
 
-    let _rows = generateRows({
-        columnValues: { id: ({ index }) => index, ...defaultColumnValues },
-        length: 8,
-      });
-    console.log(_rows);
+    // let _rows = generateRows({
+    //     columnValues: { id: ({ index }) => index, ...defaultColumnValues },
+    //     length: 8,
+    //   });
+    // console.log(_rows);
 
     this.state = {
        columns: [
@@ -54,12 +54,12 @@ class UserList extends React.PureComponent {
          { name: 'role', title: 'תפקיד' },
          { name: 'email', title: 'אי-מייל' },
        ],
-       rows: _rows,
+       //rows: _rows,
        users: [],
        sorting: [{ columnName: 'first_name', direction: 'asc' }]
     };
 
-    this.commitChanges = this.commitChanges.bind(this);
+    //this.commitChanges = this.commitChanges.bind(this);
   }
 
   componentDidMount() {
@@ -164,7 +164,7 @@ class UserList extends React.PureComponent {
           <IntegratedFiltering />
           <IntegratedPaging />
           <EditingState
-            onCommitChanges={this.commitChanges}
+            onCommitChanges={::this.commitChanges}
           />
           <SortingState
             sorting={sorting} />
