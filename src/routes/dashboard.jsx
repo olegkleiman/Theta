@@ -1,4 +1,4 @@
-import Dashboard from '../views/Dashboard/Dashboard.jsx';
+import Dashboard from '../Dashboard';
 import UserList from '../UserList';
 import ImportWizard from '../ImportWizard';
 import ReportsWizard from '../ReportsWizard';
