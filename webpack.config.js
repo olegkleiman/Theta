@@ -3,7 +3,7 @@ const webpack = require('webpack');
 
 var config = {
   entry: [
-    'react-hot-loader/patch',
+    'babel-polyfill',
     path.resolve(__dirname, './src/index.jsx')
   ],
   output: {
@@ -22,9 +22,9 @@ var config = {
       }
     ]
   },
-  plugins: [
-    new webpack.HotModuleReplacementPlugin()
-  ],
+  // plugins: [
+  //   new webpack.HotModuleReplacementPlugin()
+  // ],
   devServer: {
     host: process.env.HOST,
     hot: true
