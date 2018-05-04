@@ -1,11 +1,16 @@
 @import url('https://fonts.googleapis.com/css?family=Lato|Ralewey');
 
-body {
+/* body {
   margin-top: 70px;
-}
+} */
 
 button {
   font: 16px 'Lato', sans-serif !important;
+}
+
+.navbar li>a:focus, .navbar li>a:hover {
+  text-decoration: none;
+  background-color: red;
 }
 
 .loginText
@@ -31,4 +36,10 @@ button {
   text-align: center;
   font-weight: 300;
   font-size: 70px;
+}
+
+.sidebar .nav > li.active-pro {
+    position: absolute;
+    width: 100%;
+    bottom: 10px;
 }
