@@ -11,6 +11,10 @@ import ImportData from './ImportData';
 import Reports from './Reports';
 import Footer from './Footer';
 
+import dashboardRoutes from './routes/dashboard.jsx';
+
+import Sidebar from './Sidebar';
+
 class Dashboard extends React.Component {
 
   // componentWillReceiveProps(nextProps){
@@ -32,16 +36,22 @@ class Dashboard extends React.Component {
   render() {
       return (
         <React.Fragment>
+          <Sidebar {...this.props} routes={dashboardRoutes}/>
           <nav className="navbar fixed-top navbar-expand-lg navbar-light bg-light">
-              <a className="navbar-brand" href="#">Theta</a>
-              <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+              <Link className='navbar-brand' to='/dashboard'>Theta</Link>
+              <button className="navbar-toggler" type="button"
+                  data-toggle="collapse"
+                  data-target="#navbarSupportedContent"
+                  aria-controls="navbarSupportedContent"
+                  aria-expanded="false"
+                  aria-label="Toggle navigation">
                 <span className="navbar-toggler-icon"></span>
               </button>
 
               <div className="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul className="navbar-nav mr-auto">
                   <li className="nav-item dropdown">
-                    <Link className='nav-link' className='dropdown-toggle' data-toggle='dropdown' to='/dashboard/lists'>
+                    <Link className='nav-link dropdown-toggle' data-toggle='dropdown' to='/dashboard/lists'>
                       Lists <span className="sr-only caret">(current)</span>
                     </Link>
                     <ul className='dropdown-menu' role='menu'>
@@ -86,7 +96,7 @@ class Dashboard extends React.Component {
 
           </div>
 
-          <Footer />
+          <Footer fluid/>
         </React.Fragment>);
   }
 
