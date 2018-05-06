@@ -1,3 +1,5 @@
+'use strict';
+
 var path = require('path');
 const webpack = require('webpack');
 
@@ -9,6 +11,11 @@ var config = {
   output: {
       path: __dirname + '/dist',
       filename: 'main.js'
+  },
+  stats: {
+    colors: true,
+    reasons: true,
+    chunks: true
   },
   resolve: {
       extensions: ['*', '.js', '.jsx']
