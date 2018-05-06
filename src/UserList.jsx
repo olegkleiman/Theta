@@ -82,7 +82,7 @@ class UserList extends React.PureComponent {
       const _users = [];
 
       snap.forEach( (docSnapshot) => {
-        let _data = docSnapshot.data();
+        const _data = docSnapshot.data();
 
         _users.push({
           id: docSnapshot.id,
