@@ -21,11 +21,6 @@ import {
   PagingPanel
 } from '@devexpress/dx-react-grid-bootstrap4';
 
-import {
-  generateRows,
-  defaultColumnValues,
-} from './generator';
-
 const editColumnMessages = {
   addCommand: 'משתמש חדש',
   editCommand: 'שנה',
@@ -41,12 +36,6 @@ class UserList extends React.PureComponent {
   constructor(props) {
     super(props);
 
-    // let _rows = generateRows({
-    //     columnValues: { id: ({ index }) => index, ...defaultColumnValues },
-    //     length: 8,
-    //   });
-    // console.log(_rows);
-
     this.state = {
        columns: [
          { name: 'first_name', title: 'שם פרטי' },
@@ -58,24 +47,9 @@ class UserList extends React.PureComponent {
        users: [],
        sorting: [{ columnName: 'first_name', direction: 'asc' }]
     };
-
-    //this.commitChanges = this.commitChanges.bind(this);
   }
 
   componentDidMount() {
-
-    firebase.auth().signInAndRetrieveDataWithCustomToken(this.props.accessToken)
-                    .catch( error => {
-                      var errorCode = error.code;
-                      var errorMessage = error.message;
-                    });
-
-    firebase.auth().onAuthStateChanged( (user) => {
-      if( user ) {
-        var isAnonymous = user.isAnonymous;
-        var uid = user.uid;
-      }
-    });
 
     this.unregisterCollectionObserver = firebase.firestore().collection('users').onSnapshot( (snap) => {
 
