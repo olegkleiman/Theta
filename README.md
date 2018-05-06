@@ -11,3 +11,7 @@ It utilizes <a href='https://firebase.google.com/docs/hosting/reserved-urls?auth
 However, pay attention that if the project is served by another HTTP server (like webpack-dev-server, reflected in script as <code>yarn start:dev</code>), the mentioned <i>simpler project configuration</i> will not work and you may need to adjust the link URLs in <code>index.html</code> to regular forms (e.g. change <code>/_ _</code>  in <code>__/firebase/4.13.0/firebase-app.js</code> to <code>https://www.gstatic.com/firebasejs/4.13.0/firebase-app.js</code> and so on).
 
 In order to comply to Firebase deployment's demands for SPA, the public directory of the project is "dist". This is in accordance with 'output' section settings of <code>webpack.config.js</code>
+
+### Deploy Firebase rules
+Firestore rules should be deployed bt Firebase CLI from <code>.rules</code> file prior to using the app:
+<code>firebase deploy --only firestore:rules</code>
