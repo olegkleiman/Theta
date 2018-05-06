@@ -1,6 +1,7 @@
 // @flow
 import React from 'react';
 import { connect } from 'react-redux';
+import GoogleButton from 'react-google-button'
 
 import firebaseApp from './firebase.js';
 
@@ -34,13 +35,12 @@ class Login extends React.PureComponent {
 
   render() {
 
-    return <div className='raw loginCtrl'>
-              <div className='col text-center'>
-              <button className='btn btn-gplus'
-                onClick={::this.googleLogin}>
-                <i className="fa fa-google-plus pr-1"></i> Google +
-              </button>
-            </div>
+    return <div className='d-flex flex-lg-row justify-content-center'>
+              <div className="p-4">
+                <GoogleButton
+                  onClick={::this.googleLogin}
+                />
+              </div>
           </div>
 
   }
