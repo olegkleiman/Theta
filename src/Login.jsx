@@ -1,45 +1,47 @@
 // @flow
 import React from 'react';
 import { connect } from 'react-redux';
-import GoogleButton from 'react-google-button'
+import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 
 import firebaseApp from './firebase.js';
 
+// Configure FirebaseUI.
+const uiConfig = {
+  signInFlow: 'popup',
+  signInOptions: [
+    firebase.auth.GoogleAuthProvider.PROVIDER_ID
+  ],
+  callbacks: {
+    // Avoid redirects after sign-in.
+    signInSuccess: () => false
+  }
+};
+
 class Login extends React.PureComponent {
 
-  googleLogin() {
+  // Listen to the Firebase Auth state and set the local state.
+   componentDidMount() {
+     firebaseApp.auth().onAuthStateChanged(
+         (user) => {
 
-    var provider = new firebase.auth.GoogleAuthProvider();
+           this.props.dispatch({
+             type: 'LOGIN',
+             data: {
+               userName: user.displayName,
+               userPictureUrl: user.photoURL
+             }
+           });
 
-    provider.addScope('profile');
-    provider.addScope('email');
-    provider.addScope('https://www.googleapis.com/auth/plus.me');
-    firebaseApp.auth().signInWithPopup(provider)
-    .then(result => {
-
-      this.props.dispatch({
-        type: 'LOGIN',
-        data: {
-          userName: result.additionalUserInfo.profile.name,
-          userPictureUrl: result.additionalUserInfo.profile.picture,
-          accessToken: result.credential.accessToken,
-          jwt: result.credential.idToken
-        }
-      });
-
-      this.props.history.push('dashboard');
-
-    });
-
-  }
+           this.props.history.push('dashboard');
+       }
+     );
+   }
 
   render() {
 
     return <div className='d-flex flex-lg-row justify-content-center'>
               <div className="p-4">
-                <GoogleButton
-                  onClick={::this.googleLogin}
-                />
+              <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={firebaseApp.auth()}/>
               </div>
           </div>
 
