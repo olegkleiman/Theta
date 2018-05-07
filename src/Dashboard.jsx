@@ -3,8 +3,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Switch, Route, Link } from 'react-router-dom';
 
-import firebaseApp from './firebase.js';
-
 import Home from './Home';
 import Lists from './Lists';
 import UserList from './UserList';
