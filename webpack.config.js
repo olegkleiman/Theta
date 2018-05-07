@@ -26,6 +26,13 @@ var config = {
         test: /\.(js|jsx)$/,
         exclude: /node_modules/,
         use: ['babel-loader']
+      },
+      {
+        test: /\.(gif|png|svg)$/,
+        loader: 'file-loader',
+        options: {
+          outputPath: 'img/'
+        }
       }
     ]
   },
