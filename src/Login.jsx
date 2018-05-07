@@ -3,6 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 
+import firebase from 'firebase/app';
 import firebaseApp from './firebase.js';
 
 // Configure FirebaseUI.
@@ -24,15 +25,17 @@ class Login extends React.PureComponent {
      firebaseApp.auth().onAuthStateChanged(
          (user) => {
 
-           this.props.dispatch({
-             type: 'LOGIN',
-             data: {
-               userName: user.displayName,
-               userPictureUrl: user.photoURL
-             }
-           });
+           if( user ) {
+             this.props.dispatch({
+               type: 'LOGIN',
+               data: {
+                 userName: user.displayName,
+                 userPictureUrl: user.photoURL
+               }
+             });
 
-           this.props.history.push('dashboard');
+             this.props.history.push('dashboard');
+          }
        }
      );
    }
