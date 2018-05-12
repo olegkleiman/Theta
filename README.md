@@ -3,9 +3,11 @@ Broadly speaking, this is SPA React/Redux app performing CRUD operations against
 
 ## Build
 Build is simple as <code>yarn build</code>. This invokes <code>webpack</code> to produce <code>main.js</code> bundle in "dist" directory.
-Consequently, the home directory for hosting by <code>WebpackDevServer</code> is also "dist" that is reflected by its invokation: 
+Consequently, the home directory for hosting by <code>WebpackDevServer</code> is also "dist" that is reflected by its invokation:
+
 "start:dev": "webpack-dev-server --mode development --colors --watch --content-base dist/"
-As usual for Webpack, the entry point of the project called <code>index.jsx</code>. In contrast with more traditional approach where transpiling is performed by <code>babel-polyfill</code>, this project is transpliled with a help of <code>react-hot-loader</code>.
+
+As usual for Webpack, the entry point of the project called <code>index.jsx</code>.
 
 ## Deploy
 This project is designed for deployment to Google Firebase (<code>firebase deploy</code>) or served locally (<code>firebase serve</code>). 
