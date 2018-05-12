@@ -3258,32 +3258,32 @@ Created using IcoMoon - icomoon.io
   .card-chart .dropdown .btn {
     margin: 0; }
 
-.footer {
+.page-footer {
   padding: 24px 0; }
-  .footer.footer-default {
+  .page-footer.footer-default {
     background-color: #f2f2f2; }
-  .footer nav {
+  .page-footer nav {
     display: inline-block;
     float: left;
     padding-left: 7px; }
-  .footer ul {
+  .page-footer ul {
     margin-bottom: 0;
     padding: 0;
     list-style: none; }
-    .footer ul li {
+    .page-footer ul li {
       display: inline-block; }
-      .footer ul li a {
+      .page-footer ul li a {
         color: inherit;
         padding: 0.5rem;
         font-size: 0.8571em;
         text-transform: uppercase;
         text-decoration: none; }
-        .footer ul li a:hover {
+        .page-footer ul li a:hover {
           text-decoration: none; }
-  .footer .copyright {
+  .page-footer .copyright {
     font-size: 0.8571em;
     line-height: 1.8; }
-  .footer:after {
+  .page-footer:after {
     display: table;
     clear: both;
     content: " "; }
