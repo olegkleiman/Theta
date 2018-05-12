@@ -3,7 +3,11 @@ import React from 'react';
 import {
   Container,
   Row,
-  Card
+  Card,
+  Dropdown,
+  DropdownToggle,
+  DropdownMenu,
+  DropdownItem
 } from 'reactstrap';
 import firebase from './firebase.js';
 
@@ -16,25 +20,33 @@ type Props = {
 
 }
 
-class ImportWizard extends React.Component<State, Props> {
+class ImportWizard extends React.Component<Props, State> {
 
-  constructor() {
-    super();
+  state = {
+    doc_types: [],
+    dropdownOpen: false
+  };
 
-    this.state = {
-      doc_types: []
-    }
+  constructor(props) {
+    super(props);
+
+    // this.state = {
+    //   doc_types: [],
+    //   dropdownOpen: false
+    // }
 
     this.styles = {
       navItem : {
-        width: '33.33%'
+        width: '33.3333%'
       },
       movingTab: {
         width: '250px',
         transform: 'translate3d(-8px, 0px, 0px)',
-        transition: 'all 0.5s cubic-bezier(0.29, 1.42, 0.79, 1)'
+        transition: 'transform 0.5s cubic-bezier(0.29, 1.42, 0.79, 1)'
       }
     }
+
+    this.movingTab = React.createRef();
   }
 
   componentDidMount() {
@@ -61,63 +73,98 @@ class ImportWizard extends React.Component<State, Props> {
     });
   }
 
-  render() {
+  toggle() {
+     this.setState(prevState => ({
+       dropdownOpen: !prevState.dropdownOpen
+     }));
+   }
 
-    return <div className='image-container containerShift'>
-              <Container>
+   onNext() {
+     console.log('onNext');
+   }
+
+   highligthTab(e, tabNum) {
+
+     const tab = e.target;
+     const _m = (tabNum - 1) * 8; // 'edge' calculated for tabNum as: 0 = -8; 1 = 0; 2 = 8
+     const offset = tab.offsetWidth;
+
+     const elem = this.movingTab.current;
+     elem.innerText = tab.innerText;
+     var translate = `translate3d(${_m + offset * tabNum}px, 0px, 0px)`;
+     elem.style.transform = translate;
+
+   }
+
+  render(): React.Node {
+
+    return <div>
+              <div className='panel-header panel-header-sm'></div>
+              <div className='content'>
                 <Row>
                   <div className='col-lg-8 offset-lg-2'>
                     {/* Wizard container */}
                     <div className='wizard-container'>
-                      <div className='card wizard-card' data-color='blue' id='wizardProfile'>
+                      <div className='card wizard-card' data-color='green' id='wizardProfile'>
                         <form noValidate>
                           <div className='wizard-header'>
                             <h3 className='wizard-title'>Upload file</h3>
                             <h5>The uploads are stored, validated and parsed</h5>
                           </div>
                           <div className='wizard-navigation'>
-                            <ul className='nav nav-pills'>
-                              <li style={this.styles.navItem} className='active'>
-                                <a href='#about' data-toggle='tab' aria-expanded='true'>Select provider</a>
+                            <ul className='nav nav-pills' role="tablist">
+                              <li style={this.styles.navItem}
+                                  onClick={ (e) => ::this.highligthTab(e, 0)}>
+                                <a href='#select_provider' class='nav-link nav-item active'
+                                    data-toggle="tab" role="tab"
+                                    aria-selected='true'>Select provider</a>
                               </li>
-                              <li style={this.styles.navItem}>
-                                <a href='#account' data-toggle='tab'>Select file</a>
+                              <li style={this.styles.navItem}
+                                  onClick={ (e) => ::this.highligthTab(e, 1)}>
+                                <a href='#select_file' class='nav-link nav-item'
+                                   data-toggle="tab" role="tab"
+                                   aria-selected="false">Select file</a>
                               </li>
-                              <li style={this.styles.navItem}>
-                                <a href='#address' data-toggle='tab'>Confirm</a>
+                              <li style={this.styles.navItem} ref={ (el) => this.tab }
+                                  onClick={ (e) => ::this.highligthTab(e, 2)}>
+                                <a href='#confirm' class='nav-link nav-item'
+                                   data-toggle="tab" role="tab"
+                                   aria-selected="false">Confirm</a>
                               </li>
                             </ul>
-                            <div style={this.styles.movingTab} className='moving-tab'>Select provider</div>
+                            <div style={this.styles.movingTab}
+                                  ref={this.movingTab}
+                                  className='moving-tab'>Select provider</div>
                           </div>
                           <div className='tab-content'>
-                            <div className='tab-pane active' id='about'>
+                            <div className='tab-pane active' id='select_provider'>
                               <div className='row'>
                                 <h4 className='info-text'>Who is data provider for uploaded file?</h4>
-                                <div className='dropdown'>
-                                  <button className="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <Dropdown isOpen={this.state.dropdownOpen} toggle={::this.toggle}>
+                                  <DropdownToggle caret>
                                     Select Provider
-                                  </button>
-
-                                  <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                  </DropdownToggle>
+                                  <DropdownMenu>
                                     {
                                       this.state.doc_types.map( (docType, index) => {
-                                        return <a className="dropdown-item" key={index} href="#">{docType}</a>
+                                        return <DropdownItem key={index} href="#">{docType}</DropdownItem>
                                       })
                                     }
-                                  </div>
+                                  </DropdownMenu>
 
-                                </div>
+                                </Dropdown>
                               </div>
                             </div>
-                            <div className='tab-pane' id='accont'>
+                            <div className='tab-pane' id='select_file'>
                             </div>
-                            <div className='tab-pane' id='address'>
+                            <div className='tab-pane' id='confirm'>
                             </div>
                           </div>
                           <div className='wizard-footer'>
                             <div className='float-right'>
                               <input type='button' name='next' value='Next'
-                                className='btn btn-next btn-fill btn-success btn-wd'>
+                                className='btn btn-next btn-fill btn-success btn-wd'
+                                onClick={::this.onNext}>
                               </input>
                             </div>
                             <div className='float-left'>
@@ -133,7 +180,7 @@ class ImportWizard extends React.Component<State, Props> {
                     {/* Wizard container */}
                   </div>
                 </Row>
-              </Container>
+              </div>
            </div>
   }
 
