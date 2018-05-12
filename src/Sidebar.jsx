@@ -2,6 +2,8 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { Nav } from 'reactstrap';
 
+import logo from './logo-white.svg';
+
 class Sidebar extends React.Component {
 
   // verifies if routeName is the one active (in browser input)
@@ -15,7 +17,7 @@ class Sidebar extends React.Component {
               <div className="logo">
                 <a href='#' className="simple-text logo-mini">
                       <div className="logo-img">
-                          <img src='./img/logo-white.svg' alt="react-logo" />
+                          <img src={logo} alt="react-logo" />
                       </div>
                 </a>
                 <a href='#' className="simple-text logo-normal">
