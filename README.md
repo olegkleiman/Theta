@@ -2,7 +2,9 @@
 Broadly speaking, this is SPA React/Redux app performing CRUD operations against Firebase RealtimeDB. Its UI is mostly based on <a href='https://devexpress.github.io/devextreme-reactive/react/grid/' target='_blank'>DevExtreme React Grid</a>. The app is  powered by <a href='https://reacttraining.com/react-router/web/guides/philosophy' target='_blank'>React Router 4</a>.
 
 ## Build
-Build is simple as <code>yarn build</code>. This invokes <code>webpack</code> to produce <code>main.js</code> bundle in "dist" directory. 
+Build is simple as <code>yarn build</code>. This invokes <code>webpack</code> to produce <code>main.js</code> bundle in "dist" directory.
+Consequently, the home directory for hosting by <code>WebpackDevServer</code> is also "dist" that is reflected by its invokation: 
+"start:dev": "webpack-dev-server --mode development --colors --watch --content-base dist/"
 As usual for Webpack, the entry point of the project called <code>index.jsx</code>. In contrast with more traditional approach where transpiling is performed by <code>babel-polyfill</code>, this project is transpliled with a help of <code>react-hot-loader</code>.
 
 ## Deploy
