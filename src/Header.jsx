@@ -1,11 +1,23 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import {
   Container,
+  Row,
+  Col,
   Navbar,
+  NavItem,
   NavbarBrand,
   NavbarToggler,
   Collapse,
-  Nav
+  Nav,
+  NavLink,
+  Dropdown,
+  DropdownToggle,
+  DropdownMenu,
+  DropdownItem,
+  InputGroup,
+  Input,
+  InputGroupAddon
 } from 'reactstrap';
 
 import firebaseApp from './firebase.js';
@@ -35,6 +47,12 @@ class Header extends React.Component {
 
   }
 
+  dropdownToggle(e){
+      this.setState({
+          dropdownOpen: !this.state.dropdownOpen
+      });
+  }
+
   openSidebar(){
       document.documentElement.classList.toggle('nav-open');
       this.refs.sidebarToggle.classList.toggle('toggled');
@@ -42,8 +60,8 @@ class Header extends React.Component {
 
   render() {
     return (<Navbar
-              color="white" expand="lg"
-              className='navbar-absolute fixed-top'>
+              expand="lg"
+              className='navbar-absolute fixed-top navbar-transparent bg-transparent'>
                 <Container fluid>
                   <div className="navbar-wrapper">
                     <div className="navbar-toggle">
@@ -61,13 +79,30 @@ class Header extends React.Component {
                     <span className="navbar-toggler-bar navbar-kebab"></span>
                   </NavbarToggler>
                   <Collapse isOpen={this.state.isOpen} navbar className="justify-content-end">
-                    <Nav navbar>
-                      <img src={this.props.userPictureUrl} className='rounded' width='32px' height='32px' />
-                      <div>{this.props.userName}</div>
-                    </Nav>
+                      <Nav navbar>
+                          <NavbarBrand>Welcome, {this.props.userName}</NavbarBrand>
+                          <Dropdown nav isOpen={this.state.dropdownOpen} toggle={(e) => this.dropdownToggle(e)}>
+                              <DropdownToggle caret nav>
+                                  <i className="now-ui-icons users_single-02"></i>
+                                  <p>
+                                    <span className="d-lg-none d-md-block">Action</span>
+                                  </p>
+                              </DropdownToggle>
+                              <DropdownMenu right>
+                                  <DropdownItem tag="a" onClick={::this.logout}>
+                                    <Row>
+                                      <Col md='5'>
+                                          <img src={this.props.userPictureUrl} className='rounded' width='32px' height='32px' />
+                                      </Col>
+                                      <Col md='7'>
+                                          <div className='navbar-text'>Log Out</div>
+                                      </Col>
+                                    </Row>
+                                  </DropdownItem>
+                              </DropdownMenu>
+                          </Dropdown>
+                      </Nav>
                   </Collapse>
-                  <button type='button' onClick={::this.logout}>Logout
-                  </button>
                 </Container>
             </Navbar>)
   }
