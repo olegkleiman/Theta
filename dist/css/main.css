@@ -8,9 +8,21 @@ button {
   font: 16px 'Lato', sans-serif !important;
 }
 
+.h5 h5 {
+  color: rgb(249, 99, 50);
+}
+
 .navbar li>a:focus, .navbar li>a:hover {
   text-decoration: none;
   background-color: red;
+}
+
+.nav-pills {
+  background-color: rgba(200, 200, 200, 0.2);
+}
+.nav-pills .nav-link.active, .nav-pills .show>.nav-link {
+  color: #fff;
+  background-color: rgba(200, 200, 200, 0.2);
 }
 
 .loginText
@@ -42,4 +54,8 @@ button {
     position: absolute;
     width: 100%;
     bottom: 10px;
+}
+
+.containerShift {
+  margin-top: 80px;
 }
