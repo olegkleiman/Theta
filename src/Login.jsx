@@ -26,6 +26,8 @@ class Login extends React.PureComponent {
          (user) => {
 
            if( user ) {
+
+             // Can I dispatch several actions at once?
              this.props.dispatch({
                type: 'LOGIN',
                data: {
@@ -34,7 +36,15 @@ class Login extends React.PureComponent {
                }
              });
 
+             this.props.dispatch({
+               type: 'PAGE_NAVIGATED',
+               data: {
+                 pageName: 'Home',
+               }
+             });
+
              this.props.history.push('dashboard');
+
           }
        }
      );
