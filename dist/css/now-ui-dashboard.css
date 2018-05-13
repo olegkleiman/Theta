@@ -3281,6 +3281,7 @@ Created using IcoMoon - icomoon.io
         .page-footer ul li a:hover {
           text-decoration: none; }
   .page-footer .copyright {
+    float: right;
     font-size: 0.8571em;
     line-height: 1.8; }
   .page-footer:after {
