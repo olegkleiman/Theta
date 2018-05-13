@@ -50,12 +50,6 @@ button {
   font-size: 70px;
 }
 
-.sidebar .nav > li.active-pro {
-    position: absolute;
-    width: 100%;
-    bottom: 10px;
-}
-
 .containerShift {
   margin-top: 80px;
 }
