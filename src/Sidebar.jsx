@@ -1,16 +1,32 @@
+// @flow
 import React from 'react';
 import { NavLink } from 'react-router-dom';
+import classNames from 'classnames';
 import { Nav } from 'reactstrap';
 
 import logo from './logo-white.svg';
 
-class Sidebar extends React.Component {
+type State = {
+  currentLink: number
+};
 
-  // verifies if routeName is the one active (in browser input)
-  activeRoute(routeName) {
-      return this.props.location.pathname.indexOf(routeName) > -1 ? 'active' : '';
+class Sidebar extends React.Component<{}, State> {
+
+  state = {
+    currentLink: 1
   }
 
+  constructor(props) {
+    super(props);
+  }
+
+  linkClicked = (linkNumber: number) => {
+    console.log(linkNumber);
+
+    this.setState({
+      currentLink: linkNumber
+    });
+  }
 
   render() {
     return <div className="sidebar" data-color="blue">
@@ -28,13 +44,16 @@ class Sidebar extends React.Component {
                 <Nav>
                     {
                       this.props.routes.map( (prop, index) => {
-                        if(prop.redirect)
-                            return null;
+
+                        let linkClassName = classNames('menu-item', {
+                          'active': prop.id == this.state.currentLink
+                        })
 
                         return (
-                          <li className={::this.activeRoute(prop.path) + (prop.pro ? " active active-pro":"")} key={index}>
+                          <li className={ linkClassName } key={index}>
 
-                            <NavLink to={prop.path} className="nav-link" activeClassName="active">
+                            <NavLink to={prop.path} className="nav-link"
+                              onClick={ () => ::this.linkClicked(index+1) }>
                               <i className={"now-ui-icons "+prop.icon}></i>
                               <p>{prop.name}</p>
                             </NavLink>
