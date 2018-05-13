@@ -124,7 +124,10 @@ class UserList extends React.PureComponent {
     const { users, columns, sorting } = this.state;
 
     return (
-      <Card>
+      <div>
+        <div className='panel-header panel-header-sm'></div>
+        <div className='content'>
+          <Card>
         <Grid
           rows={users}
           columns={columns}
@@ -156,6 +159,8 @@ class UserList extends React.PureComponent {
           <PagingPanel />
         </Grid>
       </Card>
+        </div>
+      </div>
     );
 
   }
