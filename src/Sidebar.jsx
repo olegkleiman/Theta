@@ -1,5 +1,6 @@
 // @flow
 import React from 'react';
+import { connect } from 'react-redux';
 import { NavLink } from 'react-router-dom';
 import classNames from 'classnames';
 import { Nav } from 'reactstrap';
@@ -20,11 +21,18 @@ class Sidebar extends React.Component<{}, State> {
     super(props);
   }
 
-  linkClicked = (linkNumber: number) => {
+  linkClicked = (linkNumber: number, pageName: String) => {
     console.log(linkNumber);
 
     this.setState({
       currentLink: linkNumber
+    });
+
+    this.props.dispatch({
+      type: 'PAGE_NAVIGATED',
+      data: {
+        pageName: pageName,
+      }
     });
   }
 
@@ -53,7 +61,7 @@ class Sidebar extends React.Component<{}, State> {
                           <li className={ linkClassName } key={index}>
 
                             <NavLink to={prop.path} className="nav-link"
-                              onClick={ () => ::this.linkClicked(index+1) }>
+                              onClick={ () => ::this.linkClicked(index+1, prop.name) }>
                               <i className={"now-ui-icons "+prop.icon}></i>
                               <p>{prop.name}</p>
                             </NavLink>
@@ -69,4 +77,5 @@ class Sidebar extends React.Component<{}, State> {
 
 }
 
-export default Sidebar;
+
+export default connect()(Sidebar);
