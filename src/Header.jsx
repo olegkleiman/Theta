@@ -1,4 +1,5 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import {
   Container,
@@ -71,7 +72,7 @@ class Header extends React.Component {
                         <span className="navbar-toggler-bar bar3"></span>
                       </button>
                     </div>
-                    <NavbarBrand href="/">Home</NavbarBrand>
+                    <NavbarBrand href="/">{this.props.pageName}</NavbarBrand>
                   </div>
                   <NavbarToggler onClick={this.toggle}>
                     <span className="navbar-toggler-bar navbar-kebab"></span>
@@ -109,4 +110,10 @@ class Header extends React.Component {
 
 };
 
-export default Header;
+function mapStateToProps(state) {
+  return {
+      pageName: state.pageName,
+  }
+}
+
+export default connect(mapStateToProps)(Header);
