@@ -3,6 +3,7 @@ import _ from 'lodash';
 const INITIAL_STATE = {
   userName: '',
   userPictureUrl: '',
+  pageName: ''
 };
 
 
@@ -25,6 +26,13 @@ const reducers = (state = INITIAL_STATE, action) => {
       state = _.assign({}, state, {
                                     userName: '',
                                     userPictureUrl: ''
+                                  });
+    }
+    break;
+
+    case 'PAGE_NAVIGATED': {
+      state = _.assign({}, state, {
+                                    pageName: action.data.pageName
                                   });
     }
     break;
