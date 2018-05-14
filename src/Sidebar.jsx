@@ -5,7 +5,7 @@ import { NavLink } from 'react-router-dom';
 import classNames from 'classnames';
 import { Nav } from 'reactstrap';
 
-import logo from './logo-white.svg';
+import logo from './logo.png';
 
 type State = {
   currentLink: number
@@ -19,6 +19,16 @@ class Sidebar extends React.Component<{}, State> {
 
   constructor(props) {
     super(props);
+
+    this.styles = {
+      logoStyle : {
+        width: '106px'
+      },
+      logoTitle: {
+        overflow: 'inherit',
+        textAlign: 'center'
+      }
+    }
   }
 
   linkClicked = (linkNumber: number, pageName: String) => {
@@ -31,7 +41,7 @@ class Sidebar extends React.Component<{}, State> {
     this.props.dispatch({
       type: 'PAGE_NAVIGATED',
       data: {
-        pageName: pageName,
+        pageName: pageName
       }
     });
   }
@@ -39,14 +49,14 @@ class Sidebar extends React.Component<{}, State> {
   render() {
     return <div className="sidebar" data-color="blue">
               <div className="logo">
-                <a href='#' className="simple-text logo-mini">
+                <a href='#' style={this.styles.logoStyle} className="simple-text logo-mini">
                       <div className="logo-img">
                           <img src={logo} alt="react-logo" />
                       </div>
                 </a>
-                <a href='#' className="simple-text logo-normal">
-                  Theta
-                </a>
+                <a href='#' style={this.styles.logoTitle} className="simple-text logo-normal">
+                   צהרוני נצנים
+                 </a>
               </div>
               <div className="sidebar-wrapper" ref="sidebar">
                 <Nav>
