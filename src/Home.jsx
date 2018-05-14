@@ -1,5 +1,7 @@
 // @flow
 import React from 'react';
+import { connect } from 'react-redux';
+import { withRouter } from "react-router-dom";
 import {
   Container,
   Row,
@@ -27,6 +29,9 @@ class Home extends React.Component<State, Props> {
   }
 
   componentDidMount() {
+
+    const self = this;
+
     this.unregisterCollectionObserver =
       firebase.firestore().collection('activities').onSnapshot( (snap) => {
 
@@ -36,9 +41,11 @@ class Home extends React.Component<State, Props> {
 
         let _activity = docSnapshot.data();
 
+        const linkTarget = '#' + self.props.match.path + _activity.link;
         _activities.push({
           name: _activity.name,
           description: _activity.description,
+          link: linkTarget
         });
 
       });
@@ -54,6 +61,17 @@ class Home extends React.Component<State, Props> {
     if( this.unregisterCollectionObserver ) {
       this.unregisterCollectionObserver();
     }
+  }
+
+  activitySelected(activityName: String) {
+    console.log(activityName);
+
+    this.props.dispatch({
+      type: 'PAGE_NAVIGATED',
+      data: {
+        pageName: activityName
+      }
+    });
   }
 
   render() {
@@ -75,8 +93,12 @@ class Home extends React.Component<State, Props> {
                                     <div className='col-3' key={index}>
                                       <div className='card card-user'>
                                         <div className='card-body'>
-                                          <h5 className='card-title'>{activity.name}</h5>
-                                          <p className='card-text'>{activity.description}</p>
+                                          <div>
+                                            <a onClick={ () => ::this.activitySelected(activity.name) } href={activity.link}>
+                                              <h5><b>{activity.name}</b></h5>
+                                              <p className='card-text'>{activity.description}</p>
+                                            </a>
+                                          </div>
                                         </div>
                                       </div>
                                     </div>)
@@ -94,4 +116,4 @@ class Home extends React.Component<State, Props> {
 
 };
 
-export default Home;
+export default withRouter(connect()(Home));
