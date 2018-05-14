@@ -9,11 +9,13 @@ import {
   DropdownMenu,
   DropdownItem
 } from 'reactstrap';
+import classNames from 'classnames';
 import firebase from './firebase.js';
 
 type State = {
   doc_types: [],
-  styles: {}
+  styles: {},
+  docsProvider: String
 }
 
 type Props = {
@@ -24,16 +26,12 @@ class ImportWizard extends React.Component<Props, State> {
 
   state = {
     doc_types: [],
-    dropdownOpen: false
+    dropdownOpen: false,
+    docsProvider: ''
   };
 
   constructor(props) {
     super(props);
-
-    // this.state = {
-    //   doc_types: [],
-    //   dropdownOpen: false
-    // }
 
     this.styles = {
       navItem : {
@@ -96,7 +94,21 @@ class ImportWizard extends React.Component<Props, State> {
 
    }
 
+   onProviderSelected = (provider) => {
+     this.setState({
+       docsProvider: provider
+     })
+   }
+
   render(): React.Node {
+
+    let nextButtonClassName = classNames('btn btn-next btn-fill btn-success btn-wd', {
+      'disabled': this.state.docsProvider == ''
+    });
+
+    let prevButtonClassName = classNames('btn btn-previous btn-fill btn-default btn-ws', {
+      'disabled': true
+    })
 
     return <div>
               <div className='panel-header panel-header-sm'></div>
@@ -147,7 +159,7 @@ class ImportWizard extends React.Component<Props, State> {
                                   <DropdownMenu>
                                     {
                                       this.state.doc_types.map( (docType, index) => {
-                                        return <DropdownItem key={index} href="#">{docType}</DropdownItem>
+                                        return <DropdownItem key={index} onClick={ ()=> ::this.onProviderSelected(docType) }>{docType}</DropdownItem>
                                       })
                                     }
                                   </DropdownMenu>
@@ -163,13 +175,13 @@ class ImportWizard extends React.Component<Props, State> {
                           <div className='wizard-footer'>
                             <div className='float-right'>
                               <input type='button' name='next' value='Next'
-                                className='btn btn-next btn-fill btn-success btn-wd'
+                                className={nextButtonClassName}
                                 onClick={::this.onNext}>
                               </input>
                             </div>
                             <div className='float-left'>
                               <input type='button' name='previous' value='Previous'
-                                className='btn btn-previous btn-fill btn-default btn-ws disabled'/>
+                                className={prevButtonClassName}/>
                             </div>
                             <div className='clearfix'>
                             </div>
