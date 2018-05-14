@@ -105,7 +105,7 @@ class ImportWizard extends React.Component<Props, State> {
                   <div className='col-lg-8 offset-lg-2'>
                     {/* Wizard container */}
                     <div className='wizard-container'>
-                      <div className='card wizard-card' data-color='green' id='wizardProfile'>
+                      <div className='card wizard-card' data-color='blue' id='wizardProfile'>
                         <form noValidate>
                           <div className='wizard-header'>
                             <h3 className='wizard-title'>Upload file</h3>
@@ -115,19 +115,19 @@ class ImportWizard extends React.Component<Props, State> {
                             <ul className='nav nav-pills' role="tablist">
                               <li style={this.styles.navItem}
                                   onClick={ (e) => ::this.highligthTab(e, 0)}>
-                                <a href='#select_provider' class='nav-link nav-item active'
+                                <a href='#select_provider' className='nav-link nav-item active'
                                     data-toggle="tab" role="tab"
                                     aria-selected='true'>Select provider</a>
                               </li>
                               <li style={this.styles.navItem}
                                   onClick={ (e) => ::this.highligthTab(e, 1)}>
-                                <a href='#select_file' class='nav-link nav-item'
+                                <a href='#select_file' className='nav-link nav-item'
                                    data-toggle="tab" role="tab"
                                    aria-selected="false">Select file</a>
                               </li>
                               <li style={this.styles.navItem} ref={ (el) => this.tab }
                                   onClick={ (e) => ::this.highligthTab(e, 2)}>
-                                <a href='#confirm' class='nav-link nav-item'
+                                <a href='#confirm' className='nav-link nav-item'
                                    data-toggle="tab" role="tab"
                                    aria-selected="false">Confirm</a>
                               </li>
