@@ -86,7 +86,7 @@ class Header extends React.Component {
                               <DropdownToggle caret nav>
                                   <i className="now-ui-icons users_single-02"></i>
                                   <p>
-                                    <span className="d-md-block">Accont</span>
+                                    <span className="d-md-block">Account</span>
                                   </p>
                               </DropdownToggle>
                               <DropdownMenu right>
