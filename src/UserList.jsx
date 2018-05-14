@@ -1,6 +1,5 @@
 // @flow
 import React from 'react';
-import { connect } from 'react-redux';
 import firebase from './firebase.js';
 import { Card } from 'reactstrap';
 import {
@@ -128,37 +127,37 @@ class UserList extends React.PureComponent {
         <div className='panel-header panel-header-sm'></div>
         <div className='content'>
           <Card>
-        <Grid
-          rows={users}
-          columns={columns}
-          getRowId={getRowId}
-        >
-          <PagingState
-            defaultCurrentPage={0}
-            pageSize={3}
-          />
-          <SearchState />
-          <IntegratedFiltering />
-          <IntegratedPaging />
-          <EditingState
-            onCommitChanges={::this.commitChanges}
-          />
-          <SortingState
-            sorting={sorting} />
-          <Table />
-          <TableHeaderRow showSortingControls />
-          <TableEditRow />
-          <TableEditColumn
-            showAddCommand
-            showEditCommand
-            showDeleteCommand
-            messages={editColumnMessages}
-          />
-          <Toolbar />
-          <SearchPanel />
-          <PagingPanel />
-        </Grid>
-      </Card>
+            <Grid
+              rows={users}
+              columns={columns}
+              getRowId={getRowId}
+            >
+              <PagingState
+                defaultCurrentPage={0}
+                pageSize={3}
+              />
+              <SearchState />
+              <IntegratedFiltering />
+              <IntegratedPaging />
+              <EditingState
+                onCommitChanges={::this.commitChanges}
+              />
+              <SortingState
+                sorting={sorting} />
+              <Table />
+              <TableHeaderRow showSortingControls />
+              <TableEditRow />
+              <TableEditColumn
+                showAddCommand
+                showEditCommand
+                showDeleteCommand
+                messages={editColumnMessages}
+              />
+              <Toolbar />
+              <SearchPanel />
+              <PagingPanel />
+            </Grid>
+          </Card>
         </div>
       </div>
     );
@@ -167,10 +166,4 @@ class UserList extends React.PureComponent {
 
 };
 
-function mapStateToProps(state) {
-  return {
-    accessToken: state.jwt,
-  }
-}
-
-export default connect(mapStateToProps)(UserList);
+export default UserList;
