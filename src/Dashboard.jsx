@@ -8,6 +8,7 @@ import Lists from './Lists';
 import UserList from './UserList';
 import ImportWizard from './ImportWizard';
 import ReportsWizard from './ReportsWizard';
+import InspectionForm from './InspectionForm';
 import Footer from './Footer';
 
 import firebase from './firebase.js';
@@ -25,7 +26,7 @@ type Props = {
 
 }
 
-class Dashboard extends React.Component<State,Props> {
+class Dashboard extends React.Component<Props, State> {
 
   constructor() {
     super();
@@ -104,6 +105,8 @@ class Dashboard extends React.Component<State,Props> {
                 <Route path={this.props.match.path + '/users'} component={UserList} />
                 <Route path={this.props.match.path + '/import'} component={ImportWizard} />
                 <Route path={this.props.match.path + '/reports'} component={ReportsWizard} />
+
+                <Route path={this.props.match.path + '/inspection'} component={InspectionForm} />
             </Switch>
             <Footer fluid/>
           </div>
