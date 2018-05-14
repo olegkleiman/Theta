@@ -20,7 +20,7 @@ service cloud.firestore {
     	allow read : if request.auth.uid != null;
     }
 
-     match /document_types {
+     match /document_types/ {doctype} {
     	allow read : if request.auth.uid != null;
     }
   }
