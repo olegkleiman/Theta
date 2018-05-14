@@ -15,7 +15,8 @@ import firebase from './firebase.js';
 type State = {
   doc_types: [],
   styles: {},
-  docsProvider: String
+  docsProvider: String,
+  dropdownOpen: Boolean
 }
 
 type Props = {
