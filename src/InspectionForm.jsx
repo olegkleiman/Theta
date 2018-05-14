@@ -29,6 +29,16 @@ class InspectionForm extends React.Component<State> {
     file: null
   };
 
+  constructor(props) {
+      super(props);
+
+      this.styles = {
+        formTitle: {
+          textAlign: 'center'
+        }
+      }
+  }
+
   toggle() {
     this.setState(prevState => ({
       dropdownOpen: !prevState.dropdownOpen
@@ -64,7 +74,11 @@ class InspectionForm extends React.Component<State> {
     const tokens = file.name.split('.');
     const fileName = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
     const fileRef = storage.child(this.userId + '/inspections/' + fileName + '.' + tokens[1]);
-    fileRef.put(file)
+    const metadata = {
+      contentType: file.type
+    };
+
+    fileRef.put(file, metadata)
     .then( snapshot => {
       console.log('Uploaded');
     })
@@ -108,7 +122,7 @@ class InspectionForm extends React.Component<State> {
             <div className='col-12'>
               <Card>
                 <div className='card-header'>
-                  <h4>Inspection Form</h4>
+                  <h4 style={this.styles.formTitle}>Inspection Form</h4>
                 </div>
                 <div className='card-body'>
                   <form onSubmit={::this.onFormSubmit}>
