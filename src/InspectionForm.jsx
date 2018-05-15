@@ -9,7 +9,9 @@ import {
   Dropdown,
   DropdownToggle,
   DropdownMenu,
-  DropdownItem
+  DropdownItem,
+  FormGroup,
+  Label
 } from 'reactstrap';
 import firebaseApp from './firebase.js';
 
@@ -154,6 +156,64 @@ class InspectionForm extends React.Component<State> {
                       </div>
                       <div className='col col-lg-4'>
                         <Input placeholder='type here' />
+                      </div>
+                    </Row>
+                    <Row>
+                        <div className='col col-lg-3'>
+                          Subject 1
+                        </div>
+                        <div className='col col-lg-3'>
+                          <FormGroup check>
+                            <Label check>
+                              <Input type='radio'name='radio1'/>
+                              First Radio
+                            </Label>
+                          </FormGroup>
+                        </div>
+                        <div className='col col-lg-3'>
+                          <FormGroup check>
+                            <Label check>
+                              <Input type='radio' name='radio1' />
+                              Second Radio
+                            </Label>
+                          </FormGroup>
+                        </div>
+                        <div className='col col-lg-3'>
+                          <FormGroup check>
+                            <Label check>
+                              <Input type='radio' name='radio1' />
+                                Third Radio
+                            </Label>
+                          </FormGroup>
+                        </div>
+                    </Row>
+                    <Row>
+                      <div className='col col-lg-3'>
+                        Subject 2
+                      </div>
+                      <div className='col col-lg-3'>
+                        <FormGroup check>
+                          <Label check>
+                            <Input type='radio'name='radio2'/>
+                            2. First Radio
+                          </Label>
+                        </FormGroup>
+                      </div>
+                      <div className='col col-lg-3'>
+                        <FormGroup check>
+                          <Label check>
+                            <Input type='radio' name='radio2' />
+                            2. Second Radio
+                          </Label>
+                        </FormGroup>
+                      </div>
+                      <div className='col col-lg-3'>
+                        <FormGroup check>
+                          <Label check>
+                            <Input type='radio' name='radio2' />
+                              2. Third Radio
+                          </Label>
+                        </FormGroup>
                       </div>
                     </Row>
                     <Row>
