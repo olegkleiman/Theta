@@ -19,3 +19,7 @@ In order to comply to Firebase deployment's demands for SPA, the public director
 ### Deploy Firebase rules
 Firestore rules should be deployed bt Firebase CLI from <code>.rules</code> file prior to using the app:
 <code>firebase deploy --only firestore:rules</code>
+
+## How it works
+### Typography
+This project uses <a href='https://demos.creative-tim.com/now-ui-kit/index.html' target='_blank'>Now UI</a> of Ceative Tim that inclides its own CSS that tied to  <a href='https://demos.creative-tim.com/now-ui-kit/nucleo-icons.html' target='_blank'>subset</a> of Nucleo fonts and icons. All the icons used in this projects are taken from this subset in accordance with free licence of Now UI distribution.
