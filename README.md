@@ -22,4 +22,4 @@ Firestore rules should be deployed bt Firebase CLI from <code>.rules</code> file
 
 ## How it works
 ### Typography
-This project uses <a href='https://demos.creative-tim.com/now-ui-kit/index.html' target='_blank'>Now UI</a> of Ceative Tim that inclides its own CSS that tied to  <a href='https://demos.creative-tim.com/now-ui-kit/nucleo-icons.html' target='_blank'>subset</a> of Nucleo fonts and icons. All the icons used in this projects are taken from this subset in accordance with free licence of Now UI distribution.
+This project uses the free version of <a href='https://demos.creative-tim.com/now-ui-kit/index.html' target='_blank'>Now UI</a> design from <a href='https://www.creative-tim.com/' target='_blank'>Creative Tim</a> that inclides its own CSS that tied to  <a href='https://demos.creative-tim.com/now-ui-kit/nucleo-icons.html' target='_blank'>subset</a> of Nucleo fonts and icons. All the icons used in this projects are taken from this subset in accordance with free licence of Now UI distribution.
