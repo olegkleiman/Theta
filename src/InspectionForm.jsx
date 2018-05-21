@@ -3,6 +3,7 @@ import React from 'react';
 import {
   Container,
   Button,
+  ButtonGroup,
   Row,
   Card,
   Input,
@@ -10,6 +11,8 @@ import {
   DropdownToggle,
   DropdownMenu,
   DropdownItem,
+  Form,
+  FormText,
   FormGroup,
   Label
 } from 'reactstrap';
@@ -63,6 +66,12 @@ class InspectionForm extends React.Component<State> {
 
   onFormSubmit = (event) => {
     event.preventDefault(); // stop form submit
+
+    console.log(event.target.instructorName.value);
+    console.log(event.target.journal.value);
+    console.log(event.target.calendar.value);
+    console.log(this.state.selectedKindergarten);
+
     this.fileUpload(this.state.file);
   }
 
@@ -119,21 +128,20 @@ class InspectionForm extends React.Component<State> {
     return (
       <div>
         <div className='panel-header panel-header-sm'></div>
-        <div className='content'>
+        <div className='content container h-100'>
           <Row>
             <div className='col-12'>
               <Card>
                 <div className='card-header'>
-                  <h4 style={this.styles.formTitle}>Inspection Form</h4>
+                  <h4 style={this.styles.formTitle}>Kindergarten Inspection Form</h4>
                 </div>
                 <div className='card-body'>
-                  <form onSubmit={::this.onFormSubmit}>
-                    <Row>
-                      <div className='col col-lg-2'>
-                        <h4 className='info-text'>Kindergarten</h4>
-                      </div>
-                      <div className='col col-lg-4'>
-                        <Dropdown isOpen={this.state.dropdownOpen} toggle={::this.toggle}>
+                  <Form onSubmit={::this.onFormSubmit}>
+                    <FormGroup>
+                        <Label for='kinergartenName'>Kindergarten</Label>
+                        <Dropdown id='kinergartenName' name='kinergartenName'
+                                  isOpen={this.state.dropdownOpen}
+                                  toggle={::this.toggle}>
                         <DropdownToggle caret>
                           {this.state.selectedKindergarten}
                         </DropdownToggle>
@@ -147,74 +155,51 @@ class InspectionForm extends React.Component<State> {
                             })
                           }
                         </DropdownMenu>
-                      </Dropdown>
+                        </Dropdown>
+                        <FormText>Select from the list</FormText>
+                    </FormGroup>
+
+                    <FormGroup>
+                      <Label for='instructorName'>Instructor Name</Label>
+                      <Input id='instructorName' name='instructorName' />
+                      <FormText>Full name of the person</FormText>
+                    </FormGroup>
+
+                    <Row>
+                      <div className='col-3 offset-md-3 text-center'>Exists, normal
+                      </div>
+                      <div className='col-3 text-center'>Exists, abnormal
+                      </div>
+                      <div className='col-3 text-center'>Not Exists
                       </div>
                     </Row>
                     <Row>
-                      <div className='col col-lg-2'>
-                        <h4>Instructor Name</h4>
-                      </div>
-                      <div className='col col-lg-4'>
-                        <Input placeholder='type here' />
-                      </div>
+                        <FormGroup check className='col-3'>
+                        Journal
+                        </FormGroup>
+                        <FormGroup check className='col-3 text-center'>
+                          <Input type='radio'name='journal' value='1'/>{' '}
+                        </FormGroup>
+                        <FormGroup check className='col-3 text-center'>
+                          <Input type='radio'name='journal' value='2'/>{' '}
+                        </FormGroup>
+                        <FormGroup check className='col-3 text-center' >
+                          <Input type='radio'name='journal' value='3'/>{' '}
+                        </FormGroup>
                     </Row>
                     <Row>
-                        <div className='col col-lg-3'>
-                          Subject 1
-                        </div>
-                        <div className='col col-lg-3'>
-                          <FormGroup check>
-                            <Label check>
-                              <Input type='radio'name='radio1'/>
-                              First Radio
-                            </Label>
-                          </FormGroup>
-                        </div>
-                        <div className='col col-lg-3'>
-                          <FormGroup check>
-                            <Label check>
-                              <Input type='radio' name='radio1' />
-                              Second Radio
-                            </Label>
-                          </FormGroup>
-                        </div>
-                        <div className='col col-lg-3'>
-                          <FormGroup check>
-                            <Label check>
-                              <Input type='radio' name='radio1' />
-                                Third Radio
-                            </Label>
-                          </FormGroup>
-                        </div>
-                    </Row>
-                    <Row>
-                      <div className='col col-lg-3'>
-                        Subject 2
-                      </div>
-                      <div className='col col-lg-3'>
-                        <FormGroup check>
-                          <Label check>
-                            <Input type='radio'name='radio2'/>
-                            2. First Radio
-                          </Label>
+                        <FormGroup check className='col-3'>
+                        Calendar
                         </FormGroup>
-                      </div>
-                      <div className='col col-lg-3'>
-                        <FormGroup check>
-                          <Label check>
-                            <Input type='radio' name='radio2' />
-                            2. Second Radio
-                          </Label>
+                        <FormGroup check className='col-3 text-center'>
+                           <Input type='radio'name='calendar'/>
                         </FormGroup>
-                      </div>
-                      <div className='col col-lg-3'>
-                        <FormGroup check>
-                          <Label check>
-                            <Input type='radio' name='radio2' />
-                              2. Third Radio
-                          </Label>
+                        <FormGroup check className='col-3 text-center'>
+                          <Input type='radio' name='calendar' />
                         </FormGroup>
-                      </div>
+                        <FormGroup check className='col-3 text-center'>
+                          <Input type='radio' name='calendar' />
+                        </FormGroup>
                     </Row>
                     <Row>
                       <div className='col col-lg-12'>
@@ -229,7 +214,7 @@ class InspectionForm extends React.Component<State> {
                         <Button type='submit' color='success'>Submit</Button>
                       </div>
                     </Row>
-                  </form>
+                  </Form>
                 </div>
               </Card>
             </div>
