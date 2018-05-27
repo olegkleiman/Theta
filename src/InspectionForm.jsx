@@ -239,28 +239,28 @@ class InspectionForm extends React.Component<State> {
             Subject 2
           </div>
           <div className='col col-lg-3'>
-            <FormGroup check>
-              <Label check>
-                <Input type='radio'name='radio2'/>
-                2. First Radio
-              </Label>
+
+            <FormGroup check className='radio'>
+                <Input type='radio' id='radio4' name='inst2'/>
+                <Label check for='radio4'>2. First Radio</Label>
             </FormGroup>
+
           </div>
           <div className='col col-lg-3'>
-            <FormGroup check>
-              <Label check>
-                <Input type='radio' name='radio2' />
-                2. Second Radio
-              </Label>
+
+            <FormGroup check className='radio'>
+                <Input type='radio' id='radio5' name='inst2' />
+                <Label check for='radio5'>2. Second Radio</Label>
             </FormGroup>
+
           </div>
           <div className='col col-lg-3'>
-            <FormGroup check>
-              <Label check>
-                <Input type='radio' name='radio2' />
-                  2. Third Radio
-              </Label>
+
+            <FormGroup check className='radio'>
+                <Input type='radio' id='radio6' name='inst2' />
+                <Label check for='radio6'>2. Third Radio</Label>
             </FormGroup>
+
           </div>
         </Row>
         <Row>
