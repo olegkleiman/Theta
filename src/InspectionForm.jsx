@@ -1,9 +1,9 @@
 // @flow
 import React from 'react';
+import { Field, reduxForm } from 'redux-form';
 import {
   Container,
   Button,
-  ButtonGroup,
   Row,
   Card,
   Input,
@@ -11,12 +11,48 @@ import {
   DropdownToggle,
   DropdownMenu,
   DropdownItem,
-  Form,
-  FormText,
+  FormControl,
   FormGroup,
   Label
 } from 'reactstrap';
-import firebaseApp from './firebase.js';
+import firebaseApp from '../firebase.js';
+
+import KindergartenSelector from './KindergartenSelector';
+
+const validate = values => {
+  const errors = {};
+
+  if( !values.instructorName ) {
+    errors.instructorName = 'Required'
+  } else if( values.instructorName.length < 2 ) {
+    errors.instructorName = 'Must be more than 2 chars'
+  }
+
+  return errors;
+}
+
+const warn = values => {
+  const warnings = {};
+
+  return warnings;
+}
+
+const renderField = ({
+  input,
+  label,
+  type,
+  meta: { touched, error, warning }
+}) => (
+  <div>
+    <label>{label}</label>
+    <div>
+      <input {...input} placeholder={label} type={type} />
+      { touched &&
+        ((error && <div><i className='now-ui-icons ui-1_bell-53 btn-outline-danger'></i><span>{error}</span></div>) ||
+        (warning && <span>{warninig}</span>))}
+    </div>
+  </div>
+)
 
 type State = {
   kindergartens: [],
@@ -44,36 +80,11 @@ class InspectionForm extends React.Component<State> {
       }
   }
 
-  toggle() {
-    this.setState(prevState => ({
-      dropdownOpen: !prevState.dropdownOpen
-    }));
-  }
-
-  onKindergartenSelected = (kindergartenName: String) => {
-    console.log(kindergartenName);
-    this.setState( prevState => ({
-      selectedKindergarten: kindergartenName
-    }));
-
-  }
-
-  handleFileUpload = (event) => {
-    this.setState({
-      file: event.target.files[0]
-    });
-  }
-
-  onFormSubmit = (event) => {
-    event.preventDefault(); // stop form submit
-
-    console.log(event.target.instructorName.value);
-    console.log(event.target.journal.value);
-    console.log(event.target.calendar.value);
-    console.log(this.state.selectedKindergarten);
-
-    this.fileUpload(this.state.file);
-  }
+  // toggle() {
+  //   this.setState(prevState => ({
+  //     dropdownOpen: !prevState.dropdownOpen
+  //   }));
+  // }
 
   fileUpload = (file) => {
     const formData = new FormData();
@@ -96,134 +107,188 @@ class InspectionForm extends React.Component<State> {
     .catch( error => console.error(error) );
   }
 
-  componentDidMount() {
-    const self = this;
+  //onKindergartenSelected = (kindergartenName: String) => {
 
-    firebaseApp.auth().onAuthStateChanged( (user) => {
-      if( user ) {
+  //   this.setState( prevState => ({
+  //     selectedKindergarten: kindergartenName
+  //   }));
+  //
+  // }
 
-        self.userId = user.uid;
+  renderDropdownList = ({ input, data, valueField, textField }) => {
+    return <KindergartenSelector {...this.props} />
+  }
 
-        firebaseApp.firestore().collection('kindergartens')
-        .get()
-        .then( response => {
-
-            let list = [];
-            response.docs.forEach( (doc) => {
-              list.push(doc.data().name);
-            });
-
-            self.setState({
-              kindergartens: list
-            })
-
-
-        });
-
-      }
+  handleFileUpload = (event) => {
+    this.setState({
+      file: event.target.files[0]
     });
   }
 
+  // componentDidMount() {
+  //   const self = this;
+  //
+  //   firebaseApp.auth().onAuthStateChanged( (user) => {
+  //     if( user ) {
+  //
+  //       self.userId = user.uid;
+  //
+  //       firebaseApp.firestore().collection('kindergartens')
+  //       .get()
+  //       .then( response => {
+  //
+  //           let list = [];
+  //           response.docs.forEach( (doc) => {
+  //             list.push(doc.data().name);
+  //           });
+  //
+  //           self.setState({
+  //             kindergartens: list
+  //           })
+  //
+  //
+  //       });
+  //
+  //     }
+  //   });
+  // }
+
+  handleChange = (e) => {
+    console.log(e.target.value);
+  }
+
+  //@readonly
   render() {
+
+    const { handleSubmit } = this.props;
+
     return (
       <div>
-        <div className='panel-header panel-header-sm'></div>
-        <div className='content container h-100'>
-          <Row>
-            <div className='col-12'>
-              <Card>
-                <div className='card-header'>
-                  <h4 style={this.styles.formTitle}>Kindergarten Inspection Form</h4>
-                </div>
-                <div className='card-body'>
-                  <Form onSubmit={::this.onFormSubmit}>
-                    <FormGroup>
-                        <Label for='kinergartenName'>Kindergarten</Label>
-                        <Dropdown id='kinergartenName' name='kinergartenName'
-                                  isOpen={this.state.dropdownOpen}
-                                  toggle={::this.toggle}>
-                        <DropdownToggle caret>
-                          {this.state.selectedKindergarten}
-                        </DropdownToggle>
-                        <DropdownMenu>
-                          {
-                            this.state.kindergartens.map ( (item ,index) => {
-                              return <DropdownItem key={index}
-                                                    onClick={ ()=> ::this.onKindergartenSelected(item) }>
-                                        {item}
-                                    </DropdownItem>
-                            })
-                          }
-                        </DropdownMenu>
-                        </Dropdown>
-                        <FormText>Select from the list</FormText>
-                    </FormGroup>
+      <form onSubmit={handleSubmit}>
+        <Row>
+          <div className='col col-lg-2'>
+            <h4 className='info-text'>Kindergarten</h4>
+          </div>
+          <div className='col col-lg-4'>
+            <FormGroup>
+              <Input type='select' name='select'>
+                <option value="select">select</option>
+                <option value="other">...</option>
+              </Input>
+            </FormGroup>
+            {/*}<Field name='kindergartedSelector' component={KindergartenSelector} label='one' />
 
-                    <FormGroup>
-                      <Label for='instructorName'>Instructor Name</Label>
-                      <Input id='instructorName' name='instructorName' />
-                      <FormText>Full name of the person</FormText>
-                    </FormGroup>
 
-                    <Row>
-                      <div className='col-3 offset-md-3 text-center'>Exists, normal
-                      </div>
-                      <div className='col-3 text-center'>Exists, abnormal
-                      </div>
-                      <div className='col-3 text-center'>Not Exists
-                      </div>
-                    </Row>
-                    <Row>
-                        <FormGroup check className='col-3'>
-                        Journal
-                        </FormGroup>
-                        <FormGroup check className='col-3 text-center'>
-                          <Input type='radio'name='journal' value='1'/>{' '}
-                        </FormGroup>
-                        <FormGroup check className='col-3 text-center'>
-                          <Input type='radio'name='journal' value='2'/>{' '}
-                        </FormGroup>
-                        <FormGroup check className='col-3 text-center' >
-                          <Input type='radio'name='journal' value='3'/>{' '}
-                        </FormGroup>
-                    </Row>
-                    <Row>
-                        <FormGroup check className='col-3'>
-                        Calendar
-                        </FormGroup>
-                        <FormGroup check className='col-3 text-center'>
-                           <Input type='radio'name='calendar'/>
-                        </FormGroup>
-                        <FormGroup check className='col-3 text-center'>
-                          <Input type='radio' name='calendar' />
-                        </FormGroup>
-                        <FormGroup check className='col-3 text-center'>
-                          <Input type='radio' name='calendar' />
-                        </FormGroup>
-                    </Row>
-                    <Row>
-                      <div className='col col-lg-12'>
-                        <Input placeholder='remarks' />
-                      </div>
-                    </Row>
-                    <Row>
-                      <Input type='file' onChange={::this.handleFileUpload} />
-                    </Row>
-                    <Row>
-                      <div className='col col-lg-1'>
-                        <Button type='submit' color='success'>Submit</Button>
-                      </div>
-                    </Row>
-                  </Form>
-                </div>
-              </Card>
+            <Dropdown isOpen={this.state.dropdownOpen} toggle={::this.toggle}>
+              <DropdownToggle caret>
+                {this.state.selectedKindergarten}
+              </DropdownToggle>
+              <DropdownMenu>
+                {
+                  this.state.kindergartens.map ( (item ,index) => {
+                    return <DropdownItem key={index}
+                                          onClick={ ()=> ::this.onKindergartenSelected(item) }>
+                              {item}
+                          </DropdownItem>
+                  })
+                }
+              </DropdownMenu>
+            </Dropdown>
+          */}
+          </div>
+        </Row>
+        <Row>
+          <div className='col col-lg-2'>
+            <h4>Instructor Name</h4>
+          </div>
+          <div className='col col-lg-4'>
+            <Field name="instructorName" component={renderField} type="text" label='type here' />
+          </div>
+        </Row>
+        <Row>
+            <div className='col col-lg-3'>
+              Subject 1
             </div>
-          </Row>
-        </div>
+            <div className='col col-lg-3'>
+
+              <FormGroup check className='radio'>
+                <Input type='radio' id='radio1' name='inst' />
+                <Label check for='radio1'>First Radio</Label>
+              </FormGroup>
+
+            </div>
+            <div className='col col-lg-3'>
+
+              <FormGroup check className='radio'>
+                  <Input type='radio' id='radio2' name='inst'/>
+                  <Label check for='radio2'>Second Radio</Label>
+              </FormGroup>
+
+            </div>
+            <div className='col col-lg-3'>
+
+              <FormGroup check className='radio'>
+                  <Input type='radio' id='radio3' name='inst' />
+                  <Label check for='radio3'>Third Radio</Label>
+              </FormGroup>
+
+            </div>
+        </Row>
+        <Row>
+          <div className='col col-lg-3'>
+            Subject 2
+          </div>
+          <div className='col col-lg-3'>
+            <FormGroup check>
+              <Label check>
+                <Input type='radio'name='radio2'/>
+                2. First Radio
+              </Label>
+            </FormGroup>
+          </div>
+          <div className='col col-lg-3'>
+            <FormGroup check>
+              <Label check>
+                <Input type='radio' name='radio2' />
+                2. Second Radio
+              </Label>
+            </FormGroup>
+          </div>
+          <div className='col col-lg-3'>
+            <FormGroup check>
+              <Label check>
+                <Input type='radio' name='radio2' />
+                  2. Third Radio
+              </Label>
+            </FormGroup>
+          </div>
+        </Row>
+        <Row>
+          <div className='col col-lg-1'>
+            <label>Remarks</label>
+          </div>
+          <div className='col col-lg-11'>
+            <Field name='remarks' component='textarea' type='text' />
+          </div>
+        </Row>
+        <Row>
+          <Input type='file' onChange={::this.handleFileUpload} />
+        </Row>
+
+        <Row>
+          <div className='col col-lg-1'>
+            <Button type="submit" color='success'>Submit</Button>
+          </div>
+        </Row>
+
+      </form>
       </div>
     )
   }
-
 };
 
-export default InspectionForm;
+export default reduxForm({
+  form: 'simple',
+  validate,
+  warn
+})(InspectionForm);
