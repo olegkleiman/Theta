@@ -1427,7 +1427,7 @@ h4, .h4 {
   h4 + .category,
   h4.title + .category, .h4 + .category,
   .h4.title + .category {
-    margin-top: -10px; }
+    margin-top: -10px !important; }
 
 h5, .h5 {
   font-size: 1.57em;
@@ -1450,7 +1450,7 @@ p.description {
       color: #2c2c2c;
       text-decoration: none; }
   .title + .category {
-    margin-top: -10px; }
+    margin-top: -10px !important; }
 
 .description,
 .card-description,
