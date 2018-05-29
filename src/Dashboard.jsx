@@ -8,7 +8,7 @@ import Lists from './Lists';
 import UserList from './UserList';
 import ImportWizard from './ImportWizard';
 import ReportsWizard from './ReportsWizard';
-import InspectionForm from './InspectionForm';
+import InspectionForm from './forms/InspectionForm';
 import Footer from './Footer';
 
 import firebase from './firebase.js';
