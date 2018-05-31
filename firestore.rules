@@ -23,9 +23,14 @@ service cloud.firestore {
     match /document_types/{doctype} {
     	allow read : if request.auth.uid != null;
     }
-    
+
     match /kindergartens/{doc} {
     	allow read : if request.auth.uid != null;
     }
+
+    match /units/{unit} {
+     allow read : if request.auth.uid != null;
+   }
+
   }
 }
