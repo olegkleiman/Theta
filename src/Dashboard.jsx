@@ -10,6 +10,8 @@ import ImportWizard from './ImportWizard';
 import ReportsWizard from './ReportsWizard';
 import InspectionForm from './forms/InspectionForm';
 import Footer from './Footer';
+import Office from './Office';
+import Units from './Units';
 
 import firebase from './firebase.js';
 import dashboardRoutes from './routes/dashboard.jsx';
@@ -107,6 +109,8 @@ class Dashboard extends React.Component<Props, State> {
                 <Route path={this.props.match.path + '/reports'} component={ReportsWizard} />
 
                 <Route path={this.props.match.path + '/inspection'} component={InspectionForm} />
+                <Route path={this.props.match.path + '/office'} component={Office} />
+                <Route path={this.props.match.path + '/units'} component={Units} />
             </Switch>
             <Footer fluid/>
           </div>

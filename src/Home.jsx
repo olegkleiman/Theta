@@ -64,7 +64,6 @@ class Home extends React.Component<State, Props> {
   }
 
   activitySelected(activityName: String) {
-    console.log(activityName);
 
     this.props.dispatch({
       type: 'PAGE_NAVIGATED',
@@ -77,7 +76,7 @@ class Home extends React.Component<State, Props> {
   render() {
     return (<div>
               <div className='panel-header panel-header-sm'></div>
-              <div className='content'>
+              <div className='content container h-100'>
                   <Row>
                     <div className='col col-md-12'>
                       <div className='card'>
