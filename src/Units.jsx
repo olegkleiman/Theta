@@ -1,6 +1,7 @@
 // @flow
 import React from 'react';
 import firebase from './firebase.js';
+import classNames from 'classnames';
 
 import Groups from './Groups.jsx';
 
@@ -74,9 +75,13 @@ class Units extends React.Component<Props, State> {
 
   render() {
 
+    let nextButtonClassName = classNames('btn btn-next btn-fill btn-success btn-wd', {
+      'disabled': this.state.selectedUnit == ''
+    });
+
     const dropdownTitle = this.state.selectedUnit == '' ? 'Select Unit'
                                                           : this.state.selectedUnit;
-    
+
     return <div>
               <div className='panel-header panel-header-sm'></div>
               <div className='content container h-100'>
@@ -103,7 +108,7 @@ class Units extends React.Component<Props, State> {
                           </Dropdown>
                         </Row>
                         <Row>
-                          <Button />
+                          <Button color='primary' className={nextButtonClassName}>Next</Button>
                         </Row>
                       </div>
                     </div>
