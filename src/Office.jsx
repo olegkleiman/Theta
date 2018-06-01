@@ -1,7 +1,6 @@
 // @flow
 import React from 'react';
 import { connect } from 'react-redux';
-import { withRouter } from "react-router-dom";
 
 import {
   Row
@@ -54,4 +53,4 @@ class Office extends React.Component {
 
 }
 
-export default withRouter(connect()(Office));
+export default connect()(Office);
