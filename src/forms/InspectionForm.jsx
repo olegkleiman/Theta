@@ -19,8 +19,6 @@ import {
 } from 'reactstrap';
 import firebaseApp from '../firebase.js';
 
-import KindergartenSelector from './KindergartenSelector';
-
 const validate = values => {
   const errors = {};
 
