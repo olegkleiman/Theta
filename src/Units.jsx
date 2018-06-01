@@ -8,20 +8,12 @@ import classNames from 'classnames';
 import Groups from './Groups.jsx';
 
 import {
-  Container,
   Button,
   Row,
-  Card,
-  Input,
   Dropdown,
   DropdownToggle,
   DropdownMenu,
-  DropdownItem,
-  Form,
-  FormText,
-  FormControl,
-  FormGroup,
-  Label
+  DropdownItem
 } from 'reactstrap';
 
 type State = {
@@ -80,7 +72,7 @@ class Units extends React.Component<Props, State> {
     this.props.dispatch({
       type: 'PAGE_NAVIGATED',
       data: {
-        pageName: 'Groups'
+        pageName: 'Groups of ' + this.state.selectedUnit
       }
     });
 
