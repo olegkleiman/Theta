@@ -1,5 +1,7 @@
 // @flow
 import React from 'react';
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
 import firebase from './firebase.js';
 import classNames from 'classnames';
 
@@ -73,6 +75,18 @@ class Units extends React.Component<Props, State> {
     })
   }
 
+  onNext() {
+
+    this.props.dispatch({
+      type: 'PAGE_NAVIGATED',
+      data: {
+        pageName: 'Groups'
+      }
+    });
+
+    this.props.history.push('/dashboard/groups');
+  }
+
   render() {
 
     let nextButtonClassName = classNames('btn btn-next btn-fill btn-success btn-wd', {
@@ -108,7 +122,9 @@ class Units extends React.Component<Props, State> {
                           </Dropdown>
                         </Row>
                         <Row>
-                          <Button color='primary' className={nextButtonClassName}>Next</Button>
+                          <Button color='primary'
+                                  className={nextButtonClassName}
+                                  onClick={::this.onNext}>Next</Button>
                         </Row>
                       </div>
                     </div>
@@ -120,4 +136,4 @@ class Units extends React.Component<Props, State> {
 
 }
 
-export default Units;
+export default withRouter(connect()(Units));
