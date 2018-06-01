@@ -41,6 +41,7 @@ var config = {
   // ],
   devServer: {
     host: process.env.HOST,
+    inline: true,
     hot: true
   }
 };
