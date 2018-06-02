@@ -29,7 +29,7 @@ type State = {
 }
 
 type Props = {
-  id: String
+  docId: String
 }
 
 class Unit extends React.Component<Props, State> {
@@ -59,29 +59,53 @@ class Unit extends React.Component<Props, State> {
 
   }
 
-  componentDidMount() {
+   componentDidMount() {
 
-    const docId = this.props.id;
+     this._loadAsyncData(this.props.docId);
+
+   }
+
+  componentDidUpdate(prevProps, prevState) {
+
+    if( prevProps.docId !== this.props.docId ) {
+      this._loadAsyncData(this.props.docId)
+    }
+
+  }
+
+  // static getDerivedStateFromProps(nextProps, prevState) {
+  //
+  //   if( nextProps.id !== prevState.id ) {
+  //     return {
+  //       docData: null,
+  //     }
+  //   }
+  //
+  // }
+
+  _loadAsyncData(docId) {
+    if( docId === this.props.id ) {
+
+    }
+
+    //this.props.docId = id;
 
     const getOptions = {
       source: 'server'
     }
 
-    const self = this;
-
     firebase.firestore().collection('units').doc(docId)
       .get(getOptions)
       .then( doc => {
+
         let data = doc.data();
 
-        self.setState({
-          docData: data
-        });
+        this.setState({
+            docData: data,
+        })
 
-      })
-      .catch( error => {
-        console.log(error);
       });
+
   }
 
   render() {
