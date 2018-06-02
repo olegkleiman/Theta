@@ -1,15 +1,15 @@
 // @flow
 import React from 'react';
-import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
 import firebase from './firebase.js';
 import classNames from 'classnames';
 
-import Groups from './Groups.jsx';
+import Unit from './Unit';
+import Groups from './Groups';
 
 import {
   Button,
   Row,
+  Col,
   Dropdown,
   DropdownToggle,
   DropdownMenu,
@@ -18,7 +18,10 @@ import {
 
 type State = {
   units: [],
-  selectedUnit: String,
+  selectedUnit: {
+    name: String,
+    id: String
+  },
   dropdownOpen: Boolean
 }
 
@@ -30,7 +33,10 @@ class Units extends React.Component<Props, State> {
 
   state = {
     units: [],
-    selectedUnit: '',
+    selectedUnit: {
+      name: '',
+      id: ''
+    },
     dropdownOpen: false
   };
 
@@ -44,14 +50,21 @@ class Units extends React.Component<Props, State> {
 
     const self = this;
 
+    const getOptions = {
+      source: 'server'
+    }
+
     firebase.firestore().collection('units')
-      .get()
+      .get(getOptions)
       .then( response => {
 
       const _units = [];
 
       response.docs.forEach( (unit) => {
-        _units.push(unit.data().name);
+        _units.push({
+          name: unit.data().name,
+          id: unit.id
+        });
       });
 
       self.setState({
@@ -67,26 +80,17 @@ class Units extends React.Component<Props, State> {
     })
   }
 
-  onNext() {
-
-    this.props.dispatch({
-      type: 'PAGE_NAVIGATED',
-      data: {
-        pageName: 'Groups of ' + this.state.selectedUnit
-      }
-    });
-
-    this.props.history.push('/dashboard/groups');
-  }
-
   render() {
 
     let nextButtonClassName = classNames('btn btn-next btn-fill btn-success btn-wd', {
-      'disabled': this.state.selectedUnit == ''
+      'disabled': this.state.selectedUnit.name == ''
     });
 
-    const dropdownTitle = this.state.selectedUnit == '' ? 'Select Unit'
-                                                          : this.state.selectedUnit;
+    const dropdownTitle = this.state.selectedUnit.name == '' ? 'Select Unit'
+                                                          : this.state.selectedUnit.name;
+
+    let unit = this.state.selectedUnit.id == '' ? null
+                : <Unit id={this.state.selectedUnit.id} />
 
     return <div>
               <div className='panel-header panel-header-sm'></div>
@@ -99,24 +103,24 @@ class Units extends React.Component<Props, State> {
                       </div>
                       <div className='card-body'>
                         <Row>
-                          <Dropdown isOpen={this.state.dropdownOpen} toggle={::this.toggle}>
-                            <DropdownToggle caret>
-                              {dropdownTitle}
-                            </DropdownToggle>
-                            <DropdownMenu>
-                              {
-                                this.state.units.map( (unit, index) => {
-                                    return <DropdownItem key={index}
-                                              onClick={()=> ::this.onUnitSelected(unit)}>{unit}</DropdownItem>
-                                })
-                              }
-                            </DropdownMenu>
-                          </Dropdown>
-                        </Row>
-                        <Row>
-                          <Button color='primary'
-                                  className={nextButtonClassName}
-                                  onClick={::this.onNext}>Next</Button>
+                          <Col xs='2'>
+                            <Dropdown isOpen={this.state.dropdownOpen} toggle={::this.toggle}>
+                              <DropdownToggle caret>
+                                {dropdownTitle}
+                              </DropdownToggle>
+                              <DropdownMenu>
+                                {
+                                  this.state.units.map( (unit, index) => {
+                                      return <DropdownItem key={index}
+                                                onClick={()=> ::this.onUnitSelected(unit)}>{unit.name}</DropdownItem>
+                                  })
+                                }
+                              </DropdownMenu>
+                            </Dropdown>
+                          </Col>
+                          <Col xs='10'>
+                            {unit}
+                          </Col>
                         </Row>
                       </div>
                     </div>
@@ -128,4 +132,4 @@ class Units extends React.Component<Props, State> {
 
 }
 
-export default withRouter(connect()(Units));
+export default Units;
