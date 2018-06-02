@@ -118,39 +118,39 @@ class Unit extends React.Component<Props, State> {
                         </Col>
                         <Col>
                           <label className='form-control-label'>Authority</label>
-                          <input type='text' value={this.state.docData.authority}
+                          <input type='text' defaultValue={this.state.docData.authority}
                                 className='form-control' />
                         </Col>
                         <Col>
                           <label className='form-control-label'>Concessionaire</label>
-                          <input type='text' value={this.state.docData.concessionaire}
+                          <input type='text' defaultValue={this.state.docData.concessionaire}
                                 className='form-control' />
                         </Col>
                         <Col>
                           <label className='form-control-label'>Symbol</label>
-                          <input type='text' value={this.state.docData.symbol}
+                          <input type='text' defaultValue={this.state.docData.symbol}
                                 className='form-control' />
                         </Col>
                       </Row>
                       <Row>
-                        <Col>
+                        <Col xs='2'>
                           <label className='form-control-label'>Type</label>
-                          <input type='text' value={this.state.docData.type}
+                          <input type='text' defaultValue={this.state.docData.type}
                                 className='form-control' />
                         </Col>
-                        <Col>
+                        <Col xs='3'>
                           <label className='form-control-label'>Education Type</label>
-                          <input type='text' value={this.state.docData.education_type}
+                          <input type='text' defaultValue={this.state.docData.education_type}
                                 className='form-control' />
                         </Col>
-                        <Col>
+                        <Col xs='3'>
                           <label className='form-control-label'>Long Day Permit</label>
                           <Input type='radio' checked readOnly value={this.state.docData.long_day_permit}
                                 className='form-control' />
                         </Col>
-                        <Col>
+                        <Col xs='4'>
                           <label className='form-control-label'>Status</label>
-                          <Input type='text' value={this.state.docData.status}
+                          <Input type='text' defaultValue={this.state.docData.status}
                                 className='form-control' />
                         </Col>
                       </Row>
@@ -160,7 +160,7 @@ class Unit extends React.Component<Props, State> {
                     </div>
                     <div id='groups' className='tab-pane' role='tabpanel'>
                       <Button color='primary'
-                              onClick={::this.gotoGroups}>Next</Button>
+                              onClick={::this.gotoGroups}>Groups</Button>
                     </div>
                   </div>
                 </div>
@@ -170,4 +170,4 @@ class Unit extends React.Component<Props, State> {
 
 }
 
-export default  withRouter(connect()(Unit));
+export default withRouter(connect()(Unit));
