@@ -112,13 +112,15 @@ class Unit extends React.Component<Props, State> {
         source: 'server'
       }
 
+      const self = this;
+
       firebase.firestore().collection('units').doc(docId)
         .get(getOptions)
         .then( doc => {
 
           let data = doc.data();
 
-          this.setState({
+          self.setState({
               docData: data,
               docId: docId
           })
@@ -128,6 +130,15 @@ class Unit extends React.Component<Props, State> {
   }
 
   render() {
+
+    // No changes are permitted for uncontrolled inputs within this form.
+    // Accordingly, we use'value' prop for these inputs set to the appropriate
+    // values in state. Such design does not allow actual reflecting user typing.
+    // It seems better that making all input disabled.
+    // If you wabt to enable changes for some input, provide 'defaultValue' props
+    // provide ref for such input and set its the 'value' after getting
+    // docDate from firebase
+
     return <div>
               <div className='card'>
                 <ul className='nav nav-tabs lustify-content-center' role='tablist'>
@@ -156,45 +167,38 @@ class Unit extends React.Component<Props, State> {
                       <Row>
                         <Col>
                           <label className='form-control-label'>Name</label>
-                          <input type='text' value={this.state.docData.name}
-                                className='form-control' />
+                          <Input type='text' value={this.state.docData.name} />
                         </Col>
                         <Col>
                           <label className='form-control-label'>Authority</label>
-                          <input type='text' defaultValue={this.state.docData.authority}
-                                className='form-control' />
+                          <Input type='text' value={this.state.docData.authority} />
                         </Col>
                         <Col>
                           <label className='form-control-label'>Concessionaire</label>
-                          <input type='text' defaultValue={this.state.docData.concessionaire}
-                                className='form-control' />
+                          <Input type='text' value={this.state.docData.concessionaire} />
                         </Col>
                         <Col>
                           <label className='form-control-label'>Symbol</label>
-                          <input type='text' defaultValue={this.state.docData.symbol}
-                                className='form-control' />
+                          <Input type='text' value={this.state.docData.symbol} />
                         </Col>
                       </Row>
                       <Row>
                         <Col xs='2'>
                           <label className='form-control-label'>Type</label>
-                          <input type='text' defaultValue={this.state.docData.type}
-                                className='form-control' />
+                          <Input type='text' value={this.state.docData.type} />
                         </Col>
                         <Col xs='3'>
                           <label className='form-control-label'>Education Type</label>
-                          <input type='text' defaultValue={this.state.docData.education_type}
-                                className='form-control' />
+                          <Input type='text' value={this.state.docData.education_type} />
                         </Col>
                         <Col xs='3'>
                           <label className='form-control-label'>Long Day Permit</label>
                           <Input type='radio' checked readOnly value={this.state.docData.long_day_permit}
-                                className='form-control' />
+                                className='form-control'/>
                         </Col>
                         <Col xs='4'>
                           <label className='form-control-label'>Status</label>
-                          <Input type='text' defaultValue={this.state.docData.status}
-                                className='form-control' />
+                          <Input type='text' value={this.state.docData.status} />
                         </Col>
                       </Row>
                     </div>
