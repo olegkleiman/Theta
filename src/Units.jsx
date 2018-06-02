@@ -90,7 +90,7 @@ class Units extends React.Component<Props, State> {
                                                           : this.state.selectedUnit.name;
 
     let unit = this.state.selectedUnit.id == '' ? null
-                : <Unit id={this.state.selectedUnit.id} />
+                : <Unit docId={this.state.selectedUnit.id} />
 
     return <div>
               <div className='panel-header panel-header-sm'></div>
