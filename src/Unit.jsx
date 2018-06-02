@@ -25,7 +25,8 @@ type State = {
     education_type: String,
     long_day_permit: Boolean,
     status: String
-  }
+  },
+  docId: String,
 }
 
 type Props = {
@@ -45,6 +46,7 @@ class Unit extends React.Component<Props, State> {
       long_day_permit: false,
       status: ''
     },
+    docId: '',
   }
 
   gotoGroups() {
@@ -59,11 +61,11 @@ class Unit extends React.Component<Props, State> {
 
   }
 
-   componentDidMount() {
+  componentDidMount() {
 
      this._loadAsyncData(this.props.docId);
 
-   }
+  }
 
   componentDidUpdate(prevProps, prevState) {
 
@@ -73,39 +75,56 @@ class Unit extends React.Component<Props, State> {
 
   }
 
-  // static getDerivedStateFromProps(nextProps, prevState) {
+  // static getDerivedStateFromProps(props, state) {
   //
-  //   if( nextProps.id !== prevState.id ) {
-  //     return {
-  //       docData: null,
+  //   if( props.docId !== state.docId ) {
+  //
+  //     const getOptions = {
+  //       source: 'server'
   //     }
+  //
+  //     return firebase.firestore().collection('units').doc(props.docId)
+  //       .get(getOptions)
+  //       .then( doc => {
+  //
+  //         let data = doc.data();
+  //
+  //         return{
+  //             docData: data,
+  //             docId: props.docId
+  //         }
+  //
+  //       });
+  //
+  //   } else {
+  //
+  //     // Return null to indicate no changes to state
+  //     return null;
   //   }
   //
   // }
 
   _loadAsyncData(docId) {
-    if( docId === this.props.id ) {
 
+    if( docId !== this.props.id ) {
+
+      const getOptions = {
+        source: 'server'
+      }
+
+      firebase.firestore().collection('units').doc(docId)
+        .get(getOptions)
+        .then( doc => {
+
+          let data = doc.data();
+
+          this.setState({
+              docData: data,
+              docId: docId
+          })
+
+        });
     }
-
-    //this.props.docId = id;
-
-    const getOptions = {
-      source: 'server'
-    }
-
-    firebase.firestore().collection('units').doc(docId)
-      .get(getOptions)
-      .then( doc => {
-
-        let data = doc.data();
-
-        this.setState({
-            docData: data,
-        })
-
-      });
-
   }
 
   render() {
@@ -133,7 +152,7 @@ class Unit extends React.Component<Props, State> {
                 </ul>
                 <div className='card-body'>
                   <div className='tab-content text-center'>
-                    <div id='general' className='tab-pane' role='tabpanel'>
+                    <div id='general' className='tab-pane active' role='tabpanel'>
                       <Row>
                         <Col>
                           <label className='form-control-label'>Name</label>
