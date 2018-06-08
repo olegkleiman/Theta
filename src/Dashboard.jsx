@@ -6,7 +6,7 @@ import { Switch, Route, Link } from 'react-router-dom';
 import Home from './Home';
 import Lists from './Lists';
 import UserList from './UserList';
-import ImportWizard from './ImportWizard';
+import ImportWizard from './ImportWizard/ImportWizard';
 import ReportsWizard from './ReportsWizard';
 import InspectionForm from './forms/InspectionForm';
 import Footer from './Footer';
