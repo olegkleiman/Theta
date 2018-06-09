@@ -69,6 +69,24 @@ class Model extends React.Component<Props, State> {
       <div>
         <div className='card'>
           <Row>
+            <Col>
+              <label className='form-control-label'>Number</label>
+              <Input type='text' value={this.state.docData.number} disabled />
+            </Col>
+            <Col>
+              <label className='form-control-label'>Education type</label>
+              <Input type='text' value={this.state.docData.education_type} />
+            </Col>
+            <Col>
+              <label className='form-control-label'>Institution Type</label>
+              <Input type='text' value={this.state.docData.institution_type} />
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <label className='form-control-label'>Status</label>
+              <Input type='text' value={this.state.docData.status} />
+            </Col>
           </Row>
         </div>
       </div>
