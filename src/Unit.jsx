@@ -2,7 +2,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-
 import firebase from './firebase.js';
 import {
   Button,
@@ -106,7 +105,7 @@ class Unit extends React.Component<Props, State> {
   //
   // }
 
-  _loadAsyncData(docId) {
+  _loadAsyncData(docId: String) {
 
     if( docId !== this.props.id ) {
 
