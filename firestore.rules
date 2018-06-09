@@ -20,7 +20,11 @@ service cloud.firestore {
     	}
     }
 
-    match /dashboard_routes/{route} {
+	  match /models/{model} {
+    	allow read : if request.auth.uid != null;
+    }
+
+		match /dashboard_routes/{route} {
     	allow read : if request.auth.uid != null;
     }
 
