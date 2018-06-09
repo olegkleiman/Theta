@@ -42,6 +42,17 @@ class Office extends React.Component {
                               </div>
                             </div>
                           </div>
+                          <div className='col-3'>
+                            <div className='card card-user'>
+                              <div className='card-body'>
+                                <div>
+                                  <a onClick={ () => ::this.activitySelected('Models Management') }  href='#/dashboard/models'>
+                                    <h5>Models</h5>
+                                  </a>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
                         </Row>
                       </div>
                     </div>
