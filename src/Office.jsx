@@ -90,7 +90,7 @@ class Office extends React.Component<Props, State>  {
                           {
                             this.state.subActivities.map(( activity, index) => {
                               return (
-                                <div className='col-3'>
+                                <Col xs='3' key={index}>
                                   <div className='card card-user'>
                                     <div className='card-body'>
                                       <div>
@@ -101,7 +101,7 @@ class Office extends React.Component<Props, State>  {
                                       </div>
                                     </div>
                                   </div>
-                                </div>
+                                </Col>
                               )
                             })
                           }
