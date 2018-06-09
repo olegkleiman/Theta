@@ -14,6 +14,10 @@ service cloud.firestore {
 
     match /activities/{user} {
     	allow read : if request.auth.uid != null;
+
+      match /sub_activities/{subActivity} {
+    		allow read : if request.auth.uid != null;
+    	}
     }
 
     match /dashboard_routes/{route} {
@@ -22,15 +26,15 @@ service cloud.firestore {
 
     match /document_types/{doctype} {
     	allow read : if request.auth.uid != null;
+      allow write: if request.auth.uid != null;
     }
 
     match /kindergartens/{doc} {
     	allow read : if request.auth.uid != null;
     }
 
-    match /units/{unit} {
-     allow read : if request.auth.uid != null;
-   }
-
+   match /units/{unit} {
+    	allow read : if request.auth.uid != null;
+    }
   }
 }
