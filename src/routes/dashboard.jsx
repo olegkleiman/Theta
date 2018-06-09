@@ -1,6 +1,6 @@
 import Dashboard from '../Dashboard';
 import UserList from '../UserList';
-import ImportWizard from '../ImportWizard';
+import ImportWizard from '../ImportWizard/ImportWizard';
 import ReportsWizard from '../ReportsWizard';
 
 var dashRoutes = [

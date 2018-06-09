@@ -7,16 +7,22 @@ import {
   Dropdown,
   DropdownToggle,
   DropdownMenu,
-  DropdownItem
+  DropdownItem,
+  FormGroup,
+  CustomInput,
+  Label,
+  Form
 } from 'reactstrap';
-import classNames from 'classnames';
-import firebase from './firebase.js';
+import XLSX from 'xlsx';
+import InputFile from './InputFile.jsx';
+import FileMetadata from "./FileMetadata.jsx"
+import Upload from "./Upload.jsx"
+import Confirm from "./Confirm.jsx"
+import SheetTab from "./SheetTab.jsx"
 
 type State = {
   doc_types: [],
-  styles: {},
-  docsProvider: String,
-  dropdownOpen: Boolean
+  styles: {}
 }
 
 type Props = {
@@ -27,8 +33,7 @@ class ImportWizard extends React.Component<Props, State> {
 
   state = {
     doc_types: [],
-    dropdownOpen: false,
-    docsProvider: ''
+    dropdownOpen: false
   };
 
   constructor(props) {
@@ -48,35 +53,6 @@ class ImportWizard extends React.Component<Props, State> {
     this.movingTab = React.createRef();
   }
 
-  componentDidMount() {
-
-    const self = this;
-
-    firebase.auth().onAuthStateChanged( (user) => {
-      if( user ) {
-        firebase.firestore().collection('document_types')
-          .get()
-          .then( response => {
-
-            let docTypes = [];
-            response.docs.forEach( (docType) => {
-              docTypes.push(docType.data().category);
-            });
-
-            self.setState({
-              doc_types: docTypes
-            })
-
-          });
-      }
-    });
-  }
-
-  toggle() {
-     this.setState(prevState => ({
-       dropdownOpen: !prevState.dropdownOpen
-     }));
-   }
 
    onNext() {
      console.log('onNext');
@@ -95,21 +71,34 @@ class ImportWizard extends React.Component<Props, State> {
 
    }
 
-   onProviderSelected = (provider) => {
-     this.setState({
-       docsProvider: provider
-     })
-   }
-
-  render(): React.Node {
-
-    let nextButtonClassName = classNames('btn btn-next btn-fill btn-success btn-wd', {
-      'disabled': this.state.docsProvider == ''
-    });
-
-    let prevButtonClassName = classNames('btn btn-previous btn-fill btn-default btn-ws', {
-      'disabled': true
+  metadataChoosen= (doc) =>{
+      var self = this;
+      self.setState({
+        doc: doc
+      })
+  }
+  fileChoosen = (files, workbook) => {
+    var self = this;
+    self.setState({
+      files: files,
+      workbook: workbook,
     })
+  }
+  // fileChoosen = (files, worksheet, headers) => {
+  //   var self = this;
+  //   self.setState({
+  //     files: files,
+  //     worksheet: worksheet,
+  //     headers: headers,
+  //   })
+  // }
+
+objectCreated = (jsonObj) => {
+  this.setState({
+    jsonData: jsonObj
+  })
+}
+  render(): React.Node {
 
     return <div>
               <div className='panel-header panel-header-sm'></div>
@@ -142,7 +131,7 @@ class ImportWizard extends React.Component<Props, State> {
                                   onClick={ (e) => ::this.highligthTab(e, 2)}>
                                 <a href='#confirm' className='nav-link nav-item'
                                    data-toggle="tab" role="tab"
-                                   aria-selected="false">Confirm</a>
+                                   aria-selected="false">Upload</a>
                               </li>
                             </ul>
                             <div style={this.styles.movingTab}
@@ -151,38 +140,34 @@ class ImportWizard extends React.Component<Props, State> {
                           </div>
                           <div className='tab-content'>
                             <div className='tab-pane active' id='select_provider'>
-                              <div className='row'>
-                                <h4 className='info-text'>Who is data provider for uploaded file?</h4>
-                                <Dropdown isOpen={this.state.dropdownOpen} toggle={::this.toggle}>
-                                  <DropdownToggle caret>
-                                    Select Provider
-                                  </DropdownToggle>
-                                  <DropdownMenu>
-                                    {
-                                      this.state.doc_types.map( (docType, index) => {
-                                        return <DropdownItem key={index} onClick={ ()=> ::this.onProviderSelected(docType) }>{docType}</DropdownItem>
-                                      })
-                                    }
-                                  </DropdownMenu>
-
-                                </Dropdown>
-                              </div>
+                              <FileMetadata onChange={::this.metadataChoosen}/>
+                              {this.state.doc &&
+                                <InputFile onChange={::this.fileChoosen}
+                                           doc={this.state.doc}/>}
                             </div>
                             <div className='tab-pane' id='select_file'>
+                              {this.state.workbook &&
+                                <SheetTab wb={this.state.workbook}
+                                          expectedSheets={this.state.doc.sheets}
+                                          onCreateObject={::this.objectCreated}/>}
                             </div>
                             <div className='tab-pane' id='confirm'>
+                              {this.state.jsonData &&
+                                 <Upload file={this.state.files[0]}
+                                         metadata={this.state.doc.metadata}
+                                         jsonData={this.state.jsonData}/>}
                             </div>
                           </div>
                           <div className='wizard-footer'>
                             <div className='float-right'>
                               <input type='button' name='next' value='Next'
-                                className={nextButtonClassName}
+                                className='btn btn-next btn-fill btn-success btn-wd'
                                 onClick={::this.onNext}>
                               </input>
                             </div>
                             <div className='float-left'>
                               <input type='button' name='previous' value='Previous'
-                                className={prevButtonClassName}/>
+                                className='btn btn-previous btn-fill btn-default btn-ws disabled'/>
                             </div>
                             <div className='clearfix'>
                             </div>
