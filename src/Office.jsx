@@ -1,12 +1,68 @@
 // @flow
 import React from 'react';
 import { connect } from 'react-redux';
+import firebase from './firebase.js';
 
 import {
-  Row
+  Row,
+  Col
 } from 'reactstrap';
 
-class Office extends React.Component {
+type State = {
+  subActivities: []
+}
+
+type Props = {
+
+}
+
+class Office extends React.Component<Props, State>  {
+
+  state = {
+    subActivities: []
+  }
+
+  componentDidMount() {
+    const getOptions = {
+      source: 'server'
+    }
+
+    const self = this;
+
+    firebase.firestore().collection('activities')
+      .get(getOptions)
+      .then( response => {
+
+        response.docs.forEach( (activity) => {
+          if( activity.data().name === 'Office' ) {
+
+            const subActivities = [];
+
+            activity.ref.collection('sub_activities')
+            .get(getOptions)
+            .then( resp => {
+
+              resp.docs.forEach( (subActivity) => {
+                const activityData = subActivity.data();
+                subActivities.push({
+                  name: activityData.name,
+                  link: activityData.link,
+                  description: activityData.description
+                });
+              });
+
+              self.setState({
+                subActivities: subActivities
+              });
+
+            })
+
+          }
+        });
+
+
+      })
+  }
 
   activitySelected(activityName: String) {
 
@@ -31,28 +87,24 @@ class Office extends React.Component {
                       </div>
                       <div className='card-body'>
                         <Row>
-                          <div className='col-3'>
-                            <div className='card card-user'>
-                              <div className='card-body'>
-                                <div>
-                                  <a onClick={ () => ::this.activitySelected('Units Management') } href='#/dashboard/units'>
-                                    <h5>Units (schools) management</h5>
-                                  </a>
+                          {
+                            this.state.subActivities.map(( activity, index) => {
+                              return (
+                                <div className='col-3'>
+                                  <div className='card card-user'>
+                                    <div className='card-body'>
+                                      <div>
+                                        <a onClick={ () => ::this.activitySelected(activity.description) }
+                                            href={activity.link}>
+                                          <h5>{activity.name}</h5>
+                                        </a>
+                                      </div>
+                                    </div>
+                                  </div>
                                 </div>
-                              </div>
-                            </div>
-                          </div>
-                          <div className='col-3'>
-                            <div className='card card-user'>
-                              <div className='card-body'>
-                                <div>
-                                  <a onClick={ () => ::this.activitySelected('Models Management') }  href='#/dashboard/models'>
-                                    <h5>Models</h5>
-                                  </a>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
+                              )
+                            })
+                          }
                         </Row>
                       </div>
                     </div>
