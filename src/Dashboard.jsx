@@ -12,6 +12,7 @@ import InspectionForm from './forms/InspectionForm';
 import Footer from './Footer';
 import Office from './Office';
 import Units from './Units';
+import Models from './Models';
 import Groups from './Groups';
 
 import firebase from './firebase.js';
@@ -114,6 +115,7 @@ class Dashboard extends React.Component<Props, State> {
                 <Route path={this.props.match.path + '/inspection'} component={InspectionForm} />
                 <Route path={this.props.match.path + '/office'} component={Office} />
                 <Route path={this.props.match.path + '/units'} component={Units} />
+                <Route path={this.props.match.path + '/models'} component={Models} />
                 <Route path={this.props.match.path + '/groups'} component={Groups} />
             </Switch>
             <Footer fluid/>
