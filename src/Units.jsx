@@ -44,7 +44,7 @@ class Units extends React.Component<Props, State> {
      this.setState(prevState => ({
        dropdownOpen: !prevState.dropdownOpen
      }));
-   }
+  }
 
   componentDidMount() {
 
