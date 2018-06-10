@@ -13,8 +13,12 @@ import {
 } from 'reactstrap';
 
 type State = {
-  docData: Object,
-  docId: String
+  docData: {
+    number: String,
+    education_type: String,
+    institution_type: String,
+    status: String
+  }
 }
 
 type Props = {
@@ -24,8 +28,12 @@ type Props = {
 class Model extends React.Component<Props, State> {
 
   state = {
-    docData: {},
-    docId: ''
+    docData: {
+      number: '',
+      education_type: '',
+      institution_type: '',
+      status: ''
+    }
   }
 
   componentDidMount() {
@@ -56,8 +64,7 @@ class Model extends React.Component<Props, State> {
         let data = doc.data();
 
         self.setState({
-            docData: data,
-            docId: docId
+            docData: data
         })
       })
 
@@ -68,26 +75,28 @@ class Model extends React.Component<Props, State> {
     return (
       <div>
         <div className='card'>
-          <Row>
-            <Col>
-              <label className='form-control-label'>Number</label>
-              <Input type='text' value={this.state.docData.number} disabled />
-            </Col>
-            <Col>
-              <label className='form-control-label'>Education type</label>
-              <Input type='text' value={this.state.docData.education_type} />
-            </Col>
-            <Col>
-              <label className='form-control-label'>Institution Type</label>
-              <Input type='text' value={this.state.docData.institution_type} />
-            </Col>
-          </Row>
-          <Row>
-            <Col>
-              <label className='form-control-label'>Status</label>
-              <Input type='text' value={this.state.docData.status} />
-            </Col>
-          </Row>
+          <div className='card-body'>
+              <Row>
+                <Col>
+                  <label className='form-control-label'>Number</label>
+                  <Input type='text' value={this.state.docData.number} disabled />
+                </Col>
+                <Col>
+                  <label className='form-control-label'>Education type</label>
+                  <Input type='text' value={this.state.docData.education_type} />
+                </Col>
+                <Col>
+                  <label className='form-control-label'>Institution Type</label>
+                  <Input type='text' value={this.state.docData.institution_type} />
+                </Col>
+              </Row>
+              <Row>
+                <Col>
+                  <label className='form-control-label'>Status</label>
+                  <Input type='text' value={this.state.docData.status} />
+                </Col>
+              </Row>
+            </div>
         </div>
       </div>
     )
