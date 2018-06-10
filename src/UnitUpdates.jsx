@@ -56,19 +56,20 @@ class UnitUpdates extends React.Component<Props, State> {
 
       let _updates = [];
 
-      firebase.firestore().collection('units').doc(this.props.docId)
+      firebase.firestore().collection('units').doc(this.props.docId).collection('updates')
       .get(getOptions)
-      .then( doc => {
+      .then( resp => {
 
-        let data = doc.data();
-        data.updates.forEach( (update, index) => {
+        resp.docs.forEach( (update, index) => {
+
+          let data = update.data();
 
           _updates.push({
-            id: index,
-            update_date: moment(update.update_date.seconds*1000).format('MM/DD/YYYY'),
-            places: update.places,
-            pupils: update.pupils,
-            pupils_special: update.pupils_special
+            id: update.id,
+            update_date: moment(data.seconds*1000).format('MM/DD/YYYY'),
+            places: data.places,
+            pupils: data.pupils,
+            pupils_special: data.pupils_special
           })
         });
 
@@ -83,6 +84,24 @@ class UnitUpdates extends React.Component<Props, State> {
   }
 
   commitChanges({ added, changed, deleted }) {
+    let { updates } = this.state;
+    if (added) {
+    }
+    if (changed) {
+      let changedIds = Object.keys(changed);
+      let docId = changedIds[0];
+      const changedDoc = changed[docId];
+
+      firebase.firestore().collection("units").doc(this.props.docId)
+        .collection('updates').doc(docId).set(
+        changedDoc, {
+          merge: true
+        }
+      );
+
+    }
+    if (deleted) {
+    }
   }
 
   render() {
