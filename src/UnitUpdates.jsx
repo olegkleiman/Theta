@@ -66,7 +66,7 @@ class UnitUpdates extends React.Component<Props, State> {
 
           _updates.push({
             id: update.id,
-            update_date: moment(data.seconds*1000).format('MM/DD/YYYY'),
+            update_date: moment(data.update_date.seconds*1000).format('DD/MM/YYYY'),
             places: data.places,
             pupils: data.pupils,
             pupils_special: data.pupils_special
