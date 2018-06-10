@@ -86,8 +86,21 @@ class UnitUpdates extends React.Component<Props, State> {
   commitChanges({ added, changed, deleted }) {
     let { updates } = this.state;
     if (added) {
+
+      added.map( (update, index) => {
+
+        firebase.firestore().collection("units").doc(this.props.docId)
+        .collection('updates').add({
+          places: update.places,
+          pupils: update.pupils,
+          pupils_special: update.pupils_special,
+          update_date: new Date() // TBD
+        });
+      })
+
     }
     if (changed) {
+
       let changedIds = Object.keys(changed);
       let docId = changedIds[0];
       const changedDoc = changed[docId];
@@ -101,6 +114,15 @@ class UnitUpdates extends React.Component<Props, State> {
 
     }
     if (deleted) {
+
+      let docId = deleted[0];
+      firebase.firestore().collection("units").doc(this.props.docId)
+        .collection('updates').doc(docId).delete().then(function() {
+          console.log("Document successfully deleted!");
+      }).catch(function(error) {
+          console.error("Error removing document: ", error);
+      });
+
     }
   }
 
