@@ -50,40 +50,45 @@ class UnitUpdates extends React.Component<Props, State> {
 
     if( prevProps.docId !== this.props.docId) {
 
-      const getOptions = {
-        source: 'server'
-      }
-
-      let _updates = [];
-
-      firebase.firestore().collection('units').doc(this.props.docId).collection('updates')
-      .get(getOptions)
-      .then( resp => {
-
-        resp.docs.forEach( (update, index) => {
-
-          let data = update.data();
-
-          _updates.push({
-            id: update.id,
-            update_date: moment(data.update_date.seconds*1000).format('DD/MM/YYYY'),
-            places: data.places,
-            pupils: data.pupils,
-            pupils_special: data.pupils_special
-          })
-        });
-
-        this.setState({
-          updates: _updates
-        });
-
-      });
-
+      this._loadAsyncData(this.props.docId)
     }
 
   }
 
+  _loadAsyncData(docId: String) {
+
+    const getOptions = {
+      source: 'server'
+    }
+
+    let _updates = [];
+
+    firebase.firestore().collection('units').doc(this.props.docId).collection('updates')
+    .get(getOptions)
+    .then( resp => {
+
+      resp.docs.forEach( (update, index) => {
+
+        let data = update.data();
+
+        _updates.push({
+          id: update.id,
+          update_date: moment(data.update_date.seconds*1000).format('DD/MM/YYYY'),
+          places: data.places,
+          pupils: data.pupils,
+          pupils_special: data.pupils_special
+        })
+      });
+
+      this.setState({
+        updates: _updates
+      });
+
+    });
+  }
+
   commitChanges({ added, changed, deleted }) {
+
     let { updates } = this.state;
     if (added) {
 
@@ -124,6 +129,9 @@ class UnitUpdates extends React.Component<Props, State> {
       });
 
     }
+
+    ::this._loadAsyncData(this.props.docId);
+
   }
 
   render() {
