@@ -39,6 +39,11 @@ service cloud.firestore {
 
    match /units/{unit} {
     	allow read : if request.auth.uid != null;
+
+      match /updates/{update} {
+    		allow read : if request.auth.uid != null;
+        allow write : if request.auth.uid != null;
+    	}
     }
   }
 }
