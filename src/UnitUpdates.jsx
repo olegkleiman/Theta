@@ -38,6 +38,7 @@ class UnitUpdates extends React.Component<Props, State> {
     columns: [
       { name: 'update_date', title: 'update date' },
       { name: 'pupils', title: 'students' },
+      { name: 'pupils_special', title: 'special students'},
       { name: 'places', title: 'places' }
     ],
     //rows: _rows,
@@ -60,12 +61,14 @@ class UnitUpdates extends React.Component<Props, State> {
       .then( doc => {
 
         let data = doc.data();
-        data.updates.forEach( update => {
+        data.updates.forEach( (update, index) => {
 
           _updates.push({
+            id: index,
             update_date: moment(update.update_date.seconds*1000).format('MM/DD/YYYY'),
             places: update.places,
-            pupils: update.pupils
+            pupils: update.pupils,
+            pupils_special: update.pupils_special
           })
         });
 
