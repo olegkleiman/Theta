@@ -110,6 +110,14 @@ class UnitUpdates extends React.Component<Props, State> {
       let docId = changedIds[0];
       const changedDoc = changed[docId];
 
+      if( changedDoc.hasOwnProperty('update_date') ) {
+        const _updateDate = moment(changedDoc.update_date);
+        changedDoc.update_date = {
+          seconds: _updateDate.format('X'),
+          nanoseconds: 0
+        }
+      }
+
       firebase.firestore().collection("units").doc(this.props.docId)
         .collection('updates').doc(docId).set(
         changedDoc, {
