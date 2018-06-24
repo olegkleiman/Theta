@@ -161,6 +161,7 @@ class Units extends React.Component<Props, State> {
                                   }
                               }}
                               data={this.state.units}
+                              noDataText="Loading..."
                               columns={columns}
                               minRows={5}
                               showPagination={false}
