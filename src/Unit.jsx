@@ -168,7 +168,7 @@ class Unit extends React.Component<Props, State> {
                       <Row>
                         <Col>
                           <label className='form-control-label'>Name</label>
-                          <Input type='text' value={this.state.docData.name} />
+                          <Input type='text' value={this.state.docData.name_he} />
                         </Col>
                         <Col>
                           <label className='form-control-label'>Authority</label>
