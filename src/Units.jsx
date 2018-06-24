@@ -2,7 +2,8 @@
 import React from 'react';
 import firebase from './firebase.js';
 import classNames from 'classnames';
-
+import ReactTable from 'react-table';
+import 'react-table/react-table.css';
 import Unit from './Unit';
 import Groups from './Groups';
 
@@ -61,8 +62,13 @@ class Units extends React.Component<Props, State> {
       const _units = [];
 
       response.docs.forEach( (unit) => {
+
+        const unitData = unit.data();
+
         _units.push({
-          name: unit.data().name,
+          name: unitData.name_he,
+          concessionaire: unitData.concessionaire,
+          symbol: unitData.symbol,
           id: unit.id
         });
       });
@@ -80,6 +86,16 @@ class Units extends React.Component<Props, State> {
     })
   }
 
+  onRowSelected = (rowInfo) => {
+    console.log(rowInfo);
+    this.setState({
+      selectedUnit: {
+        name: rowInfo.original.name,
+        id: rowInfo.original.id
+      }
+    });
+  }
+
   render() {
 
     let nextButtonClassName = classNames('btn btn-next btn-fill btn-success btn-wd', {
@@ -92,6 +108,34 @@ class Units extends React.Component<Props, State> {
     let unit = this.state.selectedUnit.id == '' ? null
                 : <Unit docId={this.state.selectedUnit.id} />
 
+    const self = this;
+
+    const units = [{
+      id: '-UIT5R',
+      name: 'Oleg',
+      symbol: 'OLK',
+      concessionaire: 'C1'
+    }, {
+      id: 'XS444',
+      name: 'Lee',
+      symbol: "BRN",
+      concessionaire: 'C2'
+    }];
+
+    const columns = [{
+      Header: 'ID',
+      accessor: 'id'
+    },{
+      Header: 'Name',
+      accessor: 'name'
+    }, {
+      Header: 'Symbol',
+      accessor: 'symbol',
+    }, {
+      Header: 'Concessionaire',
+      accessor: 'concessionaire'
+    }];
+
     return <div>
               <div className='panel-header panel-header-sm'></div>
               <div className='content container h-100'>
@@ -102,6 +146,28 @@ class Units extends React.Component<Props, State> {
                         <h5 className='title'>Units Management</h5>
                       </div>
                       <div className='card-body'>
+                        <Row>
+                          <div className='card'>
+                            <div className='card-body'>
+                            <ReactTable
+                              getTrProps={(state, rowInfo, column) => {
+                                  console.log(rowInfo);
+                                  return {
+                                    onClick: (e, handleOriginal) => {
+                                      self.onRowSelected(rowInfo);
+                                      if( handleOriginal )
+                                        handleOriginal();
+                                    }
+                                  }
+                              }}
+                              data={this.state.units}
+                              columns={columns}
+                              minRows={5}
+                              showPagination={false}
+                              className="-highlight col col-12"/>
+                          </div>
+                          </div>
+                        </Row>
                         <Row>
                           <Col xs='2'>
                             <Dropdown isOpen={this.state.dropdownOpen} toggle={::this.toggle}>
