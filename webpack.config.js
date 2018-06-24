@@ -33,6 +33,10 @@ var config = {
         options: {
           outputPath: 'img/'
         }
+      },
+      {
+        test: /\.css$/,
+        use: ['style-loader', 'css-loader']
       }
     ]
   },
