@@ -2,6 +2,7 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
 import ReactTable from 'react-table';
+import moment from 'moment';
 import firebase from './firebase.js';
 
 import {
@@ -23,7 +24,8 @@ import {
 
 type State = {
   groups: [{
-    symbol: String
+    symbol: String,
+    opened: Date
   }],
 }
 
@@ -56,7 +58,8 @@ class Groups extends React.Component<Props, State> {
         response.docs.forEach( (group) => {
           const groupData = group.data();
           _groups.push({
-            symbol: groupData.symbol
+            symbol: groupData.symbol,
+            opened: moment.unix(groupData.opened.seconds).format('DD/MM/YYYY')
           });
         });
 
@@ -75,6 +78,9 @@ class Groups extends React.Component<Props, State> {
     const columns = [{
       Header: 'Symbol',
       accessor: 'symbol'
+    }, {
+      Header: 'Opened',
+      accessor: 'opened'
     }];
 
     const self = this;
@@ -100,6 +106,7 @@ class Groups extends React.Component<Props, State> {
                               }
                           }}
                           data={this.state.groups}
+                          noDataText="Loading..."
                           columns={columns}/>
                       </div>
                     </div>
