@@ -40,7 +40,6 @@ exports.groups = functions.https.onRequest((req, res) => {
       unitIds.forEach( unitId => {
           var _promise = firestore.collection('units/' + unitId + '/groups')
                         .get();
-          console.log('Promise: ' + _promise);
           _promises.push(_promise);
       })
 
