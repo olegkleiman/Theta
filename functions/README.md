@@ -1,4 +1,4 @@
-# Firebase functions to wrap CRUD operaions Theta object model.
+# Firebase functions to wrap common CRUD operations
 
 ## Deploy these functions to Firebase:
 (from this directory) <code>$ yarn deploy</code>
