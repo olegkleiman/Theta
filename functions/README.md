@@ -20,3 +20,5 @@ Content-Type: application/json
 	"address": "כיכר המדינה"
 	
 }
+
+Content-Type: application/x-www-form-urlencoded is also accepted
