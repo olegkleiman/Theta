@@ -9,9 +9,10 @@ This function is not Firebase trigger, it is intended for explicit invokation fr
 
 POST http://us-central1-theta-1524876066401.cloudfunctions.net/app/pupil
 
-"Content-Type","application/json"
+Content-Type: application/json
+
 {
 	"groupSymbol": "aaa",
-	"name": "Oleg",
+	"name": "Fabio",
 	"address": "כיכר המדינה"
 }
