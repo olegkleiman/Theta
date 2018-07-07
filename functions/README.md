@@ -12,7 +12,11 @@ POST http://us-central1-theta-1524876066401.cloudfunctions.net/app/pupil
 Content-Type: application/json
 
 {
+
 	"groupSymbol": "aaa",
+	
 	"name": "Fabio",
+	
 	"address": "כיכר המדינה"
+	
 }
