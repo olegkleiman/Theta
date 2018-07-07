@@ -40,7 +40,7 @@ app.post('/pupil', (req, res) => {
 
     if( !_group ) {
 
-      return res.status(404).send(`No group identified by symbol ${eq.body.groupSymbol} was found`)
+      return res.status(404).send(`No group identified by symbol ${req.body.groupSymbol} was found`)
 
     } else {
 
@@ -163,8 +163,6 @@ function getGroups(req, res) {
 
           groupDocs.forEach( groupDoc => {
 
-            //console.log('Parent: ' + groupDoc.parent);
-
             groupDoc.docs.forEach( doc => {
 
               // This document (doc.ref) belongs to 'groups' collection (doc.ref.parent)
@@ -184,7 +182,6 @@ function getGroups(req, res) {
 
           });
 
-          //return res.send(_groups);
           return _groups;
       })
 }
