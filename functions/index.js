@@ -1,6 +1,5 @@
 const functions = require('firebase-functions');
 require('firebase/firestore');
-//import 'firebase/firestore';
 
 const admin = require('firebase-admin');
 const moment = require('moment');
@@ -48,9 +47,7 @@ app.post('/pupil', (req, res) => {
   })
   .then( groupParams => {
 
-    return firestore.collection('units/' + groupParams.unitId)
-    .doc(groupParams.groupdId)
-    .collection('pupils')
+    return firestore.collection('units/' + groupParams.unitId + 'groups/' + groupParams.groupdId + 'pupils/')
 
   })
   .then( pupilsCollectionRef => {
