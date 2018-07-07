@@ -29,7 +29,24 @@ app.get('/units', (req, res) => {
 })
 
 app.post('/pupil', (req, res) => {
-  console.log(req.body.groupSymbol);
+  var groupSymbol = req.body.groupSymbol;
+  var secret = req.query.secret;
+  console.log('Secret: ' + secret);
+
+  if( secret == 'undefined' ) {
+    return res.status(401)
+           .json({
+             errorCode: 401,
+             errorMessage: `Not authorized. Provide 'secret' parameter in url`
+           })
+  }
+  if( secret !== 'Day1!') {
+    return res.status(401)
+           .json({
+             errorCode: 401,
+             errorMessage: `Not authorized. 'secret' parameter is not valid`
+           })
+  }
 
   return getGroups(req, res)
   .then( groups => {
@@ -40,11 +57,15 @@ app.post('/pupil', (req, res) => {
 
     if( !_group ) {
 
-      return res.status(404).send(`No group identified by symbol ${req.body.groupSymbol} was found`)
+      return res.status(404)
+            .json({
+              errorCode: 404,
+              errorMessage: `No group identified by symbol '${req.body.groupSymbol}' was found`
+            });
 
     } else {
 
-      console.log(`Found group: id: ${_group.id} unitId: ${_group.unitId}`);
+      //console.log(`Found group: id: ${_group.id} unitId: ${_group.unitId}`);
 
       return {
         groupdId: _group.id,
@@ -60,9 +81,10 @@ app.post('/pupil', (req, res) => {
   .then( pupilsCollectionRef => {
 
     return pupilsCollectionRef.add({
-      name: 'Abel',
-      address: 'Braga'
-    })
+        name: req.body.name,
+        address: req.body.address
+        //whenRegistred: req.body.whenRegistered
+      });
 
   })
   .then( ref => {
@@ -71,7 +93,7 @@ app.post('/pupil', (req, res) => {
 
 });
 
-exports.app = functions.https.onRequest(app);
+exports.api = functions.https.onRequest(app);
 
 exports.groups = functions.https.onRequest((req, res) => {
 
