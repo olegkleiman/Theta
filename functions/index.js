@@ -38,16 +38,23 @@ app.post('/pupil', (req, res) => {
       return group.symbol === req.body.groupSymbol
     });
 
-    console.log(`Found group: id: ${_group.id} unitId: ${_group.unitId}`);
+    if( !_group ) {
 
-    return {
-      groupdId: _group.id,
-      unitId: _group.unitId
+      return res.status(404).send(`No group identified by symbol ${eq.body.groupSymbol} was found`)
+
+    } else {
+
+      console.log(`Found group: id: ${_group.id} unitId: ${_group.unitId}`);
+
+      return {
+        groupdId: _group.id,
+        unitId: _group.unitId
+      }
     }
   })
   .then( groupParams => {
 
-    return firestore.collection('units/' + groupParams.unitId + 'groups/' + groupParams.groupdId + 'pupils/')
+    return firestore.collection('units/' + groupParams.unitId + '/groups/' + groupParams.groupdId + '/pupils/')
 
   })
   .then( pupilsCollectionRef => {
