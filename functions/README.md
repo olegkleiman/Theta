@@ -7,7 +7,7 @@
 
 This function is not Firebase trigger, it is intended for explicit invokation from external clients
 
-POST http://us-central1-theta-1524876066401.cloudfunctions.net/api/pupil
+POST http://us-central1-theta-1524876066401.cloudfunctions.net/api/pupil?secret=<secret>
 
 Content-Type: application/json
 
