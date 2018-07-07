@@ -13,7 +13,7 @@ Content-Type: application/json
 
 {
 
-	"groupSymbol": "a43",
+	"groupSymbol": "4eb",
 	
 	"name": "Fabio",
 	
