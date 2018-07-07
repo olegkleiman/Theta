@@ -1,94 +1,183 @@
-// The Cloud Functions for Firebase SDK to create Cloud Functions and setup triggers.
 const functions = require('firebase-functions');
 require('firebase/firestore');
+//import 'firebase/firestore';
 
-// The Firebase Admin SDK to access the Firebase Realtime Database.
 const admin = require('firebase-admin');
-//const firebase = require('./firebase.js');
-
 const moment = require('moment');
 
 admin.initializeApp();
 const firestore = admin.firestore();
-// const settings = {
-//   timestampsInSnapshots: true
-// };
-// firestore.settings(settings);
+
+const express = require('express');
+const cookieParser = require('cookie-parser')();
+var bodyParser = require('body-parser');
+const cors = require('cors')({origin: true});
+
+const app = express();
+app.use(cors);
+app.use(bodyParser.json()); // for parsing application/json
+app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
+
+app.get('/groups', (req, res) => {
+  return getGroups(req, res)
+  .then( groups => {
+    return res.send(groups);
+  });
+});
+
+app.get('/units', (req, res) => {
+  return getUnits(req, res);
+})
+
+app.post('/pupil', (req, res) => {
+  console.log(req.body.groupSymbol);
+
+  return getGroups(req, res)
+  .then( groups => {
+
+    var _group = groups.find( group => {
+      return group.symbol === req.body.groupSymbol
+    });
+
+    console.log('Found group id: ' + _group.id);
+
+    return _group.id;
+  })
+  .then( groupdId => {
+
+    return firestore.collection('units/HXpindnz1bS43AUVCbMa/groups')
+    .doc(groupdId)
+    .collection('pupils')
+
+  })
+  .then( pupilsCollectionRef => {
+
+    return pupilsCollectionRef.add({
+      name: 'Abel',
+      address: 'Braga'
+    })
+
+  })
+  .then( ref => {
+    return res.status(200).send(ref.id);
+  });
+
+});
+
+exports.app = functions.https.onRequest(app);
 
 exports.groups = functions.https.onRequest((req, res) => {
 
-  console.log(req.method);
+  var method = req.method;
+  if( method === 'GET') {
 
-  return firestore.collection('units')
-    .get()
-    .then( response => {
-
-      const _units = [];
-
-      response.docs.forEach( (unit) => {
-        const unitId = unit.id;
-        _units.push(unitId);
-      });
-
-      return _units;
-
-    })
-    .then( unitIds => {
-
-      var _promises = [];
-
-      unitIds.forEach( unitId => {
-          var _promise = firestore.collection('units/' + unitId + '/groups')
-                        .get();
-          _promises.push(_promise);
-      })
-
-      return Promise.all(_promises)
-      .then( (items) => {
-
-        const _groups = [];
-
-        items.forEach( item => {
-
-          item.docs.forEach( doc => {
-            const groupData = doc.data();
-            //console.log(moment(groupData.opened).format('DD/MM/YYYY'));
-            _groups.push({
-              symbol: groupData.symbol,
-              opened: moment(groupData.opened).format('DD/MM/YYYY')
-            });
-
-          });
-
-        });
-
-        return res.send(_groups);
-      })
+    return getGroups(req, res)
+    .then( groups => {
+      return res.send(groups);
     });
+
+  } else {
+
+    return res.status(404).send(`Cannot ${method}`)
+  }
 
 });
 
 exports.units = functions.https.onRequest((req, res) => {
+  var method = req.method;
+  if( method === 'GET') {
 
-  return firestore.collection('units')
-    .get()
-    .then( response => {
+    return getUnits(req, res);
 
-      const _units = [];
+  } else {
 
-      response.docs.forEach( (unit) => {
+    return res.status(404).send(`Cannot ${method}`)
 
-          const unitData = unit.data();
-
-          _units.push({
-            name: unitData.name_he,
-            concessionaire: unitData.concessionaire,
-            symbol: unitData.symbol,
-            id: unit.id
-          });
-
-      });
-      return res.send(_units);
-    });
+  }
 
 });
+
+function getUnits(req, res) {
+
+    return firestore.collection('units')
+      .get()
+      .then( response => {
+
+        const _units = [];
+
+        response.docs.forEach( (unit) => {
+
+            const unitData = unit.data();
+
+            _units.push({
+              name: unitData.name_he,
+              concessionaire: unitData.concessionaire,
+              symbol: unitData.symbol,
+              id: unit.id
+            });
+
+        });
+        return res.send(_units);
+      });
+}
+
+function getGroups(req, res) {
+
+    return firestore.collection('units')
+      .get()
+      .then( response => {
+
+        const _units = [];
+
+        response.docs.forEach( (unit) => {
+          const unitId = unit.id;
+          _units.push(unitId);
+        });
+
+        return _units;
+
+      })
+      .then( unitIds => {
+
+        var _promises = [];
+
+        unitIds.forEach( unitId => {
+            var _promise = firestore.collection('units/' + unitId + '/groups')
+                          .get();
+            _promises.push(_promise);
+        })
+
+        return Promise.all(_promises)
+
+      })
+      .then( groupDocs => {
+
+          const _groups = [];
+
+          groupDocs.forEach( groupDoc => {
+
+            //console.log('Parent: ' + groupDoc.parent);
+
+            groupDoc.docs.forEach( doc => {
+
+              // This document (doc.ref) belongs to 'groups' collection (doc.ref.parent)
+              // that, in turn, has a patent - a 'units' collection (doc.ref.parent.parent).
+              // We're interesting it this grandparent's id
+              var unitId = doc.ref.parent.parent.id;
+              const groupData = doc.data();
+
+              _groups.push({
+                unitId: unitId,
+                id: doc.id,
+                symbol: groupData.symbol,
+                opened: moment(groupData.opened).format('DD/MM/YYYY')
+              });
+
+            });
+
+          });
+
+          //return res.send(_groups);
+          return _groups;
+      })
+}
