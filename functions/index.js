@@ -39,14 +39,17 @@ app.post('/pupil', (req, res) => {
       return group.symbol === req.body.groupSymbol
     });
 
-    console.log('Found group id: ' + _group.id);
+    console.log(`Found group: id: ${_group.id} unitId: ${_group.unitId}`);
 
-    return _group.id;
+    return {
+      groupdId: _group.id,
+      unitId: _group.unitId
+    }
   })
-  .then( groupdId => {
+  .then( groupParams => {
 
-    return firestore.collection('units/HXpindnz1bS43AUVCbMa/groups')
-    .doc(groupdId)
+    return firestore.collection('units/' + groupParams.unitId)
+    .doc(groupParams.groupdId)
     .collection('pupils')
 
   })
