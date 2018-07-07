@@ -15,9 +15,11 @@ Content-Type: application/json
 
 	"groupSymbol": "4eb",
 	
-	"name": "Fabio",
+	"name": "Tiago",
 	
 	"address": "כיכר המדינה"
+	
+	"whenRegistered": "07/07/2018"
 	
 }
 
