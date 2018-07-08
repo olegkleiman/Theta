@@ -25,7 +25,6 @@ Content-Type: application/json
 
 PHP invocation sample:
 <code lang='php'>
-	<?php
 
 $request = new HttpRequest();
 $request->setUrl('http://us-central1-theta-1524876066401.cloudfunctions.net/api/pupil');
