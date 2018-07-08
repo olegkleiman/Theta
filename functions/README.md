@@ -26,14 +26,14 @@ Content-Type: application/json
 On any aplication errors, response is returned with HTTP 200 and JSON formatted payload:
 ```json
 {
- errorCode: <number>,
- errorMessage: <string>	
+ "errorCode": "<number>",
+ "errorMessage": "<string>"
 }
 ```
 On success invocations, response is JSON formatted as:
 ```json
 {
- id: <string>
+ "id": "<string>"
 }
 ```
 
