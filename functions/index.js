@@ -83,9 +83,9 @@ app.post('/pupil', (req, res) => {
 
     if( !_group ) {
 
-      return res.status(404)
+      return res.status(200)
             .json({
-              errorCode: 404,
+              errorCode: 2,
               errorMessage: `No group identified by symbol '${req.body.groupSymbol}' was found`
             });
 
