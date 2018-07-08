@@ -15,6 +15,7 @@ Content-Type: application/json
  "groupSymbol": "4eb",
  "name": "Tiago",
  "address": "כיכר המדינה",
+ "phoneNumber": "0543307026",
  "whenRegistered": "07/07/2018"
 }
 ```
@@ -54,6 +55,7 @@ $request->setBody('{
 	"groupSymbol": "4eb",
 	"name": "Shuki Benishty 3",
 	"address": "כיכר המדינה",
+	"phoneNumber": "0543307026",
 	"whenRegistered": "06/07/2018"
 }');
 
