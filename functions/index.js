@@ -15,7 +15,7 @@ const cors = require('cors')({origin: true});
 const app = express();
 app.use(cors);
 app.use(bodyParser.json()); // for parsing application/json
-app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
+//app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 
 app.get('/groups', (req, res) => {
   return getGroups(req, res)
@@ -29,6 +29,16 @@ app.get('/units', (req, res) => {
 })
 
 app.post('/pupil', (req, res) => {
+
+  res.set({
+    'Content-Type': 'application/json'
+  })
+
+  if( !req.is('application/json') ) {
+    return res.status(406) //Not Acceptable
+           .send(`Content-Type header ${req.headers[content-type]} is not supported`)
+  }
+
   var groupSymbol = req.body.groupSymbol;
   var secret = req.query.secret;
 
@@ -47,6 +57,14 @@ app.post('/pupil', (req, res) => {
            })
   }
 
+  if( !groupSymbol ) {
+    return res.status(200)
+    .json({
+      errorCode: 3,
+      errorMessage: `Can't find expected parameter - groupSymbol - in request body`
+    })
+  }
+
   // format date to unix epoch milliseconds in order to comply
   // with Firebase 'timestamp' type
   var when = moment(req.body.whenRegistered, "DD/MM/YYYY");
@@ -60,7 +78,7 @@ app.post('/pupil', (req, res) => {
   .then( groups => {
 
     var _group = groups.find( group => {
-      return group.symbol === req.body.groupSymbol
+      return group.symbol === groupSymbol
     });
 
     if( !_group ) {
@@ -92,7 +110,10 @@ app.post('/pupil', (req, res) => {
 
   })
   .then( ref => {
-    return res.status(200).send(ref.id);
+
+    return res.status(200).json({
+      id: ref.id
+    });
   });
 
 });
