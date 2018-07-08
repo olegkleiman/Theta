@@ -12,10 +12,10 @@ POST http://us-central1-theta-1524876066401.cloudfunctions.net/api/pupil?secret=
 Content-Type: application/json
 ```json
 {
-	"groupSymbol": "4eb",
-	"name": "Tiago",
-	"address": "כיכר המדינה",
-	"whenRegistered": "07/07/2018"
+ "groupSymbol": "4eb",
+ "name": "Tiago",
+ "address": "כיכר המדינה",
+ "whenRegistered": "07/07/2018"
 }
 ```
 
