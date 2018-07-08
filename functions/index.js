@@ -47,11 +47,13 @@ app.post('/pupil', (req, res) => {
            })
   }
 
+  // format date to unix epoch milliseconds in order to comply
+  // with Firebase 'timestamp' type
   var when = moment(req.body.whenRegistered, "DD/MM/YYYY");
   var pupil = {
     name: req.body.name,
     address: req.body.address,
-    whenRegistred: new Date(when.valueOf())
+    whenRegistred: new Date(when.valueOf()) // valueOf() is actually unix() * 1000
   }
 
   return getGroups(req, res)
