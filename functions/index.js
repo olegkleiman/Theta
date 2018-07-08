@@ -31,7 +31,6 @@ app.get('/units', (req, res) => {
 app.post('/pupil', (req, res) => {
   var groupSymbol = req.body.groupSymbol;
   var secret = req.query.secret;
-  console.log('Secret: ' + secret);
 
   if( secret == 'undefined' ) {
     return res.status(401)
@@ -46,6 +45,13 @@ app.post('/pupil', (req, res) => {
              errorCode: 401,
              errorMessage: `Not authorized. 'secret' parameter is not valid`
            })
+  }
+
+  var when = moment(req.body.whenRegistered, "DD/MM/YYYY");
+  var pupil = {
+    name: req.body.name,
+    address: req.body.address,
+    whenRegistred: new Date(when.valueOf())
   }
 
   return getGroups(req, res)
@@ -80,11 +86,7 @@ app.post('/pupil', (req, res) => {
   })
   .then( pupilsCollectionRef => {
 
-    return pupilsCollectionRef.add({
-        name: req.body.name,
-        address: req.body.address
-        //whenRegistred: req.body.whenRegistered
-      });
+    return pupilsCollectionRef.add(pupil);
 
   })
   .then( ref => {
