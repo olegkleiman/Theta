@@ -24,3 +24,5 @@ Content-Type: application/json
 }
 
 Content-Type: application/x-www-form-urlencoded is also accepted
+
+Date format for all functions' input is 'DD/MM/YYYY'
