@@ -10,18 +10,14 @@ This function is not Firebase trigger, it is intended for explicit invokation fr
 POST http://us-central1-theta-1524876066401.cloudfunctions.net/api/pupil?secret=[secret]
 
 Content-Type: application/json
-
+```json
 {
-
 	"groupSymbol": "4eb",
-	
 	"name": "Tiago",
-	
 	"address": "כיכר המדינה"
-	
 	"whenRegistered": "07/07/2018"
-	
 }
+```
 
 On any aplication errors, response is returned with HTTP 200, header 'Content-Type': 'application/json' and JSON formatted payload:
 ```json
