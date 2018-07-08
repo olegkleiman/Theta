@@ -24,7 +24,8 @@ Content-Type: application/json
 }
 
 PHP invocation sample:
-<code lang='php'>
+```php
+<?php
 
 $request = new HttpRequest();
 $request->setUrl('http://us-central1-theta-1524876066401.cloudfunctions.net/api/pupil');
@@ -53,6 +54,6 @@ try {
 } catch (HttpException $ex) {
   echo $ex;
 }
-</code>
+```
 
 Date format for all functions' input is 'DD/MM/YYYY'
