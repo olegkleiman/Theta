@@ -1,4 +1,4 @@
-# Firebase functions to wrap common CRUD operations
+# Firebase functions to simplify common CRUD operations
 
 ## Deploy these functions to Firebase:
 (from this directory) <code>$ yarn deploy</code>
@@ -23,6 +23,37 @@ Content-Type: application/json
 	
 }
 
-Content-Type: application/x-www-form-urlencoded is also accepted
+PHP invocation sample:
+<code lang='php'>
+	<?php
+
+$request = new HttpRequest();
+$request->setUrl('http://us-central1-theta-1524876066401.cloudfunctions.net/api/pupil');
+$request->setMethod(HTTP_METH_POST);
+
+$request->setQueryData(array(
+  'secret' => 'Day1%21'
+));
+
+$request->setHeaders(array(
+  'Cache-Control' => 'no-cache',
+  'Content-Type' => 'application/json'
+));
+
+$request->setBody('{
+	"groupSymbol": "4eb",
+	"name": "Shuki Benishty 3",
+	"address": "כיכר המדינה",
+	"whenRegistered": "06/07/2018"
+}');
+
+try {
+  $response = $request->send();
+
+  echo $response->getBody();
+} catch (HttpException $ex) {
+  echo $ex;
+}
+</code>
 
 Date format for all functions' input is 'DD/MM/YYYY'
