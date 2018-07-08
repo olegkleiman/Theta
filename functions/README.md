@@ -32,7 +32,7 @@ $request->setUrl('http://us-central1-theta-1524876066401.cloudfunctions.net/api/
 $request->setMethod(HTTP_METH_POST);
 
 $request->setQueryData(array(
-  'secret' => 'Day1%21'
+  'secret' => 'xxx'
 ));
 
 $request->setHeaders(array(
