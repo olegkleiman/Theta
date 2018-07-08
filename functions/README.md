@@ -23,7 +23,7 @@ Content-Type: application/json
 	
 }
 
-On any aplication errors, response is returned with HTTP 200 and JSON formatted payload:
+On any aplication errors, response is returned with HTTP 200, header 'Content-Type': 'application/json' and JSON formatted payload:
 ```json
 {
  "errorCode": "<number>",
