@@ -13,9 +13,10 @@ Content-Type: application/json
 ```json
 {
  "groupSymbol": "4eb",
- "name": "Tiago",
- "address": "כיכר המדינה",
- "phoneNumber": "0543307026",
+ "name": "שוקי בנישתי",
+ "pupilId": "013069488",
+ "parentId": "013069480",
+ "phoneNumber": "0543307024",
  "whenRegistered": "07/07/2018"
 }
 ```
@@ -53,9 +54,10 @@ $request->setHeaders(array(
 
 $request->setBody('{
 	"groupSymbol": "4eb",
-	"name": "Shuki Benishty 3",
-	"address": "כיכר המדינה",
-	"phoneNumber": "0543307026",
+	"name": "שוקי בנישתי",
+ 	"pupilId": "013069488",
+ 	"parentId": "013069480",
+	"phoneNumber": "0543307025",
 	"whenRegistered": "06/07/2018"
 }');
 
