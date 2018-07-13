@@ -53,3 +53,12 @@ button {
 .containerShift {
   margin-top: 80px;
 }
+
+/* Now UI overrides */
+.logoMini {
+  width: 106px;
+}
+
+.tableInCard {
+  margin-top: 10px;
+}
