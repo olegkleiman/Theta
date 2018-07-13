@@ -87,7 +87,7 @@ class Units extends React.Component<Props, State> {
   }
 
   onRowSelected = (rowInfo) => {
-    console.log(rowInfo);
+
     this.setState({
       selectedUnit: {
         name: rowInfo.original.name,
@@ -151,7 +151,6 @@ class Units extends React.Component<Props, State> {
                             <div className='card-body'>
                             <ReactTable
                               getTrProps={(state, rowInfo, column) => {
-                                  console.log(rowInfo);
                                   return {
                                     onClick: (e, handleOriginal) => {
                                       self.onRowSelected(rowInfo);

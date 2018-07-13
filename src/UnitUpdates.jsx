@@ -8,7 +8,8 @@ import {
   PagingState,
   IntegratedPaging,
   SortingState,
-  SearchState } from '@devexpress/dx-react-grid';
+  SearchState,
+  DataTypeProvider } from '@devexpress/dx-react-grid';
 import {
   Grid,
   Table,
@@ -32,6 +33,17 @@ type Props = {
 
 const getRowId = row => row.id;
 
+const DateFormatter = ({ value }) => {
+  return value.replace(/(\d{4})-(\d{2})-(\d{2})/, '$3.$2.$1');
+}
+
+const DateTypeProvider = props => (
+  <DataTypeProvider
+    formatterComponent={DateFormatter}
+    {...props}
+  />
+);
+
 class UnitUpdates extends React.Component<Props, State> {
 
   state = {
@@ -43,7 +55,8 @@ class UnitUpdates extends React.Component<Props, State> {
     ],
     //rows: _rows,
     updates: [],
-    sorting: [{ columnName: 'pupils', direction: 'asc' }]
+    sorting: [{ columnName: 'pupils', direction: 'asc' }],
+    dateColumns: ['update_date']
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -73,7 +86,7 @@ class UnitUpdates extends React.Component<Props, State> {
 
         _updates.push({
           id: update.id,
-          update_date: moment(data.update_date.seconds*1000).format('DD/MM/YYYY'),
+          update_date: moment(data.update_date.seconds*1000).format('DD-MM-YYYY'),
           places: data.places,
           pupils: data.pupils,
           pupils_special: data.pupils_special
@@ -144,7 +157,7 @@ class UnitUpdates extends React.Component<Props, State> {
 
   render() {
 
-    const { updates, columns, sorting } = this.state;
+    const { updates, columns, sorting, dateColumns } = this.state;
 
     return (
       <Grid
@@ -163,6 +176,10 @@ class UnitUpdates extends React.Component<Props, State> {
 
         <SortingState
           sorting={sorting} />
+
+        <DateTypeProvider
+          for={dateColumns}
+        />
 
         <Table />
         <TableHeaderRow showSortingControls />
