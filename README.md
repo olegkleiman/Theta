@@ -4,15 +4,18 @@
 Broadly speaking, this is SPA React/Redux app performing CRUD operations against Firebase RealtimeDB. Its UI follows <a href='https://demos.creative-tim.com/now-ui-kit/index.html' taret='_blank'>Now UI</a> style of Creative Tim (that is customized version of Bootstrap 4 with a help of <code>reactstrap</code>) and parly based on <a href='https://devexpress.github.io/devextreme-reactive/react/grid/' target='_blank'>DevExtreme React Grid</a> and . The app is  powered by <a href='https://reacttraining.com/react-router/web/guides/philosophy' target='_blank'>React Router 4</a>.
 
 ## Build
-Build is simple as <code>yarn build</code>. This invokes <code>webpack</code> to produce <code>main.js</code> bundle in "dist" directory.
+Build is simple as <code>yarn build</code>. This invokes <code>webpack</code> to produce <code>main.js</code> bundle in "dist" directory and starts watching for changes.
+
+## Debug
+After the app was built (<code>yarn build</code>), in second terminal, run <code>sudo firebase serve</code>. 
+
+Alternatively, you may run in the second terminal <code>yarn start:debug</code>. This way HMR is enabled that eliminates the need for endless refreshes after every change in code.
+
 Consequently, the home directory for hosting by <code>WebpackDevServer</code> is also "dist" that is reflected by its invokation:
 
 "start:dev": "webpack-dev-server --hot --inline --mode development --colors --watch --content-base dist/"
 
 As usual for Webpack, the entry point of the project called <code>index.jsx</code>.
-
-## Debug
-The preferred way to launch the app for debugging is <code>yarn start:debug</code>.This way HMR is enabled that eliminates the need for endless refreshes after every change in code. On the other hand, on good day, <code>firebase server</code> may also work.
 
 ## Deploy
 This project is designed for deployment to Google Firebase (<code>firebase deploy</code>) or served locally (<code>firebase serve</code>). 
