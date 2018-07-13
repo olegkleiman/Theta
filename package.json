@@ -13,7 +13,7 @@
   "scripts": {
     "build": "webpack -d --watch",
     "build:once": "webpack -d",
-    "start:dev": "webpack-dev-server --mode development --colors --watch --content-base dist/"
+    "start:dev": "webpack-dev-server --hot --inline --mode development --colors --watch --content-base dist/"
   },
   "dependencies": {
     "@devexpress/dx-react-core": "^1.1.2",
