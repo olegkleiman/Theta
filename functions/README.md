@@ -16,6 +16,7 @@ Content-Type: application/json
  "name": "שוקי בנישתי",
  "pupilId": "013069488",
  "parentId": "013069480",
+ "paymentApprovalNumber": "a1334vd",
  "phoneNumber": "0543307024",
  "whenRegistered": "07/07/2018"
 }
@@ -57,6 +58,7 @@ $request->setBody('{
 	"name": "שוקי בנישתי",
  	"pupilId": "013069488",
  	"parentId": "013069480",
+	"paymentApprovalNumber": "a1334vd",
 	"phoneNumber": "0543307025",
 	"whenRegistered": "06/07/2018"
 }');
