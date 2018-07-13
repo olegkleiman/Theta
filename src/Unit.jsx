@@ -2,7 +2,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import {Fab, FabButton, FabActions, FabAction} from 'react-fab';
 import firebase from './firebase.js';
 import {
   Button,
@@ -17,8 +16,6 @@ import {
 
 import UnitUpdates from './UnitUpdates';
 import UnitGroups from './UnitGroups';
-
-import 'react-fab/dist/main.scss';
 
 type State = {
   docData: {
@@ -134,8 +131,8 @@ class Unit extends React.Component<Props, State> {
     }
   }
 
-  handleCreateGroup() {
-    
+  addGroup() {
+      this.props.history.push('/dashboard/addgroup/' + this.state.docId);
   }
 
   render() {
@@ -215,23 +212,19 @@ class Unit extends React.Component<Props, State> {
                       <UnitUpdates docId={this.state.docId} />
                     </div>
                     <div id='groups' className='tab-pane' role='tabpanel'>
-                      <UnitGroups docId={this.state.docId} />
-                      <Fab style={{ right: '20px', bottom: '20px' }}>
-                        <FabButton>
-                          +
-                        </FabButton>
-                        <FabActions>
-                          <FabAction
-                            className="button button-balanced"
-                            closeOnClick={true}
-                            onClick={::this.handleCreateGroup}
-                            tooltip="Create Group"
-                          >Add
-                        </FabAction>
-                        </FabActions>
-                      </Fab>
-                      <Button color='primary'
-                              onClick={::this.gotoGroups}>Groups</Button>
+
+                        <div className="card card-body">
+                          <div className='row'>
+                              <div className='col col-12 d-flex justify-content-end'>
+                              <Button color='primary'
+                                      className='align-self-end'
+                                      onClick={::this.addGroup}>+ Add Group</Button>
+                              </div>
+                          </div>
+                          <UnitGroups docId={this.state.docId} />
+
+                        </div>
+
                     </div>
                   </div>
                 </div>
