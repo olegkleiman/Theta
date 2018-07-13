@@ -110,17 +110,17 @@ class Units extends React.Component<Props, State> {
 
     const self = this;
 
-    const units = [{
-      id: '-UIT5R',
-      name: 'Oleg',
-      symbol: 'OLK',
-      concessionaire: 'C1'
-    }, {
-      id: 'XS444',
-      name: 'Lee',
-      symbol: "BRN",
-      concessionaire: 'C2'
-    }];
+    // const units = [{
+    //   id: '-UIT5R',
+    //   name: 'Oleg',
+    //   symbol: 'OLK',
+    //   concessionaire: 'C1'
+    // }, {
+    //   id: 'XS444',
+    //   name: 'Lee',
+    //   symbol: "BRN",
+    //   concessionaire: 'C2'
+    // }];
 
     const columns = [{
       Header: 'ID',
