@@ -52,17 +52,23 @@ class UnitGroups extends React.Component<Props, State> {
 
         let data = group.data();
 
-        let closedDate = '';
-        if( data.closed ) {
-          closedDate = moment.unix(data.closed.seconds).format('DD/MM/YYYY')
-        }
+        let _closedDate = ( data.closed ) ?
+                          moment.unix(data.closed.seconds).format('DD/MM/YYYY') :
+                          '<none>';
+
+        let _openedDate= ( data.opened ) ?
+                      moment.unix(data.opened.seconds).format('DD/MM/YYYY') :
+                      '<none>';
+
         let registeredPupils = ( data.registeredPupils ) ? data.registeredPupils : 0;
 
+
         _groups.push({
+          id: group.id,
           name: data.name,
           symbol: data.symbol,
-          opened: moment.unix(data.opened.seconds).format('DD/MM/YYYY'),
-          closed: closedDate,
+          opened: _openedDate,
+          closed: _closedDate,
           price: data.price + ' NIS',
           capacity: data.capacity,
           registeredPupils: registeredPupils
@@ -94,12 +100,29 @@ class UnitGroups extends React.Component<Props, State> {
       </div>);
   }
 
+  onRowSelected = (rowInfo) => {
+    console.log(rowInfo);
+  }
+
   render() {
+
+    const self = this;
+
     return (
       <ReactTable
+        className="-striped -highlight tableInCard"
         data={this.state.groups}
         noDataText="Loading..."
         filterable
+        getTrProps={(state, rowInfo, column) => {
+            return {
+              onClick: (e, handleOriginal) => {
+                self.onRowSelected(rowInfo);
+                if( handleOriginal )
+                  handleOriginal();
+              }
+            }
+        }}
         columns={[{
            Header: 'Name',
            accessor: 'name'
@@ -151,7 +174,7 @@ class UnitGroups extends React.Component<Props, State> {
               </div>)
            }
          }]}
-         className="-striped -highlight">
+         >
      </ReactTable>
    )
   }
