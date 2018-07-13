@@ -7,9 +7,12 @@ Broadly speaking, this is SPA React/Redux app performing CRUD operations against
 Build is simple as <code>yarn build</code>. This invokes <code>webpack</code> to produce <code>main.js</code> bundle in "dist" directory.
 Consequently, the home directory for hosting by <code>WebpackDevServer</code> is also "dist" that is reflected by its invokation:
 
-"start:dev": "webpack-dev-server --mode development --colors --watch --content-base dist/"
+"start:dev": "webpack-dev-server --hot --inline --mode development --colors --watch --content-base dist/"
 
 As usual for Webpack, the entry point of the project called <code>index.jsx</code>.
+
+## Debug
+The preferred way to launch the app for debugging is <code>yarn start:debug</code>. On other hand, on good day, <code>firebase server</code> may also work.
 
 ## Deploy
 This project is designed for deployment to Google Firebase (<code>firebase deploy</code>) or served locally (<code>firebase serve</code>). 
