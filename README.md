@@ -12,7 +12,7 @@ Consequently, the home directory for hosting by <code>WebpackDevServer</code> is
 As usual for Webpack, the entry point of the project called <code>index.jsx</code>.
 
 ## Debug
-The preferred way to launch the app for debugging is <code>yarn start:debug</code>. On other hand, on good day, <code>firebase server</code> may also work.
+The preferred way to launch the app for debugging is <code>yarn start:debug</code>.This way HMR is enabled that eliminates the need for endless refreshes after every change in code. On the other hand, on good day, <code>firebase server</code> may also work.
 
 ## Deploy
 This project is designed for deployment to Google Firebase (<code>firebase deploy</code>) or served locally (<code>firebase serve</code>). 
