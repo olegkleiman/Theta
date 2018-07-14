@@ -85,12 +85,6 @@ On success, returns JSON Array with follwoing structure:
         "symbol": "<Groups symbol>",
         "opened": "<Data when group was opened>"
     },
-    {
-    	...
-    },
-    {
-    	...
-    }
 ]
 ```
 
