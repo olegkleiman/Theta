@@ -72,4 +72,27 @@ try {
 }
 ```
 
+## Get all groups
+
+GET http://us-central1-theta-1524876066401.cloudfunctions.net/api/groups
+
+On success, returns JSON Array with follwoing structure:
+```json
+[
+    {
+        "unitId": "<FirebaseId for containing unit>",
+        "id": "<FirebaseId for groups",
+        "symbol": "<Groups symbol>",
+        "opened": "<Data when group was opened>"
+    },
+    {
+    	...
+    },
+    {
+    	...
+    }
+]
+```
+
+
 Date format for all functions' input is 'DD/MM/YYYY'
