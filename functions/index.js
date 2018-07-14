@@ -262,6 +262,7 @@ function getGroups(req, res) {
                 unitId: unitId,
                 id: doc.id,
                 symbol: groupData.symbol,
+                name: groupData.name,
                 opened: moment(groupData.opened).format('DD/MM/YYYY')
               });
 
