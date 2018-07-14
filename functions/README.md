@@ -80,7 +80,7 @@ GET http://us-central1-theta-1524876066401.cloudfunctions.net/api/groups
 
 <code>Content-Type: application/json</code>
 
-On success, returns HTTP 200 and JSON Array with follwoing structure:
+On success, returns HTTP 200 with <code>Content-Type: application/json; charset=utf-8</code> and JSON Array with follwoing structure:
 ```json
 [
     {
