@@ -7,7 +7,7 @@
 
 This function is not Firebase trigger, it is intended for explicit invokation from external clients
 
-POST http://us-central1-theta-1524876066401.cloudfunctions.net/api/pupil?secret=[secret]
+POST https://us-central1-theta-1524876066401.cloudfunctions.net/api/pupil?secret=[secret]
 
 <code>Content-Type: application/json</code>
 
@@ -43,7 +43,7 @@ PHP invocation sample:
 <?php
 
 $request = new HttpRequest();
-$request->setUrl('http://us-central1-theta-1524876066401.cloudfunctions.net/api/pupil');
+$request->setUrl('https://us-central1-theta-1524876066401.cloudfunctions.net/api/pupil');
 $request->setMethod(HTTP_METH_POST);
 
 $request->setQueryData(array(
@@ -76,7 +76,7 @@ try {
 
 ## Get all groups
 
-GET http://us-central1-theta-1524876066401.cloudfunctions.net/api/groups
+GET https://us-central1-theta-1524876066401.cloudfunctions.net/api/groups
 
 <code>Content-Type: application/json</code>
 
