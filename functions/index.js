@@ -50,8 +50,6 @@ app.post('/pupil', (req, res) => {
   var groupSymbol = req.body.groupSymbol;
   var secret = req.query.secret;
 
-  console.log(secret);
-
   if( secret == 'undefined' ) {
     return res.status(401)
            .json({
