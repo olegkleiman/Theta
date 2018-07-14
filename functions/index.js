@@ -3,6 +3,7 @@ require('firebase/firestore');
 
 const admin = require('firebase-admin');
 const moment = require('moment');
+var Validator = require('jsonschema').Validator;
 
 admin.initializeApp();
 const firestore = admin.firestore();
@@ -14,8 +15,13 @@ const cors = require('cors')({origin: true});
 
 const app = express();
 app.use(cors);
-app.use(bodyParser.json()); // for parsing application/json
-//app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
+ // Enforces 406 (Not Acceptable) for Content-Type different from 'application-json'
+app.use(bodyParser.json({
+  strict:false
+}));
+
+// Uncomment for parsing application/x-www-form-urlencoded
+//app.use(bodyParser.urlencoded({ extended: true }));
 
 app.get('/groups', (req, res) => {
   return getGroups(req, res)
@@ -30,17 +36,21 @@ app.get('/units', (req, res) => {
 
 app.post('/pupil', (req, res) => {
 
+  if( !req.is('application/json') ) {
+    var header = JSON.stringify(req.headers['content-type']);
+    console.log(`Incoming header: ${header}`);
+    return res.status(406) //Not Acceptable
+           .send(`Content-Type header ${header} is not supported`);
+  }
+
   res.set({
     'Content-Type': 'application/json'
-  })
-
-  if( !req.is('application/json') ) {
-    return res.status(406) //Not Acceptable
-           .send(`Content-Type header ${req.headers[content-type]} is not supported`)
-  }
+  });
 
   var groupSymbol = req.body.groupSymbol;
   var secret = req.query.secret;
+
+  console.log(secret);
 
   if( secret == 'undefined' ) {
     return res.status(401)
@@ -49,7 +59,7 @@ app.post('/pupil', (req, res) => {
              errorMessage: `Not authorized. Provide 'secret' parameter in url`
            })
   }
-  if( secret !== 'Day1!') {
+  if( secret !== 'Day1!' && secret !== 'Ep$ilon' ) {
     return res.status(401)
            .json({
              errorCode: 401,
@@ -65,12 +75,28 @@ app.post('/pupil', (req, res) => {
     })
   }
 
+  var schema = {
+    "groupSymbol": "string",
+    "name": "string",
+    "pupilId": "string",
+    "parentId": "string",
+    "phoneNumber": "number",
+    "paymentApprovalNumber": "string",
+    "whenRegistered": "date"
+  };
+  var v = new Validator();
+  console.log(`Validation: ${v.validate(req.body, schema).valid}`);
+
   // format date to unix epoch milliseconds in order to comply
   // with Firebase 'timestamp' type
   var when = moment(req.body.whenRegistered, "DD/MM/YYYY");
   var pupil = {
     name: req.body.name,
-    address: req.body.address,
+    pupilId: ( req.body.pupilId ) ? req.body.pupilId : '<none>',
+    parentId: (req.body.parentId) ? req.body.parentId : '<none>',
+    paymentApprovalNumber: (req.body.paymentApprovalNumber) ?
+        req.body.paymentApprovalNumber : '<none',
+    phoneNumber: req.body.phoneNumber,
     whenRegistred: new Date(when.valueOf()) // valueOf() is actually unix() * 1000
   }
 
