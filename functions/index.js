@@ -30,6 +30,22 @@ app.get('/groups', (req, res) => {
   });
 });
 
+app.get('/group', (req, res) => {
+
+  const groupSymbol = req.query.symbol;
+
+  return getGroups(req, res)
+  .then( groups => {
+
+    const group = groups.find( group => {
+      return group.symbol === groupSymbol
+    });
+
+    return res.send(group);
+  })
+
+});
+
 app.get('/units', (req, res) => {
   return getUnits(req, res);
 })
