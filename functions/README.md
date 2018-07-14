@@ -9,7 +9,7 @@ This function is not Firebase trigger, it is intended for explicit invokation fr
 
 POST http://us-central1-theta-1524876066401.cloudfunctions.net/api/pupil?secret=[secret]
 
-Content-Type: application/json
+<code>Content-Type: application/json</code>
 ```json
 {
  "groupSymbol": "4eb",
@@ -76,7 +76,9 @@ try {
 
 GET http://us-central1-theta-1524876066401.cloudfunctions.net/api/groups
 
-On success, returns JSON Array with follwoing structure:
+<code>Content-Type: application/json</code>
+
+On success, returns HTTP 200 and JSON Array with follwoing structure:
 ```json
 [
     {
