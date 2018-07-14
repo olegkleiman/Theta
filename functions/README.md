@@ -11,7 +11,7 @@ POST http://us-central1-theta-1524876066401.cloudfunctions.net/api/pupil?secret=
 
 <code>Content-Type: application/json</code>
 
-Body:
+<code>Body:</code>
 ```json
 {
  "groupSymbol": "4eb",
