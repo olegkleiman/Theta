@@ -10,6 +10,7 @@ This function is not Firebase trigger, it is intended for explicit invokation fr
 POST http://us-central1-theta-1524876066401.cloudfunctions.net/api/pupil?secret=[secret]
 
 <code>Content-Type: application/json</code>
+
 Body:
 ```json
 {
