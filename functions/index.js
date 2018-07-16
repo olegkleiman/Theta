@@ -107,6 +107,8 @@ app.post('/pupil', (req, res) => {
   var pupil = {
     name: req.body.name,
     pupilId: ( req.body.pupilId ) ? req.body.pupilId : '<none>',
+    address: ( req.body.address ) ? req.body.address : '<none>',
+    birthDay: ( req.body.birthDay ) ? req.body.birthDay : '<none>',
     parentId: (req.body.parentId) ? req.body.parentId : '<none>',
     paymentApprovalNumber: (req.body.paymentApprovalNumber) ?
         req.body.paymentApprovalNumber : '<none',
@@ -190,6 +192,28 @@ exports.units = functions.https.onRequest((req, res) => {
   }
 
 });
+
+exports.createPupil = functions.firestore
+  .document('units/{unitId}/groups/{groupId}/pupils/{pupilId}')
+  .onCreate( (snap, context) => {
+     const newDoc = snap.data();
+     // console.log(`UnitId: ${context.params.unitId}`);
+     // console.log(`GroupId: ${context.params.groupId}`);
+     // console.log(`PupilId: ${context.params.pupilId}`);
+
+     const doc = firestore.doc(`units/${context.params.unitId}/groups/${context.params.groupId}`);
+     doc.get()
+     .then( _doc => {
+        const docData = _doc.data();
+        //console.log(docData.registeredPupils);
+
+        doc.update({
+          registeredPupils: docData.registeredPupils + 1
+        })
+     })
+
+     return true;
+  })
 
 function getUnits(req, res) {
 
