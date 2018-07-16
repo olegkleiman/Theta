@@ -48,6 +48,10 @@ service cloud.firestore {
       match /groups/{group} {
     		allow read : if request.auth.uid != null;
         allow write : if request.auth.uid != null;
+
+        match /pupils/{pupil} {
+        	allow read : if request.auth.uid != null;
+        }
     	}
     }
   }
