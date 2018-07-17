@@ -1,5 +1,6 @@
 // @flow
 import React from 'react';
+import { withRouter } from 'react-router-dom';
 import ReactTable from 'react-table';
 import moment from 'moment';
 import firebase from './firebase.js';
@@ -101,7 +102,8 @@ class UnitGroups extends React.Component<Props, State> {
   }
 
   onRowSelected = (rowInfo) => {
-    console.log(rowInfo);
+
+    this.props.history.push(`/dashboard/group/${this.props.docId}/${rowInfo.original.id}`);
   }
 
   render() {
@@ -181,4 +183,4 @@ class UnitGroups extends React.Component<Props, State> {
 
 }
 
-export default UnitGroups;
+export default withRouter(UnitGroups);
