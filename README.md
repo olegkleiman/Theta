@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.org/olegkleiman/Theta.svg?branch=master)](https://travis-ci.org/olegkleiman/Theta)
 
 # Theta 
-Broadly speaking, this is SPA React/Redux app performing CRUD operations against Firebase RealtimeDB. Its UI follows <a href='https://demos.creative-tim.com/now-ui-kit/index.html' taret='_blank'>Now UI</a> style of Creative Tim (that is customized version of Bootstrap 4 with a help of <code>reactstrap</code>) and parly based on <a href='https://devexpress.github.io/devextreme-reactive/react/grid/' target='_blank'>DevExtreme React Grid</a> and . The app is  powered by <a href='https://reacttraining.com/react-router/web/guides/philosophy' target='_blank'>React Router 4</a>.
+Broadly speaking, this is SPA React/Redux app performing CRUD operations against Firebase RealtimeDB. Its UI follows <a href='https://demos.creative-tim.com/now-ui-kit/index.html' taret='_blank'>Now UI</a> style of Creative Tim (that is customized version of Bootstrap 4 with a help of <code>reactstrap</code>) and partly based on <a href='https://devexpress.github.io/devextreme-reactive/react/grid/' target='_blank'>DevExtreme React Grid</a> and <i>react-table<i>. The app is  powered by <a href='https://reacttraining.com/react-router/web/guides/philosophy' target='_blank'>React Router 4</a>.
 
 ## Build
 Build is simple as <code>yarn build</code>. This invokes <code>webpack</code> to produce <code>main.js</code> bundle in "dist" directory and starts watching for changes.
