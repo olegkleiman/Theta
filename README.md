@@ -18,6 +18,11 @@ Consequently, the home directory for hosting by <code>WebpackDevServer</code> is
 As usual for Webpack, the entry point of the project called <code>index.jsx</code>.
 
 ## Deploy
+When you didn't performed the changed in Firestore Rules, simle use <code>yarn deploy</code> = <code>firebase deploy --only hosting</code>
+
+Usually Fiebase functions are deployed separately from <i>functions</i> directory, but if you want full deploy, use <code>firebase deploy</code>
+
+### Description
 This project is designed for deployment to Google Firebase (<code>firebase deploy</code>) or served locally (<code>firebase serve</code>). 
 It utilizes <a href='https://firebase.google.com/docs/hosting/reserved-urls?authuser=0#sdk_auto-configuration' target='_blank'> simpler project configuration</a> when initializing Firebase App (in index.html). This way the launching page gains permformance boost because Firebase uses HTTP/2 and boost the pages from the same origin.
 However, pay attention that if the project is served by another HTTP server (like webpack-dev-server, reflected in script as <code>yarn start:dev</code>), the mentioned <i>simpler project configuration</i> will not work and you may need to adjust the link URLs in <code>index.html</code> to regular forms (e.g. change <code>/_ _</code>  in <code>__/firebase/4.13.0/firebase-app.js</code> to <code>https://www.gstatic.com/firebasejs/4.13.0/firebase-app.js</code> and so on).
