@@ -13,6 +13,7 @@
   "scripts": {
     "build": "webpack -d --watch",
     "build:once": "webpack -d",
+    "deploy": "firebase deploy --only hosting",
     "start:debug": "webpack-dev-server -d --hot --inline --mode development --colors --watch --content-base dist/"
   },
   "dependencies": {
