@@ -9,15 +9,18 @@ class Pupil {
   name: String;
   id: String;
   phoneNumber: String;
+  birthDay: String;
   whenRegistered: Timestamp;
 
   constructor(name: String,
               id: String,
               phoneNumber: String,
+              birthDay: String,
               whenRegistered: Timestamp) {
     this.name = name;
     this.id = id;
     this.phoneNumber = phoneNumber;
+    this.birthDay = birthDay;
     this.whenRegistered = moment.unix(whenRegistered.seconds).format('DD/MM/YYYY HH:mm');
   }
 }
@@ -91,6 +94,7 @@ class Group extends React.Component<{}, State> {
         const _pupil = new Pupil(pupilData.name,
                                  pupilData.pupilId,
                                  pupilData.phoneNumber,
+                                 pupilData.birthDay,
                                  pupilData.whenRegistered);
 
         _pupils.push(_pupil);
@@ -116,7 +120,7 @@ class Group extends React.Component<{}, State> {
               <div className='card'>
                 <div className='card-header'>
                   <h5 className='title' dir='rtl'>{this.state.groupData.name}({this.state.groupData.symbol})</h5>
-                  <h4>Capacity: {this.state.groupData.capacity}</h4>
+                  <h6>Capacity: {this.state.groupData.capacity} pupils</h6>
                 </div>
                 <div className='card-body'>
                   <Row>
@@ -135,6 +139,9 @@ class Group extends React.Component<{}, State> {
                         Header: 'Phone number',
                         accessor: 'phoneNumber'
                       }, {
+                        Header: 'Birthdday',
+                        accessor: 'birthDay'
+                      },{
                         Header: 'When Registered',
                         accessor: 'whenRegistered'
                       }]}>
