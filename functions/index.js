@@ -89,7 +89,7 @@ app.post('/pupil', (req, res) => {
     })
   }
 
-  var schema = {
+  const schema = {
     "groupSymbol": "string",
     "name": "string",
     "pupilId": "string",
@@ -98,13 +98,13 @@ app.post('/pupil', (req, res) => {
     "paymentApprovalNumber": "string",
     "whenRegistered": "date"
   };
-  var v = new Validator();
+  const v = new Validator();
   console.log(`Validation: ${v.validate(req.body, schema).valid}`);
 
   // format date to unix epoch milliseconds in order to comply
   // with Firebase 'timestamp' type
-  var when = moment(req.body.whenRegistered, "DD/MM/YYYY");
-  var pupil = {
+  const when = moment(req.body.whenRegistered, "DD/MM/YYYY");
+  const pupil = {
     name: req.body.name,
     pupilId: ( req.body.pupilId ) ? req.body.pupilId : '<none>',
     address: ( req.body.address ) ? req.body.address : '<none>',
@@ -113,23 +113,20 @@ app.post('/pupil', (req, res) => {
     paymentApprovalNumber: (req.body.paymentApprovalNumber) ?
         req.body.paymentApprovalNumber : '<none',
     phoneNumber: req.body.phoneNumber,
-    whenRegistred: new Date(when.valueOf()) // valueOf() is actually unix() * 1000
+    whenRegistered: new Date(when.valueOf()) // valueOf() is actually unix() * 1000
   }
 
   return getGroups(req, res)
   .then( groups => {
 
-    var _group = groups.find( group => {
+    const _group = groups.find( group => {
       return group.symbol === groupSymbol
     });
 
     if( !_group ) {
 
-      return res.status(200)
-            .json({
-              errorCode: 2,
-              errorMessage: `No group identified by symbol '${req.body.groupSymbol}' was found`
-            });
+      // This will bw catched at the end of promises chain
+      throw new Error(`No group identified by symbol '${req.body.groupSymbol}' was found`);
 
     } else {
 
@@ -142,6 +139,8 @@ app.post('/pupil', (req, res) => {
     }
   })
   .then( groupParams => {
+
+    console.log(`Processing group ${groupParams}`);
 
     return firestore.collection('units/' + groupParams.unitId + '/groups/' + groupParams.groupdId + '/pupils/')
 
@@ -156,6 +155,17 @@ app.post('/pupil', (req, res) => {
     return res.status(200).json({
       id: ref.id
     });
+
+  })
+  .catch( err => {
+
+    //console.log(`Catched ${err.message}`);
+    return res.status(200)
+          .json({
+              errorCode: 2,
+              errorMessage: err.message
+            });
+
   });
 
 });
@@ -205,7 +215,7 @@ exports.createPupil = functions.firestore
      doc.get()
      .then( _doc => {
         const docData = _doc.data();
-        //console.log(docData.registeredPupils);
+        console.log(`DocData: ${docData}`);
 
         doc.update({
           registeredPupils: docData.registeredPupils + 1
