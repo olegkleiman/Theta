@@ -21,7 +21,10 @@ class Pupil {
     this.id = id;
     this.phoneNumber = phoneNumber;
     this.birthDay = birthDay;
-    this.whenRegistered = moment.unix(whenRegistered.seconds).format('DD/MM/YYYY HH:mm');
+
+    this.whenRegistered = ( whenRegistered ) ?
+                          moment.unix(whenRegistered.seconds).format('DD/MM/YYYY HH:mm') :
+                          null;
   }
 }
 
