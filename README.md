@@ -7,7 +7,7 @@ Broadly speaking, this is SPA React/Redux app performing CRUD operations against
 Build is simple as <code>yarn build</code>. This invokes <code>webpack</code> to produce <code>main.js</code> bundle in "dist" directory and starts watching for changes.
 
 ## Debug
-After the app was built (<code>yarn build</code>), in second terminal, run <code>sudo firebase serve</code>. 
+After the app was built (<code>yarn build</code>), in second terminal, run <code>sudo firebase serve --only hosting</code>. 
 
 Alternatively, you may run in the second terminal <code>yarn start:debug</code>. This way HMR is enabled that eliminates the need for endless refreshes after every change in code.
 
