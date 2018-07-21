@@ -8,15 +8,8 @@ import Unit from './Unit';
 import Groups from './Groups';
 import withAuth from './FirebaseAuth.jsx';
 
-import {
-  Button,
-  Row,
-  Col,
-  Dropdown,
-  DropdownToggle,
-  DropdownMenu,
-  DropdownItem
-} from 'reactstrap';
+import { Button, Row, Col,
+        Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 
 type State = {
   units: [],
@@ -24,25 +17,11 @@ type State = {
     name: String,
     id: String
   },
-  dropdownOpen: Boolean
+  dropdownOpen: Boolean,
+  dataStatus: string
 }
 
-type Props = {
-
-}
-
-const fetchUser = new Promise( (resolve, reject) => {
-  firebase.auth().onAuthStateChanged( (user) => {
-      if( user ) {
-        resolve(user)
-      } else {
-        reject(console.error)
-      }
-    })
-  })
-
-
-class Units extends React.Component<Props, State> {
+class Units extends React.Component<{}, State> {
 
   state = {
     units: [],
@@ -50,7 +29,8 @@ class Units extends React.Component<Props, State> {
       name: '',
       id: ''
     },
-    dropdownOpen: false
+    dropdownOpen: false,
+    dataStatus: 'Loading'
   };
 
   toggle() {
@@ -95,52 +75,15 @@ class Units extends React.Component<Props, State> {
 
       });
 
+
+
       this.setState({
-        units: _units
+        units: _units,
+        dataStatus: _units.length == 0 ? 'No Units are allowed to view for this account'
+                                        : this.state.dataStatus
       })
     }
   }
-
-  // async componentDidMount() {
-  //
-  //   const self = this;
-  //
-  //   const getOptions = {
-  //     source: 'server'
-  //   }
-  //
-  //     const userRoles = this.props.secRoles;
-  //
-  //     const response = await firebase.firestore().collection('units')
-  //                        .get(getOptions);
-  //
-  //     const _units = [];
-  //
-  //     response.docs.forEach( (unit) => {
-  //
-  //       const unitData = unit.data();
-  //
-  //       const secRole = unitData.sec_role;
-  //       const isSecGroupFound = userRoles.find( role => {
-  //         return role === secRole
-  //       });
-  //
-  //       if( isSecGroupFound ) {
-  //         _units.push({
-  //           name: unitData.name_he,
-  //           concessionaire: unitData.concessionaire,
-  //           symbol: unitData.symbol,
-  //           id: unit.id
-  //         });
-  //       }
-  //
-  //     });
-  //
-  //     this.setState({
-  //       units: _units
-  //     })
-  //
-  // }
 
   onUnitSelected = (unit) => {
     this.setState({
@@ -210,7 +153,7 @@ class Units extends React.Component<Props, State> {
                                   }
                               }}
                               data={this.state.units}
-                              noDataText="Loading..."
+                              noDataText={this.state.dataStatus}
                               columns={columns}
                               minRows={5}
                               showPagination={false}
