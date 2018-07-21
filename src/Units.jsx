@@ -17,6 +17,7 @@ type State = {
     name: String,
     id: String
   },
+  selectedRowIndex: Number,
   dropdownOpen: Boolean,
   dataStatus: string
 }
@@ -29,6 +30,7 @@ class Units extends React.Component<{}, State> {
       name: '',
       id: ''
     },
+    selectedRowIndex: -1,
     dropdownOpen: false,
     dataStatus: 'Loading...'
   };
@@ -95,7 +97,8 @@ class Units extends React.Component<{}, State> {
       selectedUnit: {
         name: rowInfo.original.name,
         id: rowInfo.original.id
-      }
+      },
+      selectedRowIndex: rowInfo.index
     });
   }
 
@@ -147,6 +150,11 @@ class Units extends React.Component<{}, State> {
                                       self.onRowSelected(rowInfo);
                                       if( handleOriginal )
                                         handleOriginal();
+                                    },
+                                    style: {
+                                      background: rowInfo && rowInfo.index === this.state.selectedRowIndex ?
+                                                  'rgba(0,0,0,0.05)' : 'white',
+                                      cursor: 'pointer'
                                     }
                                   }
                               }}
