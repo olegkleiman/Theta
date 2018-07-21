@@ -3,7 +3,7 @@ import React from 'react';
 import firebase from './firebase.js';
 
 type State = {
-  secRoles: String[]
+  secRoles: string[]
 }
 
 const fetchUser = new Promise( (resolve, reject) => {
@@ -16,7 +16,7 @@ const fetchUser = new Promise( (resolve, reject) => {
     })
   });
 
-let withAuth = (WrappedComponent: React.ComponentType<Props>) => class extends React.Component<{}, State> {
+let withAuth = (WrappedComponent) => class extends React.Component<{}, State> {
 
   state = {
     secRoles: []
@@ -32,17 +32,21 @@ let withAuth = (WrappedComponent: React.ComponentType<Props>) => class extends R
                                     .get();
     if( response.docs.length != 0 ) {
       const docSnapshot = response.docs[0];
-      const secRoles = docSnapshot.data().sec_roles;
-      console.log(secRoles);
+      let userRoles = docSnapshot.data().sec_roles;
+
+      if( !userRoles ) {
+        userRoles = ['']; // assign empty roles
+      }
 
       this.setState({
-        secRoles: secRoles
-      })
+        secRoles: userRoles
+      });
+
     }
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    return nextState.secRoles.length > 0 ? true : false;
+    return nextState.secRoles && nextState.secRoles.length > 0 ? true : false;
   }
 
   render() {
