@@ -21,13 +21,15 @@ type Group = {
 }
 
 type State = {
-  groups: Group[]
+  groups: Group[],
+  dataStatus: string
 }
 
 class UnitGroups extends React.Component<Props, State> {
 
   state = {
-    groups: []
+    groups: [],
+    dataStatus: 'Loading...'
   }
 
   async componentDidMount() {
@@ -64,7 +66,7 @@ class UnitGroups extends React.Component<Props, State> {
       });
 
       if( isAllowed ) {
-        
+
         let _closedDate = ( data.closed ) ?
                           moment.unix(data.closed.seconds).format('DD/MM/YYYY') :
                           '<none>';
@@ -89,8 +91,13 @@ class UnitGroups extends React.Component<Props, State> {
 
     });
 
+    _groups
+
     this.setState({
-      groups: _groups
+      groups: _groups,
+      dataStatus: _groups.length == 0 ? 'No Groups are allowed to view for this account'
+                                      : this.state.dataStatus
+
     });
 
 
@@ -125,7 +132,7 @@ class UnitGroups extends React.Component<Props, State> {
       <ReactTable
         className="-striped -highlight tableInCard"
         data={this.state.groups}
-        noDataText="Loading..."
+        noDataText={this.state.dataStatus}
         filterable
         getTrProps={(state, rowInfo, column) => {
             return {
