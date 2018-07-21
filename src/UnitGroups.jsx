@@ -4,6 +4,7 @@ import { withRouter } from 'react-router-dom';
 import ReactTable from 'react-table';
 import moment from 'moment';
 import firebase from './firebase.js';
+import withAuth from './FirebaseAuth.jsx';
 
 type Props = {
   docId: String
@@ -29,16 +30,21 @@ class UnitGroups extends React.Component<Props, State> {
     groups: []
   }
 
+  async componentDidMount() {
+  }
+
   componentDidUpdate(prevProps: Props, prevState: State) {
 
     if( prevProps.docId !== this.props.docId) {
 
-      this._loadAsyncData(this.props.docId)
+      ::this._loadAsyncData(this.props.docId)
     }
 
   }
 
-  _loadAsyncData(docId: String) {
+  async _loadAsyncData(docId: String) {
+
+    const userRoles = this.props.secRoles;
 
     const getOptions = {
       source: 'server'
@@ -46,13 +52,19 @@ class UnitGroups extends React.Component<Props, State> {
 
     let _groups: Group[] = [];
 
-    firebase.firestore().collection('units').doc(this.props.docId).collection('groups')
-    .get(getOptions)
-    .then( resp => {
-      resp.docs.forEach( (group, index) => {
+    const resp = await firebase.firestore().collection('units').doc(this.props.docId).collection('groups')
+                       .get(getOptions);
 
-        let data = group.data();
+    resp.docs.forEach( (group, index) => {
 
+      let data = group.data();
+      const secRole = data.sec_role;
+      const isAllowed = userRoles.find( role => {
+        return role === secRole
+      });
+
+      if( isAllowed ) {
+        
         let _closedDate = ( data.closed ) ?
                           moment.unix(data.closed.seconds).format('DD/MM/YYYY') :
                           '<none>';
@@ -62,7 +74,6 @@ class UnitGroups extends React.Component<Props, State> {
                       '<none>';
 
         let registeredPupils = ( data.registeredPupils ) ? data.registeredPupils : 0;
-
 
         _groups.push({
           id: group.id,
@@ -74,14 +85,14 @@ class UnitGroups extends React.Component<Props, State> {
           capacity: data.capacity,
           registeredPupils: registeredPupils
         });
-
-      });
-
-      this.setState({
-        groups: _groups
-      });
+      }
 
     });
+
+    this.setState({
+      groups: _groups
+    });
+
 
   }
 
@@ -183,4 +194,4 @@ class UnitGroups extends React.Component<Props, State> {
 
 }
 
-export default withRouter(UnitGroups);
+export default withRouter(withAuth(UnitGroups));
