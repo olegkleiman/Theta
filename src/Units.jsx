@@ -8,8 +8,7 @@ import Unit from './Unit';
 import Groups from './Groups';
 import withAuth from './FirebaseAuth.jsx';
 
-import { Button, Row, Col,
-        Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
+import { Button, Row, Col } from 'reactstrap';
 
 type State = {
   units: [],
@@ -168,22 +167,7 @@ class Units extends React.Component<{}, State> {
                           </div>
                         </Row>
                         <Row>
-                          <Col xs='2'>
-                            <Dropdown isOpen={this.state.dropdownOpen} toggle={::this.toggle}>
-                              <DropdownToggle caret>
-                                {dropdownTitle}
-                              </DropdownToggle>
-                              <DropdownMenu>
-                                {
-                                  this.state.units.map( (unit, index) => {
-                                      return <DropdownItem key={index}
-                                                onClick={()=> ::this.onUnitSelected(unit)}>{unit.name}</DropdownItem>
-                                  })
-                                }
-                              </DropdownMenu>
-                            </Dropdown>
-                          </Col>
-                          <Col xs='10'>
+                          <Col xs='12'>
                             {unit}
                           </Col>
                         </Row>
