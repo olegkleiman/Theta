@@ -6,6 +6,7 @@ import ReactTable from 'react-table';
 import 'react-table/react-table.css';
 import Unit from './Unit';
 import Groups from './Groups';
+import withAuth from './FirebaseAuth.jsx';
 
 import {
   Button,
@@ -30,6 +31,17 @@ type Props = {
 
 }
 
+const fetchUser = new Promise( (resolve, reject) => {
+  firebase.auth().onAuthStateChanged( (user) => {
+      if( user ) {
+        resolve(user)
+      } else {
+        reject(console.error)
+      }
+    })
+  })
+
+
 class Units extends React.Component<Props, State> {
 
   state = {
@@ -47,17 +59,19 @@ class Units extends React.Component<Props, State> {
      }));
   }
 
-  componentDidMount() {
+  async componentDidUpdate(prevProps: Props, prevState: State) {
 
-    const self = this;
+    if( this.props.secRoles.length != prevProps.secRoles.length ) {
+      const userRoles = this.props.secRoles;
 
-    const getOptions = {
-      source: 'server'
-    }
+      const getOptions = {
+        source: 'server'
+      }
 
-    firebase.firestore().collection('units')
-      .get(getOptions)
-      .then( response => {
+      const self = this;
+
+      const response = await firebase.firestore().collection('units')
+                         .get(getOptions);
 
       const _units = [];
 
@@ -65,20 +79,68 @@ class Units extends React.Component<Props, State> {
 
         const unitData = unit.data();
 
-        _units.push({
-          name: unitData.name_he,
-          concessionaire: unitData.concessionaire,
-          symbol: unitData.symbol,
-          id: unit.id
+        const secRole = unitData.sec_role;
+        const isSecGroupFound = userRoles.find( role => {
+          return role === secRole
         });
+
+        if( isSecGroupFound ) {
+          _units.push({
+            name: unitData.name_he,
+            concessionaire: unitData.concessionaire,
+            symbol: unitData.symbol,
+            id: unit.id
+          });
+        }
+
       });
 
-      self.setState({
+      this.setState({
         units: _units
       })
-
-    });
+    }
   }
+
+  // async componentDidMount() {
+  //
+  //   const self = this;
+  //
+  //   const getOptions = {
+  //     source: 'server'
+  //   }
+  //
+  //     const userRoles = this.props.secRoles;
+  //
+  //     const response = await firebase.firestore().collection('units')
+  //                        .get(getOptions);
+  //
+  //     const _units = [];
+  //
+  //     response.docs.forEach( (unit) => {
+  //
+  //       const unitData = unit.data();
+  //
+  //       const secRole = unitData.sec_role;
+  //       const isSecGroupFound = userRoles.find( role => {
+  //         return role === secRole
+  //       });
+  //
+  //       if( isSecGroupFound ) {
+  //         _units.push({
+  //           name: unitData.name_he,
+  //           concessionaire: unitData.concessionaire,
+  //           symbol: unitData.symbol,
+  //           id: unit.id
+  //         });
+  //       }
+  //
+  //     });
+  //
+  //     this.setState({
+  //       units: _units
+  //     })
+  //
+  // }
 
   onUnitSelected = (unit) => {
     this.setState({
@@ -109,18 +171,6 @@ class Units extends React.Component<Props, State> {
                 : <Unit docId={this.state.selectedUnit.id} />
 
     const self = this;
-
-    // const units = [{
-    //   id: '-UIT5R',
-    //   name: 'Oleg',
-    //   symbol: 'OLK',
-    //   concessionaire: 'C1'
-    // }, {
-    //   id: 'XS444',
-    //   name: 'Lee',
-    //   symbol: "BRN",
-    //   concessionaire: 'C2'
-    // }];
 
     const columns = [{
       Header: 'ID',
@@ -198,4 +248,4 @@ class Units extends React.Component<Props, State> {
 
 }
 
-export default Units;
+export default withAuth(Units);
