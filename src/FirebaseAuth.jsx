@@ -6,15 +6,6 @@ type State = {
   secRoles: string[]
 }
 
-const fetchUser = new Promise( (resolve, reject) => {
-  firebase.auth().onAuthStateChanged( (user) => {
-      if( user ) {
-        resolve(user)
-      } else {
-        reject(console.error)
-      }
-    })
-  });
 
 let withAuth = (WrappedComponent) => class extends React.Component<{}, State> {
 
@@ -22,9 +13,21 @@ let withAuth = (WrappedComponent) => class extends React.Component<{}, State> {
     secRoles: []
   }
 
+  fetchUser() {
+    return new Promise( (resolve, reject) => {
+    firebase.auth().onAuthStateChanged( (user) => {
+        if( user ) {
+          resolve(user)
+        } else {
+          reject(console.error)
+        }
+      })
+    });
+  }
+
   async componentDidMount() {
 
-    const user = await fetchUser;
+    const user = await ::this.fetchUser();
     const email = user.email;
 
     let response = await firebase.firestore().collection('users')
