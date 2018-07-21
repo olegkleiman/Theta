@@ -30,7 +30,7 @@ class Units extends React.Component<{}, State> {
       id: ''
     },
     dropdownOpen: false,
-    dataStatus: 'Loading'
+    dataStatus: 'Loading...'
   };
 
   toggle() {
@@ -74,8 +74,6 @@ class Units extends React.Component<{}, State> {
         }
 
       });
-
-
 
       this.setState({
         units: _units,
