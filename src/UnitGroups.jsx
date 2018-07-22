@@ -139,12 +139,24 @@ class UnitGroups extends React.Component<Props, State> {
      </div>)
   }
 
-  toggleIsClosed(index) {
+  async toggleIsClosed(index) {
     const groupData = this.state.groups[index];
     groupData.isClosed = !groupData.isClosed;
     this.setState({
       groups: this.state.groups
     })
+
+    try {
+      await firebase.firestore().collection('units')
+                      .doc(this.props.docId).collection('groups')
+                      .doc(groupData.id)
+                      .update({
+                        isClosed: groupData.isClosed
+                      });
+    } catch( err ) {
+      console.log(err);
+    }
+
   }
 
   onRowSelected = (rowInfo) => {
