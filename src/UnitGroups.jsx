@@ -32,7 +32,15 @@ class UnitGroups extends React.Component<Props, State> {
     dataStatus: 'Loading...'
   }
 
-  async componentDidMount() {
+  constructor(props) {
+
+    super(props);
+
+    this.styles = {
+      isClosed: {
+        marginTop: '-16px'
+      }
+    }
   }
 
   componentDidUpdate(prevProps: Props, prevState: State) {
@@ -126,7 +134,8 @@ class UnitGroups extends React.Component<Props, State> {
     const _isClosed = groupData.isClosed;
 
     return (
-      <div className='form-check'>
+      <div className='form-check'
+        style={this.styles.isClosed}>
         <label className='form-check-label'>
           <input className='form-check-input'
             type='checkbox'
