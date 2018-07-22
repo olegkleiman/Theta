@@ -136,18 +136,61 @@ class Group extends React.Component<{}, State> {
 
   }
 
-  renderEditable(cellInfo) {
+  async handleNameChange(cellInfo, e) {
+    if( e.key === 'Enter' || e.type === 'blur') {
+      const value = e.target.innerHTML;
+
+      if( value ) {
+
+        const groupId = this.props.match.params.groupid;
+        const unitId = this.props.match.params.unitid;
+
+        const data = [...this.state.pupils];
+        data[cellInfo.index][cellInfo.column.id] = value;
+        this.setState({
+          pupils: data
+        });
+
+        const pupilRecordId = data[cellInfo.index].recordId;
+
+        try {
+          await firebase.firestore().collection('units')
+                          .doc(unitId).collection('groups')
+                          .doc(groupId).collection('pupils')
+                          .doc(pupilRecordId)
+                          .update({
+                            name: value
+                          });
+        } catch( err ) {
+            console.error( err );
+        }
+      }
+    }
+  }
+
+  renderEditableName(cellInfo) {
+    return (
+      <div
+        style={{ backgroundColor: "#fafafa" }}
+        contentEditable
+        onKeyDown={ e => ::this.handleNameChange(cellInfo, e) }
+        onBlur={ e => ::this.handleNameChange(cellInfo, e) }>
+        {cellInfo.original.name}
+      </div>)
+  }
+
+  renderEditableAddress(cellInfo) {
     return (<div
               style={{ backgroundColor: "#fafafa" }}
               contentEditable
               onBlur={ async(e) => {
                 const value = e.target.innerHTML;
-                console.log(value);
-
-                const groupId = this.props.match.params.groupid;
-                const unitId = this.props.match.params.unitid;
 
                 if( value ) {
+
+                  const groupId = this.props.match.params.groupid;
+                  const unitId = this.props.match.params.unitid;
+
                   const data = [...this.state.pupils];
                   data[cellInfo.index][cellInfo.column.id] = value;
                   this.setState({
@@ -200,7 +243,8 @@ class Group extends React.Component<{}, State> {
                         filterable
                         columns={[{
                           Header: 'Name',
-                          accessor: 'name'
+                          accessor: 'name',
+                          Cell: ::this.renderEditableName
                         }, {
                           Header: 'ID',
                           accessor: 'id'
@@ -219,7 +263,7 @@ class Group extends React.Component<{}, State> {
                         }, {
                           Header: 'Address',
                           accessor: 'address',
-                          Cell: ::this.renderEditable
+                          Cell: ::this.renderEditableAddress
                         }]}>
                       </ReactTable>
                     </Col>
