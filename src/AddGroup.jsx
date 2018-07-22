@@ -68,6 +68,34 @@ class AddGroup extends React.Component<{}, State> {
     }
   }
 
+  validateGroup(group) {
+
+    const unitId = this.props.match.params.unitid;
+
+    if( moment(group.opened).isAfter(moment(group.openedTill)) ) {
+      return false;
+    }
+
+    return new Promise( (resolve, reject) => {
+
+      firebase.firestore().collection('units')
+                  .doc(unitId).collection('groups')
+                  .where('symbol', '==', group.symbol)
+                  .get()
+                  .then( query => {
+
+                    if( query.docs.length > 0 ) {
+                      resolve(false)
+                    } else {
+                      reject()
+                    }
+
+                  })
+
+    })
+
+  }
+
   onFormSubmit = async(event) => {
 
     event.preventDefault(); // stop from further submit
@@ -82,13 +110,20 @@ class AddGroup extends React.Component<{}, State> {
       sec_role: `group_${event.target.symbol.value}`
     }
 
+    const validated = await ::this.validateGroup(group)
+    console.log(validated);
+    if( !validated )
+      return;
+
     const unitId = this.props.match.params.unitid;
 
     try {
-      const doc = await firebase.firestore().collection('units').doc(unitId).collection('groups')
+      // Add new group to Firestore
+      const doc = await firebase.firestore().collection('units')
+                      .doc(unitId).collection('groups')
                       .add(group);
 
-      // Grand the permission to current user
+      // Grant permissions to the current user
       let response = await firebase.firestore().collection('users')
                                       .where("email", "==", this.props.userEMail)
                                       .get();
@@ -103,23 +138,27 @@ class AddGroup extends React.Component<{}, State> {
                  sec_roles: secRoles
               })
 
+              // 1 - Open
+              // 2 - Till date was expired
+              // 3 - Groups is full
+              // 4 - Close
+
+              // return fetch('http://rishumon.com/api/elamayn/edit_class.php', {
+              //   method: 'POST',
+              //   body:
+              //       {
+              //       	"groupSymbol": group.symbol,
+              //       	"description": group.name,
+              //       	"status": "1",
+              //       	"price": group.price
+              //   }
+              // })
+
+        this.props.history.push(`/dashboard/units`);
+
       }
 
-      // 1 - Open
-      // 2 - Till date was expired
-      // 3 - Groups is full
-      // 4 - Close
 
-      // return fetch('http://rishumon.com/api/elamayn/edit_class.php', {
-      //   method: 'POST',
-      //   body:
-      //       {
-      //       	"groupSymbol": group.symbol,
-      //       	"description": group.name,
-      //       	"status": "1",
-      //       	"price": group.price
-      //   }
-      // })
 
     } catch( err ) {
       console.error(err);
@@ -147,7 +186,7 @@ class AddGroup extends React.Component<{}, State> {
                               <div className='info-text'>Group Name</div>
                             </Col>
                             <Col md={{ size: 4 }}>
-                              <Input id='groupName' name='groupName'></Input>
+                              <Input invalid id='groupName' name='groupName'></Input>
                             </Col>
                           </Row>
                           <br />
