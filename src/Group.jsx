@@ -1,6 +1,6 @@
 // flow
 import React from 'react';
-import { Button, Row, Col,
+import { Button, Row, Col, Input,
          Card, CardBody
 } from 'reactstrap';
 import ReactTable from 'react-table';
@@ -230,7 +230,8 @@ class Group extends React.Component<{}, State> {
                           accessor: 'whenRegistered'
                         }, {
                           Header: 'Parent ID',
-                          accessor: 'parentId'
+                          accessor: 'parentId',
+                          Cell: cellInfo => ::this.renderEditable(cellInfo, cellInfo.original.parentId)
                         }, {
                           Header: 'Address',
                           accessor: 'address',
