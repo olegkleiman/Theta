@@ -3,14 +3,16 @@ import React from 'react';
 import firebase from './firebase.js';
 
 type State = {
-  secRoles: string[]
+  secRoles: string[],
+  email: string
 }
 
 
 let withAuth = (WrappedComponent) => class extends React.Component<{}, State> {
 
   state = {
-    secRoles: []
+    secRoles: [],
+    email: ''
   }
 
   fetchUser() {
@@ -42,7 +44,8 @@ let withAuth = (WrappedComponent) => class extends React.Component<{}, State> {
       }
 
       this.setState({
-        secRoles: userRoles
+        secRoles: userRoles,
+        email: email
       });
 
     }
@@ -58,6 +61,7 @@ let withAuth = (WrappedComponent) => class extends React.Component<{}, State> {
               <React.Fragment>
                 <WrappedComponent
                   secRoles={this.state.secRoles}
+                  userEMail={this.state.email}
                   {...this.props} />
               </React.Fragment>
             )
