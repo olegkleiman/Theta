@@ -9,17 +9,44 @@ import 'react-datetime/css/react-datetime.css';
 import moment from 'moment';
 import _ from 'moment/locale/he';
 import firebase from './firebase.js';
+import withAuth from './FirebaseAuth';
 
 type State = {
+  unitName: String,
   fromDate: moment,
   tillDate: moment
 }
 
-class AddGroup extends React.Component {
+class AddGroup extends React.Component<{}, State> {
+
+  state = {
+    unitName: ''
+  }
 
   constructor(props) {
 
     super(props);
+
+  }
+
+  async componentDidMount() {
+
+    const unitId = this.props.match.params.unitid;
+    let unitName = '<Unknown>';
+
+    try {
+      const resp = await firebase.firestore().collection('units').doc(unitId)
+                         .get();
+      const docData = resp.data();
+      unitName = docData.name_he;
+    }
+    catch( err ) {
+        console.error(err);
+    }
+
+    this.setState({
+      unitName: unitName
+    })
 
   }
 
@@ -35,11 +62,14 @@ class AddGroup extends React.Component {
   _tillDateChanged(_date: Date) {
 
     if( moment(_date).isValid() ) {
-      // TBD
+      this.setState({
+        tillDate: moment(_date)
+      });
     }
   }
 
-  onFormSubmit = (event) => {
+  onFormSubmit = async(event) => {
+
     event.preventDefault(); // stop from further submit
 
     const group = {
@@ -47,40 +77,53 @@ class AddGroup extends React.Component {
       symbol: event.target.symbol.value,
       capacity: event.target.groupCapacity.value,
       opened: this.state.fromDate.toDate(),
-      price: event.target.price.value
+      openedTill: this.state.tillDate.toDate(),
+      price: event.target.price.value,
+      sec_role: `group_${event.target.symbol.value}`
     }
 
     const unitId = this.props.match.params.unitid;
 
-    firebase.firestore().collection('units').doc(unitId).collection('groups')
-    .add(group)
-    .then( doc => {
-      return doc;
-    })
-    .then( doc => {
+    try {
+      const doc = await firebase.firestore().collection('units').doc(unitId).collection('groups')
+                      .add(group);
+
+      // Grand the permission to current user
+      let response = await firebase.firestore().collection('users')
+                                      .where("email", "==", this.props.userEMail)
+                                      .get();
+      if( response.docs.length != 0 ) {
+        const userDoc = response.docs[0];
+        const secRoles = this.props.secRoles;
+        secRoles.push(`group_${group.symbol}`);
+
+        await firebase.firestore().collection('users')
+              .doc(userDoc.id)
+              .update({
+                 sec_roles: secRoles
+              })
+
+      }
 
       // 1 - Open
       // 2 - Till date was expired
       // 3 - Groups is full
       // 4 - Close
 
-      return fetch('http://rishumon.com/api/elamayn/edit_class.php', {
-        method: 'POST',
-        body:
-            {
-            	"groupSymbol": group.symbol,
-            	"description": group.name,
-            	"status": "1",
-            	"price": group.price
-        }
-      })
-    })
-    .then( resp => {
-      console.log(resp);
-    })
-    .catch( err => {
+      // return fetch('http://rishumon.com/api/elamayn/edit_class.php', {
+      //   method: 'POST',
+      //   body:
+      //       {
+      //       	"groupSymbol": group.symbol,
+      //       	"description": group.name,
+      //       	"status": "1",
+      //       	"price": group.price
+      //   }
+      // })
+
+    } catch( err ) {
       console.error(err);
-    });
+    };
 
   }
 
@@ -92,7 +135,7 @@ class AddGroup extends React.Component {
           <Col className='col-md-12'>
             <Card body className="text-center">
               <div className='card-header'>
-                <h5 className='title'>Create new Group</h5>
+                <h5 className='title'>Create new Group for {this.state.unitName}</h5>
               </div>
               <CardBody>
                 <Card>
@@ -100,7 +143,7 @@ class AddGroup extends React.Component {
                       <Form onSubmit={::this.onFormSubmit}>
                         <Container>
                           <Row>
-                            <Col md={{ size: 2, offset: 2 }} className="text-right">
+                            <Col md={{ size: 2, offset: 2 }} className="text-right my-auto">
                               <div className='info-text'>Group Name</div>
                             </Col>
                             <Col md={{ size: 4 }}>
@@ -109,7 +152,7 @@ class AddGroup extends React.Component {
                           </Row>
                           <br />
                           <Row>
-                            <Col md={{ size: 2, offset: 2 }} className="text-right">
+                            <Col md={{ size: 2, offset: 2 }} className="text-right my-auto">
                               Symbol
                             </Col>
                             <Col md='4'>
@@ -119,7 +162,7 @@ class AddGroup extends React.Component {
                           </Row>
                           <br />
                           <Row>
-                            <Col md={{ size: 2, offset: 2 }} className="text-right">
+                            <Col md={{ size: 2, offset: 2 }} className="text-right my-auto">
                               Opened From
                             </Col>
                             <Col md='4'>
@@ -130,8 +173,8 @@ class AddGroup extends React.Component {
                           </Row>
                           <br />
                           <Row>
-                            <Col md={{ size: 2, offset: 2 }} className="text-right">
-                              Closed At
+                            <Col md={{ size: 2, offset: 2}} className="text-right my-auto">
+                              Opened Till
                             </Col>
                             <Col md='4'>
                               <Datetime closeOnSelect={true}
@@ -141,7 +184,7 @@ class AddGroup extends React.Component {
                           </Row>
                           <br />
                           <Row>
-                            <Col md={{ size: 2, offset: 2 }} className="text-right">
+                            <Col md={{ size: 2, offset: 2 }} className="text-right my-auto">
                               Capacity
                             </Col>
                             <Col md='4'>
@@ -151,13 +194,14 @@ class AddGroup extends React.Component {
                           </Row>
                           <br />
                           <Row>
-                            <Col md={{ size: 2, offset: 2 }} className="text-right">
+                            <Col md={{ size: 2, offset: 2 }} className="text-right my-auto">
                               Price
                             </Col>
                             <Col md='4'>
                               <InputGroup>
                                 <Input id='price' name='price'
-                                       type='number' placeholder="only numbers as money, e.g. 670, 670.65" />
+                                       type='number'
+                                       placeholder="only numbers as money, e.g. 670, 670.65" />
                                 <InputGroupAddon addonType="append">₪</InputGroupAddon>
                               </InputGroup>
                             </Col>
@@ -181,4 +225,4 @@ class AddGroup extends React.Component {
 
 };
 
-export default AddGroup;
+export default withAuth(AddGroup);
