@@ -6,7 +6,7 @@ import ReactTable from 'react-table';
 import 'react-table/react-table.css';
 import Unit from './Unit';
 import Groups from './Groups';
-import withAuth from './FirebaseAuth.jsx';
+import withAuth from './FirebaseAuth';
 
 import { Button, Row, Col } from 'reactstrap';
 
@@ -17,7 +17,7 @@ type State = {
     id: String
   },
   selectedRowIndex: Number,
-  dropdownOpen: Boolean,
+  dropdownOpen: boolean,
   dataStatus: string
 }
 
@@ -156,6 +156,13 @@ class Units extends React.Component<{}, State> {
                                       cursor: 'pointer'
                                     }
                                   }
+                              }}
+                              getTheadThProps = { () => {
+                                return {
+                                  style: {
+                                    'text-align': 'left'
+                                  }
+                                }
                               }}
                               data={this.state.units}
                               noDataText={this.state.dataStatus}
