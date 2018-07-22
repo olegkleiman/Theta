@@ -183,21 +183,17 @@ class UnitGroups extends React.Component<Props, State> {
         data={this.state.groups}
         noDataText={this.state.dataStatus}
         filterable
-        getTdProps= { (state, row, col, instance) => {
+        getTdProps= { (state, rowInfo, column, instance) => {
           return {
-            onClick: (event, cb) => {
-              console.log(col.Header);
+            onClick: (e, handleOriginal) => {
+              if( column.id != 'isClosed' ) {
+                self.onRowSelected(rowInfo);
+              }
             }
           }
         }}
         getTrProps={(state, rowInfo, column) => {
             return {
-              onClick: (e, handleOriginal) => {
-                console.log(column);
-                //self.onRowSelected(rowInfo);
-                if( handleOriginal )
-                  handleOriginal();
-              },
               style: {
                 cursor: 'pointer'
               }
