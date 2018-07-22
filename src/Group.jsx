@@ -18,7 +18,9 @@ class Pupil {
               id: String,
               phoneNumber: String,
               birthDay: String,
-              whenRegistered: Timestamp) {
+              whenRegistered: Timestamp,
+              parentId: String,
+              address: String) {
     this.name = name;
     this.id = id;
     this.phoneNumber = phoneNumber;
@@ -27,6 +29,8 @@ class Pupil {
     this.whenRegistered = ( whenRegistered ) ?
                           moment.unix(whenRegistered.seconds).format('DD/MM/YYYY HH:mm') :
                           null;
+    this.parentId = parentId;
+    this.address = address;
   }
 }
 
@@ -51,7 +55,8 @@ class GroupData {
 
 type State = {
   pupils: Array<Pupil>,
-  groupData: GroupData
+  groupData: GroupData,
+  dataStatus: String
 }
 
 class Group extends React.Component<{}, State> {
@@ -61,7 +66,8 @@ class Group extends React.Component<{}, State> {
     groupData: {
       name: '',
       symbol: ''
-    }
+    },
+    dataStatus: 'Loading...'
   }
 
   async componentDidMount() {
@@ -100,19 +106,41 @@ class Group extends React.Component<{}, State> {
                                  pupilData.pupilId,
                                  pupilData.phoneNumber,
                                  pupilData.birthDay,
-                                 pupilData.whenRegistered);
+                                 pupilData.whenRegistered,
+                                 pupilData.parentId,
+                                 pupilData.address);
 
         _pupils.push(_pupil);
       })
 
-      this.setState({
-        pupils: _pupils
-      });
+      if( _pupils.length == 0 ) {
+        this.setState({
+            dataStatus: 'No pupils were registered yet'
+        });
+      } else {
+        this.setState({
+          pupils: _pupils
+        });
+      }
 
     } catch( err ) {
       console.error(err);
     }
 
+  }
+
+  renderEditable(cellInfo) {
+    return (<div
+              style={{ backgroundColor: "#fafafa" }}
+              contentEditable
+              onBlur={e => {
+                const value = e.target.innerHTML;
+                console.log(value);
+                if( value ) {
+                }
+              }}>
+
+            </div>)
   }
 
   render() {
@@ -133,7 +161,7 @@ class Group extends React.Component<{}, State> {
                       <ReactTable
                         className="-striped -highlight tableInCard"
                         data={this.state.pupils}
-                        noDataText="Loading..."
+                        noDataText={this.state.dataStatus}
                         filterable
                         columns={[{
                           Header: 'Name',
@@ -145,11 +173,18 @@ class Group extends React.Component<{}, State> {
                           Header: 'Phone number',
                           accessor: 'phoneNumber'
                         }, {
-                          Header: 'Birthdday',
+                          Header: 'Birthday',
                           accessor: 'birthDay'
                         },{
                           Header: 'When Registered',
                           accessor: 'whenRegistered'
+                        }, {
+                          Header: 'Parent ID',
+                          accessor: 'parentId'
+                        }, {
+                          Header: 'Address',
+                          accessor: 'address',
+                          Cell: ::this.renderEditable
                         }]}>
                       </ReactTable>
                     </Col>
