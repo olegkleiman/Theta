@@ -170,10 +170,10 @@ class UnitGroups extends React.Component<Props, State> {
       let headers = new Headers();
       headers.append('Authorization', 'Basic ZWxhbXlhbjExNTplbGFteWFuMTE1');
       headers.append('Content-Type', 'application/json');
-      headers.append('Access-Control-Allow-Origin', '*');
+      //headers.append('Access-Control-Allow-Origin', '*');
 
       await fetch('http://rishumon.com/api/elamayn/edit_class.php', {
-        mode: 'cors',
+        //mode: 'cors',
         headers: headers,
         method: 'POST',
         body: JSON.stringify({
@@ -201,11 +201,18 @@ class UnitGroups extends React.Component<Props, State> {
 
     return (
       <ReactTable
-        className="-striped -highlight tableInCard"
+        className="-striped -highlight tableInCard col col-12"
         data={this.state.groups}
         noDataText={this.state.dataStatus}
         filterable
-        getTdProps= { (state, rowInfo, column, instance) => {
+        getTheadThProps = { () => {
+          return {
+            style: {
+              'text-align': 'left'
+            }
+          }
+        }}
+        getTdProps = { (state, rowInfo, column, instance) => {
           return {
             onClick: (e, handleOriginal) => {
               if( column.id != 'isClosed' ) {
@@ -217,7 +224,8 @@ class UnitGroups extends React.Component<Props, State> {
         getTrProps={(state, rowInfo, column) => {
             return {
               style: {
-                cursor: 'pointer'
+                cursor: 'pointer',
+                'text-align': 'left'
               }
             }
         }}
@@ -230,8 +238,7 @@ class UnitGroups extends React.Component<Props, State> {
          }, {
            Header: 'Price',
            accessor: 'price'
-         },
-         {
+         }, {
             Header: 'Open From',
             accessor: 'opened'
           }, {
@@ -240,16 +247,16 @@ class UnitGroups extends React.Component<Props, State> {
           }, {
            Header: 'Capacity',
            accessor: 'capacity'
-         }, {
+          }, {
            Header: 'Pupils Registered',
            accessor: 'registeredPupils',
            Cell: row => {
-            const capacity = row.original['capacity'];
-            let percentage = 0;
-            if( row.value  && row.value > 0 ) {
-              percentage = row.value / capacity * 100;
-            }
-            //percentage += '%';
+
+              const capacity = row.original.capacity;
+              let percentage = 0;
+              if( row.original.registeredPupils && row.original.registeredPupils > 0 ) {
+                percentage = Math.round(row.value / capacity * 100);
+              }
 
              return (
                <div style={{
@@ -259,17 +266,17 @@ class UnitGroups extends React.Component<Props, State> {
                  borderRadius: '2px'
                }}>
                  <div style={{
-                     width: percentage, //`${row.value}%`,
-                     backgroundColor: row.value > 66 ? '#85cc00'
-                      : row.value > 33 ? '#ffbf00'
-                      : '#ff2e00',
+                     width: percentage,
+                     backgroundColor: percentage > 66 ? '#85cc00'
+                      : percentage > 33 ? '#ffbf00'
+                      : 'green',
                      height: '100%',
                      borderRadius: '2px',
                      transition: 'all .2s ease-out'
                    }}>
-                   32%
-                </div>
-              </div>)
+                   {percentage}%
+                 </div>
+               </div>)
            }
          }, {
             Header: 'Is Closed',
