@@ -14,12 +14,13 @@ POST https://us-central1-theta-1524876066401.cloudfunctions.net/api/pupil?secret
 <code>Body:</code>
 ```json
 {
- "groupSymbol": "4eb",
+ "groupSymbol": "4002",
  "name": "שוקי בנישתי",
  "pupilId": "013069488",
  "parentId": "013069480",
  "paymentApprovalNumber": "a1334vd",
  "phoneNumber": "0543307024",
+ "medicalLimitations": true,
  "whenRegistered": "07/07/2018"
 }
 ```
@@ -62,6 +63,7 @@ $request->setBody('{
  	"parentId": "013069480",
 	"paymentApprovalNumber": "a1334vd",
 	"phoneNumber": "0543307025",
+	"medicalLimitations": true,
 	"whenRegistered": "06/07/2018"
 }');
 
