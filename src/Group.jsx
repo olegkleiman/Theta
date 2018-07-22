@@ -155,14 +155,17 @@ class Group extends React.Component<{}, State> {
                   });
 
                   const pupilRecordId = data[cellInfo.index].recordId;
-                  await firebase.firestore().collection('units')
-                                  .doc(unitId).collection('groups')
-                                  .doc(groupId).collection('pupils')
-                                  .doc(pupilRecordId)
-                                  .update({
-                                    address: value
-                                  });
-
+                  try {
+                    await firebase.firestore().collection('units')
+                                    .doc(unitId).collection('groups')
+                                    .doc(groupId).collection('pupils')
+                                    .doc(pupilRecordId)
+                                    .update({
+                                      address: value
+                                    });
+                  } catch( err ) {
+                      console.error( err );
+                  }
                 }
               }}>
               {cellInfo.original.address}
