@@ -4,7 +4,7 @@ import { withRouter } from 'react-router-dom';
 import ReactTable from 'react-table';
 import moment from 'moment';
 import firebase from './firebase.js';
-import withAuth from './FirebaseAuth.jsx';
+import withAuth from './FirebaseAuth';
 
 type Props = {
   docId: String
@@ -67,13 +67,15 @@ class UnitGroups extends React.Component<Props, State> {
 
       if( isAllowed ) {
 
-        let _closedDate = ( data.closed ) ?
-                          moment.unix(data.closed.seconds).format('DD/MM/YYYY') :
-                          '<none>';
+        let _isClosed = data.isClosed;
 
         let _openedDate= ( data.opened ) ?
                       moment.unix(data.opened.seconds).format('DD/MM/YYYY') :
                       '<none>';
+
+        let _openedTillDate = ( data.openedTill ) ?
+                        moment.unix(data.openedTill.seconds).format('DD/MM/YYYY') :
+                        '<none>';
 
         let registeredPupils = ( data.registeredPupils ) ? data.registeredPupils : 0;
 
@@ -82,7 +84,8 @@ class UnitGroups extends React.Component<Props, State> {
           name: data.name,
           symbol: data.symbol,
           opened: _openedDate,
-          closed: _closedDate,
+          openedTill: _openedTillDate,
+          isClosed: _isClosed,
           price: data.price + ' NIS',
           capacity: data.capacity,
           registeredPupils: registeredPupils
@@ -90,8 +93,6 @@ class UnitGroups extends React.Component<Props, State> {
       }
 
     });
-
-    _groups
 
     this.setState({
       groups: _groups,
@@ -119,6 +120,33 @@ class UnitGroups extends React.Component<Props, State> {
       </div>);
   }
 
+  renderCheckable(cellInfo) {
+
+    const groupData = this.state.groups[cellInfo.index];
+    const _isClosed = groupData.isClosed;
+
+    return (
+      <div className='form-check'>
+        <label className='form-check-label'>
+          <input className='form-check-input'
+            type='checkbox'
+            className='checkbox'
+            checked={_isClosed}
+            onChange={ () => ::this.toggleIsClosed(cellInfo.index) }
+          />
+          <span className='form-check-sign'></span>
+       </label>
+     </div>)
+  }
+
+  toggleIsClosed(index) {
+    const groupData = this.state.groups[index];
+    groupData.isClosed = !groupData.isClosed;
+    this.setState({
+      groups: this.state.groups
+    })
+  }
+
   onRowSelected = (rowInfo) => {
 
     this.props.history.push(`/dashboard/group/${this.props.docId}/${rowInfo.original.id}`);
@@ -134,12 +162,23 @@ class UnitGroups extends React.Component<Props, State> {
         data={this.state.groups}
         noDataText={this.state.dataStatus}
         filterable
+        getTdProps= { (state, row, col, instance) => {
+          return {
+            onClick: (event, cb) => {
+              console.log(col.Header);
+            }
+          }
+        }}
         getTrProps={(state, rowInfo, column) => {
             return {
               onClick: (e, handleOriginal) => {
-                self.onRowSelected(rowInfo);
+                console.log(column);
+                //self.onRowSelected(rowInfo);
                 if( handleOriginal )
                   handleOriginal();
+              },
+              style: {
+                cursor: 'pointer'
               }
             }
         }}
@@ -150,16 +189,16 @@ class UnitGroups extends React.Component<Props, State> {
            Header: 'Symbol',
            accessor: 'symbol'
          }, {
-           Header: 'Opened From',
-           accessor: 'opened'
-         }, {
-           Header: 'Closed At',
-           accessor: 'closed',
-           Cell: ::this.renderEditable
-         }, {
            Header: 'Price',
            accessor: 'price'
-         }, {
+         },
+         {
+            Header: 'Open From',
+            accessor: 'opened'
+          }, {
+             Header: 'Open Till',
+             accessor: 'openedTill'
+          }, {
            Header: 'Capacity',
            accessor: 'capacity'
          }, {
@@ -193,7 +232,11 @@ class UnitGroups extends React.Component<Props, State> {
                 </div>
               </div>)
            }
-         }]}
+         }, {
+            Header: 'Is Closed',
+            accessor: 'isClosed',
+            Cell: ::this.renderCheckable
+        }, ]}
          >
      </ReactTable>
    )
