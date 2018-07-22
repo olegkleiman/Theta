@@ -1,6 +1,8 @@
 // flow
 import React from 'react';
-import { Button, Row, Col } from 'reactstrap';
+import { Button, Row, Col,
+         Card, CardBody
+} from 'reactstrap';
 import ReactTable from 'react-table';
 import moment from 'moment';
 import firebase from './firebase.js';
@@ -120,38 +122,40 @@ class Group extends React.Component<{}, State> {
         <div className='content container h-100'>
           <Row>
             <Col className='col-md-12'>
-              <div className='card'>
+              <Card>
                 <div className='card-header'>
                   <h5 className='title' dir='rtl'>{this.state.groupData.name}({this.state.groupData.symbol})</h5>
                   <h6>Capacity: {this.state.groupData.capacity} pupils</h6>
                 </div>
-                <div className='card-body'>
+                <CardBody>
                   <Row>
-                    <ReactTable
-                      className="-striped -highlight tableInCard"
-                      data={this.state.pupils}
-                      noDataText="Loading..."
-                      filterable
-                      columns={[{
-                        Header: 'Name',
-                        accessor: 'name'
-                      }, {
-                        Header: 'ID',
-                        accessor: 'id'
-                      }, {
-                        Header: 'Phone number',
-                        accessor: 'phoneNumber'
-                      }, {
-                        Header: 'Birthdday',
-                        accessor: 'birthDay'
-                      },{
-                        Header: 'When Registered',
-                        accessor: 'whenRegistered'
-                      }]}>
-                    </ReactTable>
+                    <Col md='12'>
+                      <ReactTable
+                        className="-striped -highlight tableInCard"
+                        data={this.state.pupils}
+                        noDataText="Loading..."
+                        filterable
+                        columns={[{
+                          Header: 'Name',
+                          accessor: 'name'
+                        }, {
+                          Header: 'ID',
+                          accessor: 'id'
+                        }, {
+                          Header: 'Phone number',
+                          accessor: 'phoneNumber'
+                        }, {
+                          Header: 'Birthdday',
+                          accessor: 'birthDay'
+                        },{
+                          Header: 'When Registered',
+                          accessor: 'whenRegistered'
+                        }]}>
+                      </ReactTable>
+                    </Col>
                   </Row>
-                </div>
-              </div>
+                </CardBody>
+              </Card>
             </Col>
           </Row>
         </div>
