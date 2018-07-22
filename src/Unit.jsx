@@ -3,15 +3,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import firebase from './firebase.js';
-import {
-  Button,
-  Row,
-  Col,
-  Input,
-  Dropdown,
-  DropdownToggle,
-  DropdownMenu,
-  DropdownItem
+import { Button, Row, Col, Input,
+  Dropdown, DropdownToggle, DropdownMenu, DropdownItem
 } from 'reactstrap';
 
 import UnitUpdates from './UnitUpdates';
