@@ -136,8 +136,11 @@ class Group extends React.Component<{}, State> {
 
   }
 
-  async handleNameChange(cellInfo, e) {
+  async handleUpdate(cellInfo, e) {
     if( e.key === 'Enter' || e.type === 'blur') {
+
+      e.preventDefault();
+
       const value = e.target.innerHTML;
 
       if( value ) {
@@ -154,13 +157,16 @@ class Group extends React.Component<{}, State> {
         const pupilRecordId = data[cellInfo.index].recordId;
 
         try {
+
+          let json = {};
+          const updateField = cellInfo.column.id;
+          json[updateField] = value;
+
           await firebase.firestore().collection('units')
                           .doc(unitId).collection('groups')
                           .doc(groupId).collection('pupils')
                           .doc(pupilRecordId)
-                          .update({
-                            name: value
-                          });
+                          .update(json);
         } catch( err ) {
             console.error( err );
         }
@@ -168,51 +174,16 @@ class Group extends React.Component<{}, State> {
     }
   }
 
-  renderEditableName(cellInfo) {
+  renderEditable(cellInfo, value) {
     return (
       <div
         style={{ backgroundColor: "#fafafa" }}
         contentEditable
-        onKeyDown={ e => ::this.handleNameChange(cellInfo, e) }
-        onBlur={ e => ::this.handleNameChange(cellInfo, e) }>
-        {cellInfo.original.name}
+        suppressContentEditableWarning
+        onKeyDown={ e => ::this.handleUpdate(cellInfo, e) }
+        onBlur={ e => ::this.handleUpdate(cellInfo, e) }>
+        {value}
       </div>)
-  }
-
-  renderEditableAddress(cellInfo) {
-    return (<div
-              style={{ backgroundColor: "#fafafa" }}
-              contentEditable
-              onBlur={ async(e) => {
-                const value = e.target.innerHTML;
-
-                if( value ) {
-
-                  const groupId = this.props.match.params.groupid;
-                  const unitId = this.props.match.params.unitid;
-
-                  const data = [...this.state.pupils];
-                  data[cellInfo.index][cellInfo.column.id] = value;
-                  this.setState({
-                    pupils: data
-                  });
-
-                  const pupilRecordId = data[cellInfo.index].recordId;
-                  try {
-                    await firebase.firestore().collection('units')
-                                    .doc(unitId).collection('groups')
-                                    .doc(groupId).collection('pupils')
-                                    .doc(pupilRecordId)
-                                    .update({
-                                      address: value
-                                    });
-                  } catch( err ) {
-                      console.error( err );
-                  }
-                }
-              }}>
-              {cellInfo.original.address}
-            </div>)
   }
 
   render() {
@@ -244,7 +215,7 @@ class Group extends React.Component<{}, State> {
                         columns={[{
                           Header: 'Name',
                           accessor: 'name',
-                          Cell: ::this.renderEditableName
+                          Cell: cellInfo => ::this.renderEditable(cellInfo, cellInfo.original.name)
                         }, {
                           Header: 'ID',
                           accessor: 'id'
@@ -263,7 +234,7 @@ class Group extends React.Component<{}, State> {
                         }, {
                           Header: 'Address',
                           accessor: 'address',
-                          Cell: ::this.renderEditableAddress
+                          Cell: cellInfo => ::this.renderEditable(cellInfo, cellInfo.original.address)
                         }]}>
                       </ReactTable>
                     </Col>
