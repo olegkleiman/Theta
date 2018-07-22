@@ -14,13 +14,15 @@ class Pupil {
   birthDay: String;
   whenRegistered: Timestamp;
 
-  constructor(name: String,
+  constructor(recordId: String,
+              name: String,
               id: String,
               phoneNumber: String,
               birthDay: String,
               whenRegistered: Timestamp,
               parentId: String,
               address: String) {
+    this.recordId = recordId;
     this.name = name;
     this.id = id;
     this.phoneNumber = phoneNumber;
@@ -99,10 +101,11 @@ class Group extends React.Component<{}, State> {
                       .get(getOptions);
 
       const _pupils = [];
-      response.docs.forEach( (pupil) => {
+      response.docs.forEach( (pupilDoc) => {
 
-        const pupilData = pupil.data();
-        const _pupil = new Pupil(pupilData.name,
+        const pupilData = pupilDoc.data();
+        const _pupil = new Pupil(pupilDoc.id,
+                                 pupilData.name,
                                  pupilData.pupilId,
                                  pupilData.phoneNumber,
                                  pupilData.birthDay,
@@ -129,17 +132,40 @@ class Group extends React.Component<{}, State> {
 
   }
 
+  exportExcel() {
+
+  }
+
   renderEditable(cellInfo) {
     return (<div
               style={{ backgroundColor: "#fafafa" }}
               contentEditable
-              onBlur={e => {
+              onBlur={ async(e) => {
                 const value = e.target.innerHTML;
                 console.log(value);
+
+                const groupId = this.props.match.params.groupid;
+                const unitId = this.props.match.params.unitid;
+
                 if( value ) {
+                  const data = [...this.state.pupils];
+                  data[cellInfo.index][cellInfo.column.id] = value;
+                  this.setState({
+                    pupils: data
+                  });
+
+                  const pupilRecordId = data[cellInfo.index].recordId;
+                  await firebase.firestore().collection('units')
+                                  .doc(unitId).collection('groups')
+                                  .doc(groupId).collection('pupils')
+                                  .doc(pupilRecordId)
+                                  .update({
+                                    address: value
+                                  });
+
                 }
               }}>
-
+              {cellInfo.original.address}
             </div>)
   }
 
@@ -156,6 +182,12 @@ class Group extends React.Component<{}, State> {
                   <h6>Capacity: {this.state.groupData.capacity} pupils</h6>
                 </div>
                 <CardBody>
+                  <Row>
+                    <Col md='12' className="text-right my-auto">
+                      <Button color='primary'
+                              onClick={::this.exportExcel}>Excel</Button>
+                    </Col>
+                  </Row>
                   <Row>
                     <Col md='12'>
                       <ReactTable
