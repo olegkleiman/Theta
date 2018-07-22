@@ -3,6 +3,7 @@ import React from 'react';
 import { withRouter } from 'react-router-dom';
 import ReactTable from 'react-table';
 import moment from 'moment';
+import http from 'http';
 import firebase from './firebase.js';
 import withAuth from './FirebaseAuth';
 
@@ -155,6 +156,9 @@ class UnitGroups extends React.Component<Props, State> {
       groups: this.state.groups
     })
 
+    let rishumonStatus = ( groupData.isClosed  ) ? "1" : "4"; // Statuses: 1 - Open
+                                                              //           4 - Close
+
     try {
       await firebase.firestore().collection('units')
                       .doc(this.props.docId).collection('groups')
@@ -162,6 +166,24 @@ class UnitGroups extends React.Component<Props, State> {
                       .update({
                         isClosed: groupData.isClosed
                       });
+
+      let headers = new Headers();
+      headers.append('Authorization', 'Basic ZWxhbXlhbjExNTplbGFteWFuMTE1');
+      headers.append('Content-Type', 'application/json');
+      headers.append('Access-Control-Allow-Origin', '*');
+
+      await fetch('http://rishumon.com/api/elamayn/edit_class.php', {
+        mode: 'cors',
+        headers: headers,
+        method: 'POST',
+        body: JSON.stringify({
+        	"groupSymbol": groupData.symbol,
+        	"description": groupData.name,
+        	"status": rishumonStatus,
+        	"price": groupData.price
+        })
+      })
+
     } catch( err ) {
       console.log(err);
     }
