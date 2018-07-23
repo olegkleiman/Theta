@@ -170,11 +170,10 @@ class UnitGroups extends React.Component<Props, State> {
       let headers = new Headers();
       headers.append('Authorization', 'Basic ZWxhbXlhbjExNTplbGFteWFuMTE1');
       headers.append('Content-Type', 'application/json');
-      //headers.append('Access-Control-Allow-Origin', '*');
 
-      await fetch('http://rishumon.com/api/elamayn/edit_class.php', {
-        //mode: 'cors',
-        headers: headers,
+      await fetch('https://rishumon.com/api/elamayn/edit_class.php?secret=Day1!', {
+        mode: 'no-cors',
+        //headers: headers,
         method: 'POST',
         body: JSON.stringify({
         	"groupSymbol": groupData.symbol,
@@ -208,7 +207,7 @@ class UnitGroups extends React.Component<Props, State> {
         getTheadThProps = { () => {
           return {
             style: {
-              'text-align': 'left'
+              'textAlign': 'left'
             }
           }
         }}
@@ -225,7 +224,7 @@ class UnitGroups extends React.Component<Props, State> {
             return {
               style: {
                 cursor: 'pointer',
-                'text-align': 'left'
+                'textAlign': 'left'
               }
             }
         }}
