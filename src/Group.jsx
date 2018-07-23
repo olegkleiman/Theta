@@ -133,19 +133,19 @@ class Group extends React.Component<{}, State> {
                       noDataText="Loading..."
                       filterable
                       columns={[{
-                        Header: 'Name',
+                        Header: 'שם',
                         accessor: 'name'
                       }, {
-                        Header: 'ID',
+                        Header: 'תעודת זהות',
                         accessor: 'id'
                       }, {
-                        Header: 'Phone number',
+                        Header: 'טלפון',
                         accessor: 'phoneNumber'
                       }, {
-                        Header: 'Birthdday',
+                        Header: 'תאריך לידה',
                         accessor: 'birthDay'
                       },{
-                        Header: 'When Registered',
+                        Header: 'תאריך הרשמה',
                         accessor: 'whenRegistered'
                       }]}>
                     </ReactTable>

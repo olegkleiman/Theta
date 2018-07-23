@@ -82,7 +82,7 @@ class Models extends React.Component<Props, State> {
 
  render() {
 
-    const dropdownTitle = this.state.selectedModel.modelNumber == '' ? 'Select Model'
+    const dropdownTitle = this.state.selectedModel.modelNumber == '' ? 'בוחר מודל'
                                                           : this.state.selectedModel.modelNumber;
     let model = this.state.selectedModel.modelNumber == '' ? null
                 : <Model docId={this.state.selectedModel.id} />
@@ -94,7 +94,7 @@ class Models extends React.Component<Props, State> {
                   <div className='col col-md-12'>
                     <div className='card'>
                       <div className='card-header'>
-                        <h5 className='title'>Models</h5>
+                        <h5 className='title'>מודלים</h5>
                       </div>
                       <div className='card-body'>
                         <Row>

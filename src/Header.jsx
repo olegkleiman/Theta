@@ -86,7 +86,7 @@ class Header extends React.Component {
                               <DropdownToggle caret nav>
                                   <i className="now-ui-icons users_single-02"></i>
                                   <p>
-                                    <span className="d-md-block">Account</span>
+                                    <span className="d-md-block">חשבון</span>
                                   </p>
                               </DropdownToggle>
                               <DropdownMenu right>
@@ -96,7 +96,7 @@ class Header extends React.Component {
                                           <img src={this.props.userPictureUrl} className='rounded' width='32px' height='32px' />
                                       </Col>
                                       <Col md='7'>
-                                          <div className='navbar-text'>Log Out</div>
+                                          <div className='navbar-text'>התנתקות</div>
                                       </Col>
                                     </Row>
                                   </DropdownItem>

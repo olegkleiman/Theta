@@ -78,21 +78,21 @@ class Model extends React.Component<Props, State> {
           <div className='card-body'>
               <Row>
                 <Col>
-                  <label className='form-control-label'>Number</label>
+                  <label className='form-control-label'>מספר</label>
                   <Input type='text' value={this.state.docData.number} disabled />
                 </Col>
                 <Col>
-                  <label className='form-control-label'>Education type</label>
+                  <label className='form-control-label'>סוג חינוך</label>
                   <Input type='text' value={this.state.docData.education_type} />
                 </Col>
                 <Col>
-                  <label className='form-control-label'>Institution Type</label>
+                  <label className='form-control-label'>סוג מוסד</label>
                   <Input type='text' value={this.state.docData.institution_type} />
                 </Col>
               </Row>
               <Row>
                 <Col>
-                  <label className='form-control-label'>Status</label>
+                  <label className='form-control-label'>מצב נוכחי</label>
                   <Input type='text' value={this.state.docData.status} />
                 </Col>
               </Row>

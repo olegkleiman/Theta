@@ -61,7 +61,7 @@ class Dashboard extends React.Component<Props, State> {
 
                     if( response.docs.length == 0 ) {
                       self.setState({
-                        error: 'The presented credentials are not known to the system'
+                        error: 'לצערנו אין לך הרשאות גישה למערכת'
                       });
                     }
 

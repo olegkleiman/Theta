@@ -102,7 +102,7 @@ class Units extends React.Component<Props, State> {
       'disabled': this.state.selectedUnit.name == ''
     });
 
-    const dropdownTitle = this.state.selectedUnit.name == '' ? 'Select Unit'
+    const dropdownTitle = this.state.selectedUnit.name == '' ? 'בחר מוסד'
                                                           : this.state.selectedUnit.name;
 
     let unit = this.state.selectedUnit.id == '' ? null
@@ -123,16 +123,16 @@ class Units extends React.Component<Props, State> {
     // }];
 
     const columns = [{
-      Header: 'ID',
+      Header: 'מזהה',
       accessor: 'id'
     },{
-      Header: 'Name',
+      Header: 'שם',
       accessor: 'name'
     }, {
-      Header: 'Symbol',
+      Header: 'סמל',
       accessor: 'symbol',
     }, {
-      Header: 'Concessionaire',
+      Header: 'זכיין',
       accessor: 'concessionaire'
     }];
 
@@ -143,7 +143,7 @@ class Units extends React.Component<Props, State> {
                   <div className='col col-md-12'>
                     <div className='card'>
                       <div className='card-header'>
-                        <h5 className='title'>Units Management</h5>
+                        <h5 className='title'>ניהול מוסדות</h5>
                       </div>
                       <div className='card-body'>
                         <Row>
@@ -160,7 +160,7 @@ class Units extends React.Component<Props, State> {
                                   }
                               }}
                               data={this.state.units}
-                              noDataText="Loading..."
+                              noDataText="טוען נתונים..."
                               columns={columns}
                               minRows={5}
                               showPagination={false}

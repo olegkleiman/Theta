@@ -40,7 +40,7 @@ class UserList extends React.PureComponent {
          { name: 'first_name', title: 'שם פרטי' },
          { name: 'last_name', title: 'שם משפחה' },
          { name: 'role', title: 'תפקיד' },
-         { name: 'email', title: 'אי-מייל' },
+         { name: 'email', title: 'מייל' },
        ],
        //rows: _rows,
        users: [],

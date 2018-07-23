@@ -106,7 +106,7 @@ class Groups extends React.Component<Props, State> {
                               }
                           }}
                           data={this.state.groups}
-                          noDataText="Loading..."
+                          noDataText="טוען נתונים..."
                           columns={columns}/>
                       </div>
                     </div>

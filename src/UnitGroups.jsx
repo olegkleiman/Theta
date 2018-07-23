@@ -70,7 +70,7 @@ class UnitGroups extends React.Component<Props, State> {
           symbol: data.symbol,
           opened: _openedDate,
           closed: _closedDate,
-          price: data.price + ' NIS',
+          price: data.price + ' ש"ח',
           capacity: data.capacity,
           registeredPupils: registeredPupils
         });
@@ -114,7 +114,7 @@ class UnitGroups extends React.Component<Props, State> {
       <ReactTable
         className="-striped -highlight tableInCard"
         data={this.state.groups}
-        noDataText="Loading..."
+        noDataText="טוען נתונים..."
         filterable
         getTrProps={(state, rowInfo, column) => {
             return {
@@ -126,26 +126,26 @@ class UnitGroups extends React.Component<Props, State> {
             }
         }}
         columns={[{
-           Header: 'Name',
+           Header: 'שם',
            accessor: 'name'
          }, {
-           Header: 'Symbol',
+           Header: 'סמל',
            accessor: 'symbol'
          }, {
-           Header: 'Opened From',
+           Header: 'תאריך פתיחה',
            accessor: 'opened'
          }, {
-           Header: 'Closed At',
+           Header: 'תאריך סגירה',
            accessor: 'closed',
            Cell: ::this.renderEditable
          }, {
-           Header: 'Price',
+           Header: 'מחיר הרשמה',
            accessor: 'price'
          }, {
            Header: 'Capacity',
            accessor: 'capacity'
          }, {
-           Header: 'Pupils Registered',
+           Header: 'תלמידים רשומים',
            accessor: 'registeredPupils',
            Cell: row => {
             const capacity = row.original['capacity'];

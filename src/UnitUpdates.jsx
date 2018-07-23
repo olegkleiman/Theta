@@ -48,10 +48,10 @@ class UnitUpdates extends React.Component<Props, State> {
 
   state = {
     columns: [
-      { name: 'update_date', title: 'update date' },
-      { name: 'pupils', title: 'students' },
-      { name: 'pupils_special', title: 'special students'},
-      { name: 'places', title: 'places' }
+      { name: 'update_date', title: 'תאריך עדכון' },
+      { name: 'pupils', title: 'תלמידים' },
+      { name: 'pupils_special', title: 'תלמידים חינוך מיוחד'},
+      { name: 'places', title: 'מקומות' }
     ],
     //rows: _rows,
     updates: [],
