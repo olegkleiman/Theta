@@ -160,7 +160,7 @@ class Units extends React.Component<{}, State> {
                               getTheadThProps = { () => {
                                 return {
                                   style: {
-                                    'text-align': 'left'
+                                    'textAlign': 'left'
                                   }
                                 }
                               }}
