@@ -60,13 +60,17 @@ class Dashboard extends React.Component<Props, State> {
                 .then( response => {
 
                     if( response.docs.length == 0 ) {
-                      self.setState({
-                        error: 'The presented credentials are not known to the system'
-                      });
-                    }
 
-                    const docSnapshot = response.docs[0];
-                    return docSnapshot.data().role;
+                      firebase.auth().signOut();
+
+                      throw new Error(`No user with email ${email} is registered`);
+
+                    } else {
+
+                      const docSnapshot = response.docs[0];
+                      return docSnapshot.data().role;
+
+                    }
                 })
                 .then( role => {
                     // get allowed routes for the found role
@@ -90,7 +94,16 @@ class Dashboard extends React.Component<Props, State> {
 
                     })
 
+                })
+                .catch( err => {
+                  console.log(err);
                 });
+
+      }
+      else {
+
+        firebase.auth().signOut();
+        self.props.history.push('/logout');
 
       }
     });
