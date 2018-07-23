@@ -8,25 +8,22 @@ import Datetime from 'react-datetime';
 import 'react-datetime/css/react-datetime.css';
 import moment from 'moment';
 import _ from 'moment/locale/he';
+import classNames from 'classnames';
 import firebase from './firebase.js';
 import withAuth from './FirebaseAuth';
 
 type State = {
   unitName: String,
   fromDate: moment,
-  tillDate: moment
+  tillDate: moment,
+  invalidField: String
 }
 
 class AddGroup extends React.Component<{}, State> {
 
   state = {
-    unitName: ''
-  }
-
-  constructor(props) {
-
-    super(props);
-
+    unitName: '',
+    invalidField: ''
   }
 
   async componentDidMount() {
@@ -73,24 +70,34 @@ class AddGroup extends React.Component<{}, State> {
     const unitId = this.props.match.params.unitid;
 
     if( moment(group.opened).isAfter(moment(group.openedTill)) ) {
-      return false;
+      group.validated = false;
+      group.invalidField = 'openedTill';
+      return group;
     }
 
     return new Promise( (resolve, reject) => {
 
-      firebase.firestore().collection('units')
-                  .doc(unitId).collection('groups')
-                  .where('symbol', '==', group.symbol)
-                  .get()
-                  .then( query => {
+      try {
+        firebase.firestore().collection('units')
+                    .doc(unitId).collection('groups')
+                    .where('symbol', '==', group.symbol)
+                    .get()
+                    .then( query => {
 
-                    if( query.docs.length > 0 ) {
-                      resolve(false)
-                    } else {
-                      reject()
-                    }
+                      if( query.docs.length > 0 ) {
+                        group.validated = false;
+                        group.invalidField = 'symbol';
+                        resolve(group)
+                      } else {
+                        group.validated = true;
+                        resolve(group)
+                      }
 
-                  })
+                    })
+
+      } catch( err ) {
+        reject(err);
+      }
 
     })
 
@@ -110,14 +117,23 @@ class AddGroup extends React.Component<{}, State> {
       sec_role: `group_${event.target.symbol.value}`
     }
 
-    const validated = await ::this.validateGroup(group)
-    console.log(validated);
-    if( !validated )
-      return;
-
-    const unitId = this.props.match.params.unitid;
-
     try {
+
+      const _group = await ::this.validateGroup(group)
+      if( !_group.validated ) {
+
+        this.setState({
+          invalidField: group.invalidField
+        },
+        () => {
+                console.log('Form is invalid.');
+        });
+
+        return;
+      }
+
+      const unitId = this.props.match.params.unitid;
+
       // Add new group to Firestore
       const doc = await firebase.firestore().collection('units')
                       .doc(unitId).collection('groups')
@@ -138,27 +154,32 @@ class AddGroup extends React.Component<{}, State> {
                  sec_roles: secRoles
               })
 
-              // 1 - Open
-              // 2 - Till date was expired
-              // 3 - Groups is full
-              // 4 - Close
+        // Statuses of newly created group for Rishumon
+        // 1 - Open
+        // 2 - Till date was expired
+        // 3 - Group is full
+        // 4 - Close
 
-              // return fetch('http://rishumon.com/api/elamayn/edit_class.php', {
-              //   method: 'POST',
-              //   body:
-              //       {
-              //       	"groupSymbol": group.symbol,
-              //       	"description": group.name,
-              //       	"status": "1",
-              //       	"price": group.price
-              //   }
-              // })
+        let headers = new Headers();
+        headers.append('Authorization', 'Basic ZWxhbXlhbjExNTplbGFteWFuMTE1');
+        headers.append('Content-Type', 'application/json');
+
+        await fetch('https://rishumon.com/api/elamayn/edit_class.php?secret=Day1!', {
+          //headers: headers,
+          mode: 'no-cors',
+          method: 'POST',
+          body:
+              {
+              	"groupSymbol": group.symbol,
+              	"description": group.name,
+              	"status": "1",
+              	"price": group.price
+          }
+        })
 
         this.props.history.push(`/dashboard/units`);
 
       }
-
-
 
     } catch( err ) {
       console.error(err);
@@ -167,6 +188,23 @@ class AddGroup extends React.Component<{}, State> {
   }
 
   render() {
+
+    let isThisField = this.state.invalidField === 'symbol';
+    const groupSymbolClassNames = classNames({
+      'text-left my-auto' : true,
+      'text-danger': isThisField,
+      'visible': isThisField,
+      'invisible': !isThisField
+    });
+
+    isThisField = this.state.invalidField === 'openedTill';
+    const tillClassNames = classNames({
+      'text-left my-auto' : true,
+      'text-danger': isThisField,
+      'visible': isThisField,
+      'invisible': !isThisField
+    });
+
     return (<div>
       <div className='panel-header panel-header-sm'></div>
       <div className='content container h-100'>
@@ -186,7 +224,7 @@ class AddGroup extends React.Component<{}, State> {
                               <div className='info-text'>Group Name</div>
                             </Col>
                             <Col md={{ size: 4 }}>
-                              <Input invalid id='groupName' name='groupName'></Input>
+                              <Input id='groupName' name='groupName'></Input>
                             </Col>
                           </Row>
                           <br />
@@ -197,6 +235,10 @@ class AddGroup extends React.Component<{}, State> {
                             <Col md='4'>
                                 <Input id='symbol' name='symbol'
                                         type='number' placeholder="only numbers" />
+                            </Col>
+                            <Col md='4' invalid={(this.state.invalidField === 'symbol').toString()}
+                              className={groupSymbolClassNames}>
+                              Group with this symbol is already exists
                             </Col>
                           </Row>
                           <br />
@@ -219,6 +261,10 @@ class AddGroup extends React.Component<{}, State> {
                               <Datetime closeOnSelect={true}
                                         onChange={::this._tillDateChanged}
                                         local='he' />
+                            </Col>
+                            <Col md='4' invlalid={(this.state.invalidField === 'openedTill').toString()}
+                                className={tillClassNames}>
+                              No time left to enjoy this group :)
                             </Col>
                           </Row>
                           <br />
