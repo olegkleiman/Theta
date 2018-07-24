@@ -212,7 +212,7 @@ class AddGroup extends React.Component<{}, State> {
           <Col className='col-md-12'>
             <Card body className="text-center">
               <div className='card-header'>
-                <h5 className='title'>Create new Group for {this.state.unitName}</h5>
+                <h5 className='title'>כיתה חדשה ל {this.state.unitName}</h5>
               </div>
               <CardBody>
                 <Card>
@@ -221,7 +221,7 @@ class AddGroup extends React.Component<{}, State> {
                         <Container>
                           <Row>
                             <Col md={{ size: 2, offset: 2 }} className="text-right my-auto">
-                              <div className='info-text'>Group Name</div>
+                              <div className='info-text'>שם כיתה</div>
                             </Col>
                             <Col md={{ size: 4 }}>
                               <Input id='groupName' name='groupName'></Input>
@@ -230,11 +230,11 @@ class AddGroup extends React.Component<{}, State> {
                           <br />
                           <Row>
                             <Col md={{ size: 2, offset: 2 }} className="text-right my-auto">
-                              Symbol
+                              סמל
                             </Col>
                             <Col md='4'>
                                 <Input id='symbol' name='symbol'
-                                        type='number' placeholder="only numbers" />
+                                        type='number' placeholder="רק מספרים שלמים" />
                             </Col>
                             <Col md='4' invalid={(this.state.invalidField === 'symbol').toString()}
                               className={groupSymbolClassNames}>
@@ -244,22 +244,24 @@ class AddGroup extends React.Component<{}, State> {
                           <br />
                           <Row>
                             <Col md={{ size: 2, offset: 2 }} className="text-right my-auto">
-                              Opened From
+                              נפתח בתאריך
                             </Col>
                             <Col md='4'>
                               <Datetime closeOnSelect={true}
                                         onChange={::this._fromDateChanged}
+                                        timeFormat={false}
                                         local='he' />
                             </Col>
                           </Row>
                           <br />
                           <Row>
                             <Col md={{ size: 2, offset: 2}} className="text-right my-auto">
-                              Opened Till
+                              פעיל עד תאריך
                             </Col>
                             <Col md='4'>
                               <Datetime closeOnSelect={true}
                                         onChange={::this._tillDateChanged}
+                                        timeFormat={false}
                                         local='he' />
                             </Col>
                             <Col md='4' invlalid={(this.state.invalidField === 'openedTill').toString()}
@@ -270,32 +272,35 @@ class AddGroup extends React.Component<{}, State> {
                           <br />
                           <Row>
                             <Col md={{ size: 2, offset: 2 }} className="text-right my-auto">
-                              Capacity
+                              כמות מקומות
                             </Col>
                             <Col md='4'>
                               <Input id='groupCapacity' name='groupCapacity'
-                                     type='number' placeholder="only numbers" />
+                                     type='number' placeholder="רק מספרים שלמים" />
                             </Col>
                           </Row>
                           <br />
                           <Row>
                             <Col md={{ size: 2, offset: 2 }} className="text-right my-auto">
-                              Price
+                              מחיר
                             </Col>
                             <Col md='4'>
                               <InputGroup>
                                 <Input id='price' name='price'
                                        type='number'
-                                       placeholder="only numbers as money, e.g. 670, 670.65" />
+                                       placeholder="מספרים כמחיר, כמו 650.40, 510" />
                                 <InputGroupAddon addonType="append">₪</InputGroupAddon>
                               </InputGroup>
                             </Col>
                           </Row>
                           <Row>
                             <Col md={{ size: 1, offset: 10}}>
-                              <Button type="submit" color='primary'>Create</Button>
+                              <Button type="submit" color='primary'>הוסף</Button>
                             </Col>
                           </Row>
+                          <br/>
+                          <br/>
+                          <br/>
                         </Container>
                       </Form>
                     </CardBody>
