@@ -164,38 +164,38 @@ class Unit extends React.Component<Props, State> {
                   <div className='tab-content text-center'>
                     <div id='general' className='tab-pane active' role='tabpanel'>
                       <Row>
-                        <Col>
+                        <Col className='text-left'>
                           <label className='form-control-label'>שם</label>
                           <Input type='text' value={this.state.docData.name_he} />
                         </Col>
-                        <Col>
+                        <Col className='text-left'>
                           <label className='form-control-label'>רשות</label>
                           <Input type='text' value={this.state.docData.authority} />
                         </Col>
-                        <Col>
+                        <Col className='text-left'>
                           <label className='form-control-label'>זכיין</label>
                           <Input type='text' value={this.state.docData.concessionaire} />
                         </Col>
-                        <Col>
-                          <label className='form-control-label'>מל</label>
+                        <Col className='text-left'>
+                          <label className='form-control-label'>סמל</label>
                           <Input type='text' value={this.state.docData.symbol} />
                         </Col>
                       </Row>
                       <Row>
-                        <Col xs='2'>
+                        <Col xs='2' className='text-left'>>
                           <label className='form-control-label'>סוג</label>
                           <Input type='text' value={this.state.docData.type} />
                         </Col>
-                        <Col xs='3'>
+                        <Col xs='3' className='text-left'>>
                           <label className='form-control-label'>סוג חינוך</label>
                           <Input type='text' value={this.state.docData.education_type} />
                         </Col>
-                        <Col xs='3'>
-                          <label className='form-control-label'>אישור יוח"א"</label>
+                        <Col xs='3' className='text-left'>
+                          <label className='form-control-label'>אישור יוח"א</label>
                           <Input type='radio' checked readOnly value={this.state.docData.long_day_permit}
                                 className='form-control'/>
                         </Col>
-                        <Col xs='4'>
+                        <Col xs='4' className='text-left'>
                           <label className='form-control-label'>סטאטוס</label>
                           <Input type='text' value={this.state.docData.status} />
                         </Col>
