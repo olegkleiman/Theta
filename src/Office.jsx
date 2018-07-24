@@ -34,7 +34,7 @@ class Office extends React.Component<Props, State>  {
       .then( response => {
 
         response.docs.forEach( (activity) => {
-          if( activity.data().name === 'Office' ) {
+          if( activity.data().name === 'משרד' ) {
 
             const subActivities = [];
 
