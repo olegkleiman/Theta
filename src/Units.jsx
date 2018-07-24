@@ -31,7 +31,7 @@ class Units extends React.Component<{}, State> {
     },
     selectedRowIndex: -1,
     dropdownOpen: false,
-    dataStatus: 'Loading...'
+    dataStatus: 'טוען נתונים...'
   };
 
   toggle() {
@@ -116,16 +116,16 @@ class Units extends React.Component<{}, State> {
     const self = this;
 
     const columns = [{
-      Header: 'ID',
+      Header: 'מזהה',
       accessor: 'id'
     },{
-      Header: 'Name',
+      Header: 'שם',
       accessor: 'name'
     }, {
-      Header: 'Symbol',
+      Header: 'סמל',
       accessor: 'symbol',
     }, {
-      Header: 'Concessionaire',
+      Header: 'זכיין',
       accessor: 'concessionaire'
     }];
 
@@ -136,7 +136,7 @@ class Units extends React.Component<{}, State> {
                   <div className='col col-md-12'>
                     <div className='card'>
                       <div className='card-header'>
-                        <h5 className='title'>Units Management</h5>
+                        <h5 className='title'>ניהול מוסדות</h5>
                       </div>
                       <div className='card-body'>
                         <Row>
@@ -153,14 +153,14 @@ class Units extends React.Component<{}, State> {
                                     style: {
                                       background: rowInfo && rowInfo.index === this.state.selectedRowIndex ?
                                                   'rgba(0,0,0,0.05)' : 'white',
-                                      cursor: 'pointer'
+                                      cursor: 'pointer',
                                     }
                                   }
                               }}
                               getTheadThProps = { () => {
                                 return {
                                   style: {
-                                    'textAlign': 'left'
+                                    'textAlign': 'right'
                                   }
                                 }
                               }}
