@@ -10,13 +10,13 @@ class Logout extends React.Component {
     return (
       <Card>
         <CardTitle className='text-center'>
-          Your credentials are unknown to the system.
+          לצערנו אין לך הרשאות גישה למערכת
         </CardTitle>
         <CardBody>
           <Container>
             <Row>
               <Col md='12' className='text-center'>
-                <a href='/login'>Try with different credentials</a>
+                <a href='/login'>נסה כמשתמש אחר</a>
               </Col>
             </Row>
 
