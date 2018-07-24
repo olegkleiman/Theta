@@ -30,7 +30,7 @@ class UnitGroups extends React.Component<Props, State> {
 
   state = {
     groups: [],
-    dataStatus: 'Loading...'
+    dataStatus: 'טוען נתונים...'
   }
 
   constructor(props) {
@@ -229,25 +229,25 @@ class UnitGroups extends React.Component<Props, State> {
             }
         }}
         columns={[{
-           Header: 'Name',
+           Header: 'שם',
            accessor: 'name'
          }, {
-           Header: 'Symbol',
+           Header: 'סמל',
            accessor: 'symbol'
          }, {
-           Header: 'Price',
+           Header: 'מחיר',
            accessor: 'price'
          }, {
-            Header: 'Open From',
+            Header: 'תאריך פתיחה',
             accessor: 'opened'
           }, {
-             Header: 'Open Till',
+             Header: 'תאריך סגירה',
              accessor: 'openedTill'
           }, {
-           Header: 'Capacity',
+           Header: 'כמות מקומות',
            accessor: 'capacity'
           }, {
-           Header: 'Pupils Registered',
+           Header: 'תלמידים רשומים',
            accessor: 'registeredPupils',
            Cell: row => {
 
@@ -278,7 +278,7 @@ class UnitGroups extends React.Component<Props, State> {
                </div>)
            }
          }, {
-            Header: 'Is Closed',
+            Header: 'כיתה סגורה',
             accessor: 'isClosed',
             Cell: ::this.renderCheckable
         }, ]}
