@@ -207,7 +207,7 @@ class UnitGroups extends React.Component<Props, State> {
         getTheadThProps = { () => {
           return {
             style: {
-              'textAlign': 'left'
+              'textAlign': 'right'
             }
           }
         }}
@@ -217,6 +217,9 @@ class UnitGroups extends React.Component<Props, State> {
               if( column.id != 'isClosed' ) {
                 self.onRowSelected(rowInfo);
               }
+            },
+            style: {
+              'textAlign': 'right'
             }
           }
         }}
