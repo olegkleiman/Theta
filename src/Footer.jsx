@@ -9,7 +9,7 @@ const Footer = (props) => {
       <Container fluid={props.fluid ? true:false}>
         <nav>
           <ul>
-            <li>About Us</li>
+            <li>אודותינו</li>
           </ul>
         </nav>
         <div className="copyright">
