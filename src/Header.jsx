@@ -1,40 +1,27 @@
+// flow
 import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import {
-  Container,
-  Row,
-  Col,
-  Navbar,
-  NavItem,
-  NavbarBrand,
-  NavbarToggler,
+  Container, Row, Col,
+  Nav, Navbar, NavItem, NavbarBrand, NavbarToggler,
   Collapse,
-  Nav,
-  NavLink,
-  Dropdown,
-  DropdownToggle,
-  DropdownMenu,
-  DropdownItem,
-  InputGroup,
-  Input,
-  InputGroupAddon
+  Dropdown, DropdownToggle, DropdownMenu, DropdownItem
 } from 'reactstrap';
 
 import firebaseApp from './firebase.js';
 
-class Header extends React.Component {
+type State = {
+  isOpen: Boolean,
+  dropdownOpen: Boolean,
+}
 
-  constructor() {
+class Header extends React.Component<{}, State> {
 
-    super();
-
-    this.state = {
-        isOpen: false,
-        dropdownOpen: false,
-    };
-
-  }
+  state = {
+      isOpen: false,
+      dropdownOpen: false,
+  };
 
   logout = () => {
 
@@ -81,12 +68,12 @@ class Header extends React.Component {
                   </NavbarToggler>
                   <Collapse isOpen={this.state.isOpen} navbar className="justify-content-end">
                       <Nav navbar>
-                          <NavbarBrand>Welcome, {this.props.userName}</NavbarBrand>
+                          <NavbarBrand>ברוכים הבאים {this.props.userName}</NavbarBrand>
                           <Dropdown nav isOpen={this.state.dropdownOpen} toggle={(e) => this.dropdownToggle(e)}>
                               <DropdownToggle caret nav>
                                   <i className="now-ui-icons users_single-02"></i>
                                   <p>
-                                    <span className="d-md-block">Account</span>
+                                    <span className="d-md-block">חשבון משתמש</span>
                                   </p>
                               </DropdownToggle>
                               <DropdownMenu right>
@@ -96,7 +83,7 @@ class Header extends React.Component {
                                           <img src={this.props.userPictureUrl} className='rounded' width='32px' height='32px' />
                                       </Col>
                                       <Col md='7'>
-                                          <div className='navbar-text'>Log Out</div>
+                                          <div className='navbar-text'>התנתקות</div>
                                       </Col>
                                     </Row>
                                   </DropdownItem>
