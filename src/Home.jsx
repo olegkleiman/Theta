@@ -81,8 +81,7 @@ class Home extends React.Component<State, Props> {
                     <div className='col col-md-12'>
                       <div className='card'>
                         <div className='card-header'>
-                          <h5 className='title'>Your daily tasks</h5>
-                          <p className='category'>Sorted by recent activity</p>
+                          <h5 className='title'>המשימות היומיות שלך</h5>
                         </div>
                         <div className='card-body'>
                           <Row>
