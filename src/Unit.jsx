@@ -182,11 +182,11 @@ class Unit extends React.Component<Props, State> {
                         </Col>
                       </Row>
                       <Row>
-                        <Col xs='2' className='text-left'>>
+                        <Col xs='2' className='text-left'>
                           <label className='form-control-label'>סוג</label>
                           <Input type='text' value={this.state.docData.type} />
                         </Col>
-                        <Col xs='3' className='text-left'>>
+                        <Col xs='3' className='text-left'>
                           <label className='form-control-label'>סוג חינוך</label>
                           <Input type='text' value={this.state.docData.education_type} />
                         </Col>
