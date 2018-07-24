@@ -144,19 +144,19 @@ class Unit extends React.Component<Props, State> {
                   <li className='nav-item'>
                     <a className='nav-link active' data-toggle='tab' href='#general'
                         role='tab' area-expanded='true'>
-                      <i className='now-ui-icons ui-2_settings-90'></i>General Settings
+                      <i className='now-ui-icons ui-2_settings-90'></i>הגדרות כלליות
                     </a>
                   </li>
                   <li className='nav-item'>
                     <a className='nav-link' data-toggle='tab' href='#updates'
                       role='tab' area-expanded='false'>
-                      <i className='now-ui-icons ui-1_calendar-60'></i>Updates
+                      <i className='now-ui-icons ui-1_calendar-60'></i>עדכונים
                     </a>
                   </li>
                   <li className='nav-item'>
                     <a className='nav-link' data-toggle='tab' href='#groups'
                       role='tab' area-expanded='false'>
-                      <i className='now-ui-icons education_hat'></i>Groups
+                      <i className='now-ui-icons education_hat'></i>כיתות
                     </a>
                   </li>
                 </ul>
@@ -165,38 +165,38 @@ class Unit extends React.Component<Props, State> {
                     <div id='general' className='tab-pane active' role='tabpanel'>
                       <Row>
                         <Col>
-                          <label className='form-control-label'>Name</label>
+                          <label className='form-control-label'>שם</label>
                           <Input type='text' value={this.state.docData.name_he} />
                         </Col>
                         <Col>
-                          <label className='form-control-label'>Authority</label>
+                          <label className='form-control-label'>רשות</label>
                           <Input type='text' value={this.state.docData.authority} />
                         </Col>
                         <Col>
-                          <label className='form-control-label'>Concessionaire</label>
+                          <label className='form-control-label'>זכיין</label>
                           <Input type='text' value={this.state.docData.concessionaire} />
                         </Col>
                         <Col>
-                          <label className='form-control-label'>Symbol</label>
+                          <label className='form-control-label'>מל</label>
                           <Input type='text' value={this.state.docData.symbol} />
                         </Col>
                       </Row>
                       <Row>
                         <Col xs='2'>
-                          <label className='form-control-label'>Type</label>
+                          <label className='form-control-label'>סוג</label>
                           <Input type='text' value={this.state.docData.type} />
                         </Col>
                         <Col xs='3'>
-                          <label className='form-control-label'>Education Type</label>
+                          <label className='form-control-label'>סוג חינוך</label>
                           <Input type='text' value={this.state.docData.education_type} />
                         </Col>
                         <Col xs='3'>
-                          <label className='form-control-label'>Long Day Permit</label>
+                          <label className='form-control-label'>אישור יוח"א"</label>
                           <Input type='radio' checked readOnly value={this.state.docData.long_day_permit}
                                 className='form-control'/>
                         </Col>
                         <Col xs='4'>
-                          <label className='form-control-label'>Status</label>
+                          <label className='form-control-label'>סטאטוס</label>
                           <Input type='text' value={this.state.docData.status} />
                         </Col>
                       </Row>
@@ -211,7 +211,7 @@ class Unit extends React.Component<Props, State> {
                               <div className='col col-12 d-flex justify-content-end'>
                               <Button color='primary'
                                       className='align-self-end'
-                                      onClick={::this.addGroup}>+ Add Group</Button>
+                                      onClick={::this.addGroup}>הוסף כיתה +</Button>
                               </div>
                           </div>
                           <UnitGroups docId={this.state.docId} />
