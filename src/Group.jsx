@@ -5,6 +5,7 @@ import { Button, Row, Col, Input,
 } from 'reactstrap';
 import ReactTable from 'react-table';
 import moment from 'moment';
+import XLSX from 'xlsx';
 import firebase from './firebase.js';
 
 class Pupil {
@@ -134,6 +135,31 @@ class Group extends React.Component<{}, State> {
 
   exportExcel() {
 
+    const _data = {
+      cols: [{ name: "A", key: 0 }, { name: "B", key: 1 }, { name: "C", key: 2 }],
+      data: [
+        [ "id",    "name", "value" ],
+        [    1, "sheetjs",    7262 ],
+        [    2, "js-xlsx",    6969 ]
+      ]
+    };
+
+    console.log(_data);
+
+    /* convert from array of arrays to workbook */
+    var worksheet = XLSX.utils.aoa_to_sheet(_data);
+    var new_workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(new_workbook, worksheet, "SheetJS")
+
+    /* write a workbook */
+    const wbout = XLSX.write(new_workbookb, {type:'binary', bookType:"xlsx"});
+    writeFile(file, wbout, 'ascii')
+    .then( (r) => {
+      console.log(r);
+    })
+    .catch( (e) => {
+      console.error(err);
+    });
   }
 
   async handleUpdate(cellInfo, e) {
@@ -212,28 +238,43 @@ class Group extends React.Component<{}, State> {
                         data={this.state.pupils}
                         noDataText={this.state.dataStatus}
                         filterable
+                        getTheadThProps = { () => {
+                          return {
+                            style: {
+                              'textAlign': 'right'
+                            }
+                          }
+                        }}
+                        getTdProps = { (state, rowInfo, column, instance) => {
+                          return {
+                            style: {
+                              'textAlign': 'right'
+                            }
+                          }
+                        }}
+
                         columns={[{
-                          Header: 'Name',
+                          Header: 'שם',
                           accessor: 'name',
                           Cell: cellInfo => ::this.renderEditable(cellInfo, cellInfo.original.name)
                         }, {
-                          Header: 'ID',
+                          Header: 'מזהה',
                           accessor: 'id'
                         }, {
-                          Header: 'Phone number',
+                          Header: 'מספר טלפון',
                           accessor: 'phoneNumber'
                         }, {
-                          Header: 'Birthday',
+                          Header: 'תאריך לידה',
                           accessor: 'birthDay'
                         },{
-                          Header: 'When Registered',
+                          Header: 'תאריך הרשמה',
                           accessor: 'whenRegistered'
                         }, {
-                          Header: 'Parent ID',
+                          Header: 'מזהה הורה',
                           accessor: 'parentId',
                           Cell: cellInfo => ::this.renderEditable(cellInfo, cellInfo.original.parentId)
                         }, {
-                          Header: 'Address',
+                          Header: 'כתובת',
                           accessor: 'address',
                           Cell: cellInfo => ::this.renderEditable(cellInfo, cellInfo.original.address)
                         }]}>
