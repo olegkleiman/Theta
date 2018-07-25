@@ -14,7 +14,9 @@
     "build": "webpack -d --watch",
     "build:once": "webpack -d",
     "deploy": "firebase deploy --only hosting",
-    "start:debug": "webpack-dev-server -d --hot --inline --mode development --colors --watch --content-base dist/"
+    "start:debug": "webpack-dev-server -d --hot --inline --mode development --colors --watch --content-base dist/",
+    "backup": "firestore-backup-restore --accountCredentials ./backup/theta-backup-account.json --backupPath ./backup/data",
+    "restore": "firestore-backup-restore --backupPath ./backup/data --restoreAccountCredentials ./backup/theta-restore-account.json"
   },
   "dependencies": {
     "@devexpress/dx-react-core": "^1.1.2",
