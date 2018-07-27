@@ -1,0 +1,12 @@
+{
+  "name": "input",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "process": "babel-node --inspect-brk units.js"
+  },
+  "dependencies": {
+    "firebase-admin": "^5.13.1"
+  }
+}

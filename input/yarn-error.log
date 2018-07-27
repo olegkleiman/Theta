@@ -1,0 +1,44 @@
+Arguments: 
+  C:\Program Files\nodejs\node.exe C:\Program Files (x86)\Yarn\bin\yarn.js add firbase-admin
+
+PATH: 
+  C:\ProgramData\Oracle\Java\javapath;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\Program Files\Microsoft\Web Platform Installer\;C:\Program Files\Microsoft SQL Server\120\Tools\Binn\;C:\Program Files (x86)\Git\cmd;D:\android-ndk-r10d;C:\Program Files (x86)\Bitvise SSH Client;C:\Program Files\Microsoft SQL Server\130\Tools\Binn\;C:\watchman;C:\Program Files\nodejs\;C:\Program Files (x86)\Yarn\bin;C:\Program Files\Git\cmd;C:\Program Files\dotnet\;C:\Users\Oleg\.dnx\bin;C:\Users\Oleg\AppData\Local\Android\sdk\platform-tools;C:\Program Files\Java\jdk1.8.0_25\bin;C:\Users\Oleg\AppData\Local\Microsoft\WindowsApps;C:\Program Files\nodejs;C:\Users\Oleg\AppData\Local\atom\bin;C:\Users\Oleg\AppData\Roaming\npm;C:\Program Files\West Wind WebSurge;C:\Users\Oleg\AppData\Local\Programs\Fiddler;C:\Users\Oleg\AppData\Local\Yarn\bin;C:\Users\Oleg\AppData\Local\Microsoft\WindowsApps;
+
+Yarn version: 
+  1.3.2
+
+Node version: 
+  8.9.1
+
+Platform: 
+  win32 x64
+
+npm manifest: 
+  {
+    "name": "input",
+    "version": "1.0.0",
+    "main": "index.js",
+    "license": "MIT",
+    "scripts": {
+      "process": "babel-node --inspect units.js"
+    }
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
+
+Trace: 
+  Error: https://registry.yarnpkg.com/firbase-admin: Not found
+      at Request.params.callback [as _callback] (C:\Program Files (x86)\Yarn\lib\cli.js:62098:18)
+      at Request.self.callback (C:\Program Files (x86)\Yarn\lib\cli.js:123085:22)
+      at emitTwo (events.js:126:13)
+      at Request.emit (events.js:214:7)
+      at Request.<anonymous> (C:\Program Files (x86)\Yarn\lib\cli.js:124068:10)
+      at emitOne (events.js:116:13)
+      at Request.emit (events.js:211:7)
+      at IncomingMessage.<anonymous> (C:\Program Files (x86)\Yarn\lib\cli.js:123988:12)
+      at Object.onceWrapper (events.js:313:30)
+      at emitNone (events.js:111:20)
