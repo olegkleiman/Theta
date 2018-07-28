@@ -106,7 +106,7 @@ class Units extends React.Component<{}, State> {
   render() {
 
     let nextButtonClassName = classNames('btn btn-next btn-fill btn-success btn-wd', {
-      'disabled': this.state.selectedUnit.name == ''
+      'disabled': this.state.selectedUnit.name === ''
     });
 
     const dropdownTitle = this.state.selectedUnit.name == '' ? 'Select Unit'
@@ -136,9 +136,6 @@ class Units extends React.Component<{}, State> {
         textAlign: 'center'
       }
     }, {
-      Header: 'מזהה',
-      accessor: 'id'
-    },{
       Header: 'שם',
       accessor: 'name'
     }, {
@@ -172,33 +169,17 @@ class Units extends React.Component<{}, State> {
                                 <ReactTable
                                   filterable
                                   data={this.state.units}
-                                  noDataText={this.state.dataStatus}
                                   columns={columns}
-                                  minRows={5}
                                   showPagination={true}
-                                  className="-striped -highlight col col-12"
+                                  className="-striped -highlight"
                                   previousText = 'קודם'
                                   nextText = 'הבא'
                                   pageText = 'עמוד'
                                   ofText = 'מתוך'
                                   rowsText = 'שורות'
-                                  SubComponent={row => {
-                                    return (
-                                      <div style={{ padding: "20px" }}>
-                                        <em>SubComponent</em>
-                                      </div>
-                                    )
-                                  }}
                                   getTrProps={(state, rowInfo, column) => {
                                       return {
-                                        onClick: (e, handleOriginal) => {
-                                          self.onRowSelected(rowInfo);
-                                          if( handleOriginal )
-                                            handleOriginal();
-                                        },
                                         style: {
-                                          background: rowInfo && rowInfo.index === this.state.selectedRowIndex ?
-                                                      'rgba(0,0,0,0.05)' : 'white',
                                           cursor: 'pointer',
                                         }
                                       }
@@ -210,7 +191,17 @@ class Units extends React.Component<{}, State> {
                                       }
                                     }
                                   }}
-                              />
+                                  SubComponent={ row => {
+                                    console.log(row.original.id);
+                                    return (
+                                      <div style={{ padding: "20px" }}>
+                                        <br />
+                                        <br />
+                                          <Unit docId={row.original.id} />
+                                      </div>
+                                    )
+                                  }}>
+                                </ReactTable>
                               </div>
                             </div>
                           </Col>
