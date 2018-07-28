@@ -105,13 +105,6 @@ class Units extends React.Component<{}, State> {
 
   render() {
 
-    let nextButtonClassName = classNames('btn btn-next btn-fill btn-success btn-wd', {
-      'disabled': this.state.selectedUnit.name === ''
-    });
-
-    const dropdownTitle = this.state.selectedUnit.name == '' ? 'Select Unit'
-                                                          : this.state.selectedUnit.name;
-
     let unit = this.state.selectedUnit.id == '' ? null
                 : <Unit docId={this.state.selectedUnit.id} />
 
