@@ -32,7 +32,6 @@ class Sidebar extends React.Component<{}, State> {
   }
 
   linkClicked = (linkNumber: number, pageName: String) => {
-    console.log(linkNumber);
 
     this.setState({
       currentLink: linkNumber
@@ -51,7 +50,7 @@ class Sidebar extends React.Component<{}, State> {
               <div className="logo">
                 <a href='#' style={this.styles.logoStyle} className="simple-text logo-mini">
                       <div className="logo-img">
-                          <img src={logo} alt="react-logo" />
+                          <img src={logo} alt="theta-logo" />
                       </div>
                 </a>
                 <a href='#' style={this.styles.logoTitle} className="simple-text logo-normal">
@@ -73,7 +72,7 @@ class Sidebar extends React.Component<{}, State> {
                             <NavLink to={prop.path} className="nav-link"
                               onClick={ () => ::this.linkClicked(index+1, prop.name) }>
                               <i className={"now-ui-icons "+prop.icon}></i>
-                              <p>{prop.name}</p>
+                              <p className='sidebar_item'>{prop.name}</p>
                             </NavLink>
 
                           </li>
