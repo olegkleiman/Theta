@@ -68,7 +68,9 @@ class Units extends React.Component<{}, State> {
         if( isSecGroupFound ) {
           _units.push({
             name: unitData.name_he,
-            concessionaire: unitData.concessionaire,
+            education_type: unitData.education_type,
+            authority: unitData.authority,
+            type: unitData.type,
             symbol: unitData.symbol,
             id: unit.id
           });
@@ -125,8 +127,14 @@ class Units extends React.Component<{}, State> {
       Header: 'סמל',
       accessor: 'symbol',
     }, {
-      Header: 'זכיין',
-      accessor: 'concessionaire'
+      Header: 'רשות',
+      accessor: 'authority'
+    }, {
+      Header: 'סוג מוסד',
+      accessor: 'type'
+    }, {
+      Header: 'סוג חינוך',
+      accessor: 'education_type'
     }];
 
     return <div>
@@ -140,38 +148,42 @@ class Units extends React.Component<{}, State> {
                       </div>
                       <div className='card-body'>
                         <Row>
-                          <div className='card'>
-                            <div className='card-body'>
-                            <ReactTable
-                              getTrProps={(state, rowInfo, column) => {
-                                  return {
-                                    onClick: (e, handleOriginal) => {
-                                      self.onRowSelected(rowInfo);
-                                      if( handleOriginal )
-                                        handleOriginal();
-                                    },
-                                    style: {
-                                      background: rowInfo && rowInfo.index === this.state.selectedRowIndex ?
-                                                  'rgba(0,0,0,0.05)' : 'white',
-                                      cursor: 'pointer',
+                          <Col md='12'>
+                            <div className='card'>
+                              <div className='card-body'>
+                                <ReactTable
+                                  filterable
+                                  data={this.state.units}
+                                  noDataText={this.state.dataStatus}
+                                  columns={columns}
+                                  minRows={5}
+                                  showPagination={true}
+                                  className="-highlight col col-12"
+                                  getTrProps={(state, rowInfo, column) => {
+                                      return {
+                                        onClick: (e, handleOriginal) => {
+                                          self.onRowSelected(rowInfo);
+                                          if( handleOriginal )
+                                            handleOriginal();
+                                        },
+                                        style: {
+                                          background: rowInfo && rowInfo.index === this.state.selectedRowIndex ?
+                                                      'rgba(0,0,0,0.05)' : 'white',
+                                          cursor: 'pointer',
+                                        }
+                                      }
+                                  }}
+                                  getTheadThProps = { () => {
+                                    return {
+                                      style: {
+                                        'textAlign': 'right'
+                                      }
                                     }
-                                  }
-                              }}
-                              getTheadThProps = { () => {
-                                return {
-                                  style: {
-                                    'textAlign': 'right'
-                                  }
-                                }
-                              }}
-                              data={this.state.units}
-                              noDataText={this.state.dataStatus}
-                              columns={columns}
-                              minRows={5}
-                              showPagination={false}
-                              className="-highlight col col-12"/>
-                          </div>
-                          </div>
+                                  }}
+                              />
+                              </div>
+                            </div>
+                          </Col>
                         </Row>
                         <Row>
                           <Col xs='12'>
