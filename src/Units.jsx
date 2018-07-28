@@ -118,6 +118,24 @@ class Units extends React.Component<{}, State> {
     const self = this;
 
     const columns = [{
+      Header: '',
+      expander: true,
+      width: 65,
+      Expander: ({ isExpanded, ...rest}) =>
+        <div>
+          { isExpanded ?
+            <span>&#x2299;</span> :
+            <span>&#x2295;</span>
+          }
+        </div>,
+      style: {
+        cursor: 'pointer',
+        fontSize: 25,
+        padding: 0,
+        userSelect: 'none',
+        textAlign: 'center'
+      }
+    }, {
       Header: 'מזהה',
       accessor: 'id'
     },{
@@ -158,7 +176,19 @@ class Units extends React.Component<{}, State> {
                                   columns={columns}
                                   minRows={5}
                                   showPagination={true}
-                                  className="-highlight col col-12"
+                                  className="-striped -highlight col col-12"
+                                  previousText = 'קודם'
+                                  nextText = 'הבא'
+                                  pageText = 'עמוד'
+                                  ofText = 'מתוך'
+                                  rowsText = 'שורות'
+                                  SubComponent={row => {
+                                    return (
+                                      <div style={{ padding: "20px" }}>
+                                        <em>SubComponent</em>
+                                      </div>
+                                    )
+                                  }}
                                   getTrProps={(state, rowInfo, column) => {
                                       return {
                                         onClick: (e, handleOriginal) => {
