@@ -95,7 +95,7 @@ class UnitGroups extends React.Component<Props, State> {
           opened: _openedDate,
           openedTill: _openedTillDate,
           isClosed: _isClosed,
-          price: data.price + ' NIS',
+          price: data.price + ' ₪',
           capacity: data.capacity,
           registeredPupils: registeredPupils
         });
