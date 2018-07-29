@@ -135,7 +135,6 @@ class Dashboard extends React.Component<Props, State> {
                 <Route path={this.props.match.path + '/group/:unitid/:groupid'} component={Group} />
                 <Route path={this.props.match.path + '/groups/:unitid'} component={Groups} />
             </Switch>
-            <Footer fluid/>
           </div>
         </div>);
   }
