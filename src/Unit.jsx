@@ -142,7 +142,7 @@ class Unit extends React.Component<Props, State> {
               <div className='card'>
                 <ul className='nav nav-tabs lustify-content-center' role='tablist'>
                   <li className='nav-item'>
-                    <a className='nav-link active' data-toggle='tab' href='#groups'
+                    <a className='nav-link nav-tab active' data-toggle='tab' href='#groups'
                       role='tab' area-expanded='false'>
                       <Row>
                         <Col>
@@ -152,13 +152,13 @@ class Unit extends React.Component<Props, State> {
                     </a>
                   </li>
                   <li className='nav-item'>
-                    <a className='nav-link' data-toggle='tab' href='#updates'
+                    <a className='nav-link nav-tab' data-toggle='tab' href='#updates'
                       role='tab' area-expanded='false'>
                           <i className='now-ui-icons ui-1_calendar-60'></i>&nbsp;עדכונים
                     </a>
                   </li>
                   <li className='nav-item'>
-                    <a className='nav-link' data-toggle='tab' href='#general'
+                    <a className='nav-link nav-tab' data-toggle='tab' href='#general'
                         role='tab' area-expanded='true'>
                           <i className='now-ui-icons ui-2_settings-90'></i>&nbsp;הגדרות כלליות
                     </a>
