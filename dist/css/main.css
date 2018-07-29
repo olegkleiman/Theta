@@ -61,6 +61,13 @@
   font-size: 14px;
 }
 
+.nav-tab {
+  color: #495057;
+}
+.nav-tab.active {
+  color: #f96332;
+}
+
 /* .expanderIcon {
   font-size: 1.5em;
 } */
