@@ -6,6 +6,7 @@ import ReactTable from 'react-table';
 import 'react-table/react-table.css';
 import Unit from './Unit';
 import Groups from './Groups';
+import Pagination from './TablePagination';
 import withAuth from './FirebaseAuth';
 
 import { Button, Row, Col } from 'reactstrap';
@@ -160,25 +161,19 @@ class Units extends React.Component<{}, State> {
                             <div className='card'>
                               <div className='card-body'>
                                 <ReactTable
+                                  PaginationComponent={Pagination}
                                   filterable
                                   data={this.state.units}
                                   columns={columns}
                                   showPagination={true}
                                   className="-striped -highlight"
                                   loadingText='טוען נתונים...'
-                                  noDataText='אין נתונים'
+                                  noDataText='טוען נתונים...'
                                   previousText = 'קודם'
                                   nextText = 'הבא'
                                   pageText = 'עמוד'
                                   ofText = 'מתוך'
                                   rowsText = 'שורות'
-                                  getTrProps={(state, rowInfo, column) => {
-                                      return {
-                                        style: {
-                                          cursor: 'pointer',
-                                        }
-                                      }
-                                  }}
                                   getTheadThProps = { () => {
                                     return {
                                       style: {
