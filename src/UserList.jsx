@@ -2,31 +2,7 @@
 import React from 'react';
 import firebase from './firebase.js';
 import { Card } from 'reactstrap';
-import {
-  EditingState,
-  IntegratedFiltering,
-  PagingState,
-  IntegratedPaging,
-  SortingState,
-  SearchState } from '@devexpress/dx-react-grid';
-import {
-  Grid,
-  Table,
-  Toolbar,
-  SearchPanel,
-  TableHeaderRow,
-  TableEditRow,
-  TableEditColumn,
-  PagingPanel
-} from '@devexpress/dx-react-grid-bootstrap4';
-
-const editColumnMessages = {
-  addCommand: 'משתמש חדש',
-  editCommand: 'שנה',
-  deleteCommand: 'מחק',
-  commitCommand: 'שמירה',
-  cancelCommand: 'ביטול',
-};
+import ReactTable from 'react-table';
 
 const getRowId = row => row.id;
 
@@ -127,36 +103,10 @@ class UserList extends React.PureComponent {
         <div className='panel-header panel-header-sm'></div>
         <div className='content'>
           <Card>
-            <Grid
-              rows={users}
+            <ReactTable
+              data={users}
               columns={columns}
-              getRowId={getRowId}
-            >
-              <PagingState
-                defaultCurrentPage={0}
-                pageSize={3}
               />
-              <SearchState />
-              <IntegratedFiltering />
-              <IntegratedPaging />
-              <EditingState
-                onCommitChanges={::this.commitChanges}
-              />
-              <SortingState
-                sorting={sorting} />
-              <Table />
-              <TableHeaderRow showSortingControls />
-              <TableEditRow />
-              <TableEditColumn
-                showAddCommand
-                showEditCommand
-                showDeleteCommand
-                messages={editColumnMessages}
-              />
-              <Toolbar />
-              <SearchPanel />
-              <PagingPanel />
-            </Grid>
           </Card>
         </div>
       </div>
