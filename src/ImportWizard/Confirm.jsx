@@ -1,14 +1,5 @@
 import React from 'react';
-import {
-  SortingState, EditingState, PagingState,
-  IntegratedPaging, IntegratedSorting,
-} from '@devexpress/dx-react-grid';
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter, Card } from 'reactstrap';
-import {
-  Grid,
-  Table, TableHeaderRow, TableEditRow, TableEditColumn,
-  PagingPanel, DragDropProvider, TableColumnReordering,
-} from '@devexpress/dx-react-grid-bootstrap4';
+import ReactTable from 'react-table';
 import XLSX from 'xlsx';
 
 const getObject = (sheet, row) => {
@@ -155,40 +146,14 @@ export default class Confirm extends React.PureComponent {
   }
 
   render() {
-    const {
-      rows,
-      rowChanges
-    } = this.state;
+    const { rows, rowChanges } = this.state;
 
     return (
       <Card>
-        <Grid
-          rows={rows}
+        <ReactTable
+          data={rows}
           columns={this.props.columns}
-          getRowId={getRowId}
-        >
-
-          <EditingState
-            rowChanges={rowChanges}
-            onRowChangesChange={this.changeRowChanges}
-            onCommitChanges={this.commitChanges}
           />
-
-          <Table
-            cellComponent={::this.Cell}
-          />
-
-          <TableHeaderRow />
-          <TableEditRow
-            cellComponent={::this.EditCell}
-          />
-          <TableEditColumn
-            showEditCommand
-            commandComponent={Command}
-          />
-
-        </Grid>
-
       </Card>
     );
   }
