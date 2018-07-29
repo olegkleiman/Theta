@@ -142,27 +142,31 @@ class Unit extends React.Component<Props, State> {
               <div className='card'>
                 <ul className='nav nav-tabs lustify-content-center' role='tablist'>
                   <li className='nav-item'>
-                    <a className='nav-link active' data-toggle='tab' href='#general'
-                        role='tab' area-expanded='true'>
-                      <i className='now-ui-icons ui-2_settings-90'></i>הגדרות כלליות
+                    <a className='nav-link active' data-toggle='tab' href='#groups'
+                      role='tab' area-expanded='false'>
+                      <Row>
+                        <Col>
+                          <i className='now-ui-icons education_hat'></i>&nbsp;כיתות
+                        </Col>
+                      </Row>
                     </a>
                   </li>
                   <li className='nav-item'>
                     <a className='nav-link' data-toggle='tab' href='#updates'
                       role='tab' area-expanded='false'>
-                      <i className='now-ui-icons ui-1_calendar-60'></i>עדכונים
+                          <i className='now-ui-icons ui-1_calendar-60'></i>&nbsp;עדכונים
                     </a>
                   </li>
                   <li className='nav-item'>
-                    <a className='nav-link' data-toggle='tab' href='#groups'
-                      role='tab' area-expanded='false'>
-                      <i className='now-ui-icons education_hat'></i>כיתות
+                    <a className='nav-link' data-toggle='tab' href='#general'
+                        role='tab' area-expanded='true'>
+                          <i className='now-ui-icons ui-2_settings-90'></i>&nbsp;הגדרות כלליות
                     </a>
                   </li>
                 </ul>
                 <div className='card-body'>
                   <div className='tab-content text-center'>
-                    <div id='general' className='tab-pane active' role='tabpanel'>
+                    <div id='general' className='tab-pane' role='tabpanel'>
                       <Row>
                         <Col className='text-left'>
                           <label className='form-control-label'>שם</label>
@@ -204,7 +208,7 @@ class Unit extends React.Component<Props, State> {
                     <div id='updates' className='tab-pane' role='tabpanel'>
                       <UnitUpdates docId={this.state.docId} />
                     </div>
-                    <div id='groups' className='tab-pane' role='tabpanel'>
+                    <div id='groups' className='tab-pane active' role='tabpanel'>
 
                         <div className="card card-body">
                           <div className='row'>
