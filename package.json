@@ -19,10 +19,6 @@
     "restore": "firestore-backup-restore --backupPath ./backup/data --restoreAccountCredentials ./backup/theta-restore-account.json"
   },
   "dependencies": {
-    "@devexpress/dx-react-core": "^1.1.2",
-    "@devexpress/dx-react-grid": "^1.1.2",
-    "@devexpress/dx-react-grid-bootstrap4": "^1.1.2",
-    "@devexpress/dx-react-grid-material-ui": "^1.1.2",
     "@material-ui/icons": "^1.0.0-beta.43",
     "babel-core": "^6.26.3",
     "babel-loader": "^7.1.4",
