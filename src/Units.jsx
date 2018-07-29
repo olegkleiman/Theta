@@ -117,8 +117,8 @@ class Units extends React.Component<{}, State> {
       Expander: ({ isExpanded, ...rest}) =>
         <div>
           { isExpanded ?
-            <span>&#x2299;</span> :
-            <span>&#x2295;</span>
+            <span className='expanderIcon'>&#x2299;</span> :
+            <span className='expanderIcon'>&#x2295;</span>
           }
         </div>,
       style: {
