@@ -182,7 +182,6 @@ class Units extends React.Component<{}, State> {
                                     }
                                   }}
                                   SubComponent={ row => {
-                                    console.log(row.original.id);
                                     return (
                                       <div style={{ padding: "20px" }}>
                                           <br />
