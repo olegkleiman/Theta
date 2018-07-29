@@ -165,6 +165,8 @@ class Units extends React.Component<{}, State> {
                                   columns={columns}
                                   showPagination={true}
                                   className="-striped -highlight"
+                                  loadingText='טוען נתונים...'
+                                  noDataText='אין נתונים'
                                   previousText = 'קודם'
                                   nextText = 'הבא'
                                   pageText = 'עמוד'
@@ -188,8 +190,7 @@ class Units extends React.Component<{}, State> {
                                     console.log(row.original.id);
                                     return (
                                       <div style={{ padding: "20px" }}>
-                                        <br />
-                                        <br />
+                                          <br />
                                           <Unit docId={row.original.id} />
                                       </div>
                                     )
