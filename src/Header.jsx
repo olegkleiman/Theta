@@ -68,12 +68,12 @@ class Header extends React.Component<{}, State> {
                   </NavbarToggler>
                   <Collapse isOpen={this.state.isOpen} navbar className="justify-content-end">
                       <Nav navbar>
-                          <NavbarBrand>ברוכים הבאים {this.props.userName}</NavbarBrand>
+                          <NavbarBrand className='navbar-item'>ברוכים הבאים {this.props.userName}</NavbarBrand>
                           <Dropdown nav isOpen={this.state.dropdownOpen} toggle={(e) => this.dropdownToggle(e)}>
                               <DropdownToggle caret nav>
                                   <i className="now-ui-icons users_single-02"></i>
                                   <p>
-                                    <span className="d-md-block">חשבון משתמש</span>
+                                    <span>חשבון משתמש</span>
                                   </p>
                               </DropdownToggle>
                               <DropdownMenu right>
