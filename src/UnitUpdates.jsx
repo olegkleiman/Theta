@@ -1,25 +1,8 @@
 // @flow
 import React from 'react';
 import moment from 'moment';
+import ReactTable from 'react-table';
 import firebase from './firebase.js';
-import {
-  EditingState,
-  IntegratedFiltering,
-  PagingState,
-  IntegratedPaging,
-  SortingState,
-  SearchState,
-  DataTypeProvider } from '@devexpress/dx-react-grid';
-import {
-  Grid,
-  Table,
-  Toolbar,
-  SearchPanel,
-  TableHeaderRow,
-  TableEditRow,
-  TableEditColumn,
-  PagingPanel
-} from '@devexpress/dx-react-grid-bootstrap4';
 
 type State = {
   columns: [],
@@ -159,40 +142,34 @@ class UnitUpdates extends React.Component<Props, State> {
 
     const { updates, columns, sorting, dateColumns } = this.state;
 
+    const _columns = [{
+      Header: 'Update Date',
+      accessor: 'update_date'
+    }, {
+      Header: 'Pupils',
+      accessor: 'pupils'
+    }, {
+      Header: 'Special Pupils',
+      accessor: 'pupils_special'
+
+    }, {
+      Header: 'Places',
+      accessor: 'places'
+    }];
+
     return (
-      <Grid
-        rows={updates}
-        columns={columns}
-        getRowId={getRowId}>
-        <PagingState
-          defaultCurrentPage={0}
-          pageSize={3}
-        />
-        <IntegratedFiltering />
-        <IntegratedPaging />
-        <EditingState
-          onCommitChanges={::this.commitChanges}
-        />
+        <ReactTable
+          columns={_columns}
+          data={updates}
+          className="-striped -highlight"
+          previousText = 'קודם'
+          nextText = 'הבא'
+          pageText = 'עמוד'
+          ofText = 'מתוך'
+          rowsText = 'שורות'
+          />
 
-        <SortingState
-          sorting={sorting} />
-
-        <DateTypeProvider
-          for={dateColumns}
-        />
-
-        <Table />
-        <TableHeaderRow showSortingControls />
-        <TableEditRow />
-        <TableEditColumn
-          showAddCommand
-          showEditCommand
-          showDeleteCommand
-        />
-
-        <Toolbar />
-      </Grid>
-    )
+      )
   }
 
 }
