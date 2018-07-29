@@ -152,7 +152,7 @@ class Units extends React.Component<{}, State> {
                   <div className='col col-md-12'>
                     <div className='card'>
                       <div className='card-header'>
-                        <h5 className='title'>ניהול מוסדות</h5>
+                        <h5 className='title'>רשימת המוסדות</h5>
                       </div>
                       <div className='card-body'>
                         <Row>
