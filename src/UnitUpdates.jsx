@@ -161,6 +161,9 @@ class UnitUpdates extends React.Component<Props, State> {
         <ReactTable
           columns={_columns}
           data={updates}
+          defaultPageSize={5}
+          loadingText='טוען נתונים...'
+          noDataText='אין נתונים'
           className="-striped -highlight"
           previousText = 'קודם'
           nextText = 'הבא'
