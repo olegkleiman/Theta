@@ -1524,7 +1524,8 @@ body {
   font-size: 14px;
   font-family: "Montserrat", "Helvetica Neue", Arial, sans-serif;
   -moz-osx-font-smoothing: grayscale;
-  -webkit-font-smoothing: antialiased; }
+  -webkit-font-smoothing: antialiased;
+  }
 
 .main {
   position: relative;
@@ -1774,8 +1775,9 @@ a[data-toggle="collapse"][aria-expanded="true"] .caret,
     display: inline-block;
     margin: 0;
     line-height: 1.8em;
-    font-size: 1em;
-    font-weight: 400; }
+    /* font-size: 1em; */
+    /* font-weight: 400; */
+    }
   .navbar.navbar-absolute {
     position: absolute;
     width: 100%;
@@ -1810,10 +1812,11 @@ a[data-toggle="collapse"][aria-expanded="true"] .caret,
       padding: 5px 15px; }
   .navbar .navbar-nav .nav-link {
     text-transform: uppercase;
-    font-size: 0.7142em;
+    /* font-size: 0.7142em; */
     padding: 0.5rem 0.7rem;
     line-height: 1.625rem;
-    margin-right: 3px; }
+    margin-right: 3px;
+    }
     .navbar .navbar-nav .nav-link i.fa + p,
     .navbar .navbar-nav .nav-link i.now-ui-icons + p {
       margin-left: 6px; }
@@ -1849,10 +1852,11 @@ a[data-toggle="collapse"][aria-expanded="true"] .caret,
     border: 1px solid transparent; }
   .navbar .navbar-brand {
     text-transform: uppercase;
-    font-size: 0.8571em;
+    /* font-size: 0.8571em; */
     padding-top: 0.5rem;
     padding-bottom: 0.5rem;
-    line-height: 1.625rem; }
+    line-height: 1.625rem;
+    }
   .navbar .navbar-toggler {
     width: 37px;
     height: 27px;
@@ -4002,11 +4006,12 @@ Created using IcoMoon - icomoon.io
     -o-transition: all 0.5s cubic-bezier(0.685, 0.0473, 0.346, 1);
     -ms-transition: all 0.5s cubic-bezier(0.685, 0.0473, 0.346, 1);
     transition: all 0.5s cubic-bezier(0.685, 0.0473, 0.346, 1);
-    -webkit-transform: translate3d(-260px, 0, 0);
+    /* -webkit-transform: translate3d(-260px, 0, 0); */
     -moz-transform: translate3d(-260px, 0, 0);
     -o-transform: translate3d(-260px, 0, 0);
     -ms-transform: translate3d(-260px, 0, 0);
-    transform: translate3d(-260px, 0, 0); }
+    /* transform: translate3d(-260px, 0, 0); */
+    }
   .main-panel {
     width: 100%; } }
 
