@@ -134,51 +134,54 @@ class AddGroup extends React.Component<{}, State> {
 
       const unitId = this.props.match.params.unitid;
 
-      // Add new group to Firestore
-      const doc = await firebase.firestore().collection('units')
-                      .doc(unitId).collection('groups')
-                      .add(group);
+      // Statuses of newly created group for Rishumon
+      // 1 - Open
+      // 2 - Till date was expired
+      // 3 - Group is full
+      // 4 - Close
 
-      // Grant permissions to the current user
-      let response = await firebase.firestore().collection('users')
-                                      .where("email", "==", this.props.userEMail)
-                                      .get();
-      if( response.docs.length != 0 ) {
-        const userDoc = response.docs[0];
-        const secRoles = this.props.secRoles;
-        secRoles.push(`group_${group.symbol}`);
+      const data = {
+        "groupSymbol": group.symbol,
+        "description": group.name,
+        "status": "1",
+        "price": group.price
+      };
 
-        await firebase.firestore().collection('users')
-              .doc(userDoc.id)
-              .update({
-                 sec_roles: secRoles
-              })
+      const res = await fetch('http://rishumon.com/api/elamayn/edit_class.php?secret=Day1%21', {
+        headers: {
+            "Content-Type": "application/json",
+        },
+        mode: 'no-cors',
+        method: 'POST',
+        body: JSON.stringify(data)
+      });
+      // const _r = await res.json()
+      console.log(res);
 
-        // Statuses of newly created group for Rishumon
-        // 1 - Open
-        // 2 - Till date was expired
-        // 3 - Group is full
-        // 4 - Close
+      if( res.ok ) {
 
-        let headers = new Headers();
-        headers.append('Authorization', 'Basic ZWxhbXlhbjExNTplbGFteWFuMTE1');
-        headers.append('Content-Type', 'application/json');
+        // Add new group to Firestore
+        const doc = await firebase.firestore().collection('units')
+                        .doc(unitId).collection('groups')
+                        .add(group);
 
-        await fetch('https://rishumon.com/api/elamayn/edit_class.php?secret=Day1!', {
-          //headers: headers,
-          mode: 'no-cors',
-          method: 'POST',
-          body:
-              {
-              	"groupSymbol": group.symbol,
-              	"description": group.name,
-              	"status": "1",
-              	"price": group.price
-          }
-        })
+        // Grant permissions to the current user
+        let response = await firebase.firestore().collection('users')
+                                        .where("email", "==", this.props.userEMail)
+                                        .get();
+        if( response.docs.length != 0 ) {
+          const userDoc = response.docs[0];
+          const secRoles = this.props.secRoles;
+          secRoles.push(`group_${group.symbol}`);
 
-        this.props.history.push(`/dashboard/units`);
+          await firebase.firestore().collection('users')
+                .doc(userDoc.id)
+                .update({
+                   sec_roles: secRoles
+                })
 
+          this.props.history.push(`/dashboard/units`);
+        }
       }
 
     } catch( err ) {
