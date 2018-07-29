@@ -117,22 +117,22 @@ class AddGroup extends React.Component<{}, State> {
       sec_role: `group_${event.target.symbol.value}`
     }
 
+    const _group = await ::this.validateGroup(group)
+    if( !_group.validated ) {
+
+      this.setState({
+        invalidField: group.invalidField
+      },
+      () => {
+              console.log('Form is invalid.');
+      });
+
+      return;
+    }
+
+    const unitId = this.props.match.params.unitid;
+
     try {
-
-      const _group = await ::this.validateGroup(group)
-      if( !_group.validated ) {
-
-        this.setState({
-          invalidField: group.invalidField
-        },
-        () => {
-                console.log('Form is invalid.');
-        });
-
-        return;
-      }
-
-      const unitId = this.props.match.params.unitid;
 
       // Statuses of newly created group for Rishumon
       // 1 - Open
@@ -140,54 +140,47 @@ class AddGroup extends React.Component<{}, State> {
       // 3 - Group is full
       // 4 - Close
 
-      const data = {
+      const data2post = {
         "groupSymbol": group.symbol,
         "description": group.name,
         "status": "1",
         "price": group.price
       };
 
-      const res = await fetch('http://rishumon.com/api/elamayn/edit_class.php?secret=Day1%21', {
-        headers: {
-            "Content-Type": "application/json",
-        },
-        mode: 'no-cors',
+      await fetch('http://rishumon.com/api/elamayn/edit_class.php?secret=Day1%21', {
+        // headers: {
+        //     "Content-Type": "application/json",
+        // },
+        mode: 'no-cors', // no-cors prevents reading the response
         method: 'POST',
-        body: JSON.stringify(data)
+        body: JSON.stringify(data2post)
       });
-      // const _r = await res.json()
-      console.log(res);
 
-      if( res.ok ) {
+      // Add new group to Firestore
+      const doc = await firebase.firestore().collection('units')
+                      .doc(unitId).collection('groups')
+                      .add(group);
 
-        // Add new group to Firestore
-        const doc = await firebase.firestore().collection('units')
-                        .doc(unitId).collection('groups')
-                        .add(group);
+      // Grant permissions to the current user
+      let response = await firebase.firestore().collection('users')
+                                      .where("email", "==", this.props.userEMail)
+                                      .get();
+      if( response.docs.length != 0 ) {
+        const userDoc = response.docs[0];
+        const secRoles = this.props.secRoles;
+        secRoles.push(`group_${group.symbol}`);
 
-        // Grant permissions to the current user
-        let response = await firebase.firestore().collection('users')
-                                        .where("email", "==", this.props.userEMail)
-                                        .get();
-        if( response.docs.length != 0 ) {
-          const userDoc = response.docs[0];
-          const secRoles = this.props.secRoles;
-          secRoles.push(`group_${group.symbol}`);
+        await firebase.firestore().collection('users')
+              .doc(userDoc.id)
+              .update({
+                 sec_roles: secRoles
+              })
 
-          await firebase.firestore().collection('users')
-                .doc(userDoc.id)
-                .update({
-                   sec_roles: secRoles
-                })
-
-          this.props.history.push(`/dashboard/units`);
-        }
+        this.props.history.push(`/dashboard/units`);
       }
-
     } catch( err ) {
       console.error(err);
-    };
-
+    }
   }
 
   render() {
@@ -215,7 +208,7 @@ class AddGroup extends React.Component<{}, State> {
           <Col className='col-md-12'>
             <Card body className="text-center">
               <div className='card-header'>
-                <h5 className='title'>כיתה חדשה ל {this.state.unitName}</h5>
+                <h5 className='title'>הוספת כיתה חדשה למוסד {this.state.unitName}</h5>
               </div>
               <CardBody>
                 <Card>
