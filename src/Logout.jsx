@@ -16,7 +16,7 @@ class Logout extends React.Component {
           <Container>
             <Row>
               <Col md='12' className='text-center'>
-                <a href='/login'>נסה כמשתמש אחר</a>
+                <a href='./'>נסה כמשתמש אחר</a>
               </Col>
             </Row>
 
