@@ -4,8 +4,6 @@ import firebase from './firebase.js';
 import { Card } from 'reactstrap';
 import ReactTable from 'react-table';
 
-const getRowId = row => row.id;
-
 class UserList extends React.PureComponent {
 
   constructor(props) {
@@ -98,6 +96,13 @@ class UserList extends React.PureComponent {
 
     const { users, columns, sorting } = this.state;
 
+    const _columns = [
+      { name: 'first_name', accessor: 'שם פרטי' },
+      { name: 'last_name', accessor: 'שם משפחה' },
+      { name: 'role', accessor: 'תפקיד' },
+      { name: 'email', accessor: 'אי-מייל' }
+    ];
+
     return (
       <div>
         <div className='panel-header panel-header-sm'></div>
@@ -105,7 +110,7 @@ class UserList extends React.PureComponent {
           <Card>
             <ReactTable
               data={users}
-              columns={columns}
+              columns={_columns}
               />
           </Card>
         </div>
