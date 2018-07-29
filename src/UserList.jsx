@@ -1,26 +1,26 @@
 // @flow
 import React from 'react';
 import firebase from './firebase.js';
-import { Card } from 'reactstrap';
+import { Card, Row, Col } from 'reactstrap';
 import ReactTable from 'react-table';
 
-class UserList extends React.PureComponent {
+type State = {
+  users: []
+}
 
-  constructor(props) {
-    super(props);
+class UserList extends React.PureComponent<{}, State> {
 
-    this.state = {
-       columns: [
-         { name: 'first_name', title: 'שם פרטי' },
-         { name: 'last_name', title: 'שם משפחה' },
-         { name: 'role', title: 'תפקיד' },
-         { name: 'email', title: 'אי-מייל' },
-       ],
-       //rows: _rows,
-       users: [],
-       sorting: [{ columnName: 'first_name', direction: 'asc' }]
-    };
+  state = {
+    users: [],
+    sorting: [{ columnName: 'first_name', direction: 'asc' }]
   }
+
+  // constructor(props) {
+  //   super(props);
+  //
+  //   this.state = {
+  //   };
+  // }
 
   componentDidMount() {
 
@@ -94,13 +94,13 @@ class UserList extends React.PureComponent {
 
   render() {
 
-    const { users, columns, sorting } = this.state;
+    const { users, sorting } = this.state;
 
     const _columns = [
-      { name: 'first_name', accessor: 'שם פרטי' },
-      { name: 'last_name', accessor: 'שם משפחה' },
-      { name: 'role', accessor: 'תפקיד' },
-      { name: 'email', accessor: 'אי-מייל' }
+      { Header: 'שם פרטי', accessor: 'first_name' },
+      { Header: 'שם משפחה', accessor: 'last_name' },
+      { Header: 'תפקיד', accessor: 'role' },
+      { Header: 'אי-מייל', accessor: 'email' }
     ];
 
     return (
@@ -108,10 +108,29 @@ class UserList extends React.PureComponent {
         <div className='panel-header panel-header-sm'></div>
         <div className='content'>
           <Card>
-            <ReactTable
-              data={users}
-              columns={_columns}
-              />
+            <Row>
+              <Col md='12'>
+                <ReactTable
+                  className="-striped -highlight tableInCard col col-12"
+                  data={users}
+                  columns={_columns}
+                  getTheadThProps = { () => {
+                    return {
+                      style: {
+                        'textAlign': 'right'
+                      }
+                    }
+                  }}
+                  loadingText='טוען נתונים...'
+                  noDataText='אין נתונים'
+                  previousText = 'קודם'
+                  nextText = 'הבא'
+                  pageText = 'עמוד'
+                  ofText = 'מתוך'
+                  rowsText = 'שורות'
+                  />
+              </Col>
+            </Row>
           </Card>
         </div>
       </div>
