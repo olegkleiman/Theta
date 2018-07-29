@@ -190,8 +190,9 @@ class UnitGroups extends React.Component<Props, State> {
   }
 
   onRowSelected = (rowInfo) => {
-
-    this.props.history.push(`/dashboard/group/${this.props.docId}/${rowInfo.original.id}`);
+    if( rowInfo ) {
+      this.props.history.push(`/dashboard/group/${this.props.docId}/${rowInfo.original.id}`);
+    }
   }
 
   render() {
