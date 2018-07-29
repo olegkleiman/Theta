@@ -150,16 +150,34 @@ class UnitGroups extends React.Component<Props, State> {
   }
 
   async toggleIsClosed(index) {
-    const groupData = this.state.groups[index];
-    groupData.isClosed = !groupData.isClosed;
-    this.setState({
-      groups: this.state.groups
-    })
-
-    let rishumonStatus = ( groupData.isClosed  ) ? "1" : "4"; // Statuses: 1 - Open
-                                                              //           4 - Close
 
     try {
+
+      const groupData = this.state.groups[index];
+      groupData.isClosed = !groupData.isClosed;
+      this.setState({
+        groups: this.state.groups
+      })
+
+      let rishumonStatus = ( groupData.isClosed  ) ? "4" : "1"; // Statuses: 1 - Open
+                                                                //           4 - Close
+
+      const data2post = {
+        "groupSymbol": groupData.symbol,
+        "description": groupData.name,
+        "status": rishumonStatus,
+        "price": groupData.price
+      };
+
+      await fetch('http://rishumon.com/api/elamayn/edit_class.php?secret=Day1%21', {
+        // headers: {
+        //     "Content-Type": "application/json",
+        // },
+        mode: 'no-cors',
+        method: 'POST',
+        body: JSON.stringify(data2post)
+      })
+
       await firebase.firestore().collection('units')
                       .doc(this.props.docId).collection('groups')
                       .doc(groupData.id)
@@ -167,24 +185,8 @@ class UnitGroups extends React.Component<Props, State> {
                         isClosed: groupData.isClosed
                       });
 
-      let headers = new Headers();
-      headers.append('Authorization', 'Basic ZWxhbXlhbjExNTplbGFteWFuMTE1');
-      headers.append('Content-Type', 'application/json');
-
-      await fetch('https://rishumon.com/api/elamayn/edit_class.php?secret=Day1!', {
-        mode: 'no-cors',
-        //headers: headers,
-        method: 'POST',
-        body: JSON.stringify({
-        	"groupSymbol": groupData.symbol,
-        	"description": groupData.name,
-        	"status": rishumonStatus,
-        	"price": groupData.price
-        })
-      })
-
     } catch( err ) {
-      console.log(err);
+      console.error(err);
     }
 
   }
