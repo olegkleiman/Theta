@@ -205,6 +205,7 @@ class UnitGroups extends React.Component<Props, State> {
         data={this.state.groups}
         noDataText={this.state.dataStatus}
         filterable
+        defaultPageSize={5}
         getTheadThProps = { () => {
           return {
             style: {
@@ -286,7 +287,14 @@ class UnitGroups extends React.Component<Props, State> {
             accessor: 'isClosed',
             Cell: ::this.renderCheckable
         }, ]}
-         >
+        loadingText='טוען נתונים...'
+        noDataText='אין נתונים'
+        previousText = 'קודם'
+        nextText = 'הבא'
+        pageText = 'עמוד'
+        ofText = 'מתוך'
+        rowsText = 'שורות'
+        >
      </ReactTable>
    )
   }
