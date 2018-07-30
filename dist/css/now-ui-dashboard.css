@@ -1,19 +1,13 @@
 /*!
-
  =========================================================
  * Now UI Dashboard React - v1.0.1 based on Now UI Dashboard - v1.0.0
  =========================================================
-
  * Product Page: http://www.creative-tim.com/product/now-ui-dashboard
  * Copyright 2017 Creative Tim (http://www.creative-tim.com)
  * Licensed under MIT (https://github.com/creativetimofficial/now-ui-dashboard/blob/master/LICENSE.md)
-
  * Designed by www.invisionapp.com Coded by www.creative-tim.com
-
  =========================================================
-
  * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
  */
 /*     brand Colors              */
 /*      light colors         */
@@ -24,7 +18,6 @@
 /*!
 Animate.css - http://daneden.me/animate
 Licensed under the MIT license - http://opensource.org/licenses/MIT
-
 Copyright (c) 2015 Daniel Eden
 */
 .animated {
@@ -1524,8 +1517,7 @@ body {
   font-size: 14px;
   font-family: "Montserrat", "Helvetica Neue", Arial, sans-serif;
   -moz-osx-font-smoothing: grayscale;
-  -webkit-font-smoothing: antialiased;
-  }
+  -webkit-font-smoothing: antialiased; }
 
 .main {
   position: relative;
@@ -1775,9 +1767,8 @@ a[data-toggle="collapse"][aria-expanded="true"] .caret,
     display: inline-block;
     margin: 0;
     line-height: 1.8em;
-    /* font-size: 1em; */
-    /* font-weight: 400; */
-    }
+    font-size: 1em;
+    font-weight: 400; }
   .navbar.navbar-absolute {
     position: absolute;
     width: 100%;
@@ -1812,11 +1803,10 @@ a[data-toggle="collapse"][aria-expanded="true"] .caret,
       padding: 5px 15px; }
   .navbar .navbar-nav .nav-link {
     text-transform: uppercase;
-    /* font-size: 0.7142em; */
+    font-size: 0.7142em;
     padding: 0.5rem 0.7rem;
     line-height: 1.625rem;
-    margin-right: 3px;
-    }
+    margin-right: 3px; }
     .navbar .navbar-nav .nav-link i.fa + p,
     .navbar .navbar-nav .nav-link i.now-ui-icons + p {
       margin-left: 6px; }
@@ -1852,11 +1842,10 @@ a[data-toggle="collapse"][aria-expanded="true"] .caret,
     border: 1px solid transparent; }
   .navbar .navbar-brand {
     text-transform: uppercase;
-    /* font-size: 0.8571em; */
+    font-size: 0.8571em;
     padding-top: 0.5rem;
     padding-bottom: 0.5rem;
-    line-height: 1.625rem;
-    }
+    line-height: 1.625rem; }
   .navbar .navbar-toggler {
     width: 37px;
     height: 27px;
@@ -2195,11 +2184,9 @@ img {
   box-shadow: 0px 10px 25px 0px rgba(0, 0, 0, 0.3); }
 
 /* --------------------------------
-
 Nucleo Outline Web Font - nucleoapp.com/
 License - nucleoapp.com/license/
 Created using IcoMoon - icomoon.io
-
 -------------------------------- */
 @font-face {
   font-family: 'Nucleo Outline';
@@ -2761,7 +2748,7 @@ Created using IcoMoon - icomoon.io
   height: 100%;
   bottom: 0;
   width: 260px;
-  left: auto;
+  left: 0;
   z-index: 1031; }
   .sidebar .sidebar-wrapper,
   .off-canvas-sidebar .sidebar-wrapper {
@@ -3059,7 +3046,7 @@ Created using IcoMoon - icomoon.io
 
 .main-panel {
   position: relative;
-  float: left;
+  float: right;
   width: calc(100% - 260px);
   background-color: #E3E3E3;
   background-color: #ebecf1;
@@ -3285,7 +3272,7 @@ Created using IcoMoon - icomoon.io
         .page-footer ul li a:hover {
           text-decoration: none; }
   .page-footer .copyright {
-    float: left;
+    float: right;
     font-size: 0.8571em;
     line-height: 1.8; }
   .page-footer:after {
@@ -3995,8 +3982,8 @@ Created using IcoMoon - icomoon.io
     top: 0;
     height: 100%;
     width: 260px;
-    right: 0;
-    left: auto;
+    right: auto;
+    left: 0;
     z-index: 1032;
     visibility: visible;
     overflow-y: visible;
@@ -4006,12 +3993,11 @@ Created using IcoMoon - icomoon.io
     -o-transition: all 0.5s cubic-bezier(0.685, 0.0473, 0.346, 1);
     -ms-transition: all 0.5s cubic-bezier(0.685, 0.0473, 0.346, 1);
     transition: all 0.5s cubic-bezier(0.685, 0.0473, 0.346, 1);
-    /* -webkit-transform: translate3d(-260px, 0, 0); */
+    -webkit-transform: translate3d(-260px, 0, 0);
     -moz-transform: translate3d(-260px, 0, 0);
     -o-transform: translate3d(-260px, 0, 0);
     -ms-transform: translate3d(-260px, 0, 0);
-    /* transform: translate3d(-260px, 0, 0); */
-    }
+    transform: translate3d(-260px, 0, 0); }
   .main-panel {
     width: 100%; } }
 
@@ -4028,8 +4014,8 @@ Created using IcoMoon - icomoon.io
   .dropdown-menu .dropdown-item {
     color: inherit; }
   .footer .copyright {
-    float: left;
-    padding-left: : 15px; } }
+    float: right;
+    padding-right: 15px; } }
 
 @media screen and (max-width: 768px) {
   .nav-tabs {
