@@ -1,7 +1,7 @@
 // flow
 import React from 'react';
 import { Button, Row, Col, Input,
-         Card, CardBody
+         Card, CardBody, UncontrolledTooltip
 } from 'reactstrap';
 import ReactTable from 'react-table';
 import moment from 'moment';
@@ -58,7 +58,7 @@ class GroupData {
 type State = {
   pupils: Array<Pupil>,
   groupData: GroupData,
-  dataStatus: String
+  dataStatus: String,
 }
 
 class Group extends React.Component<{}, State> {
@@ -99,41 +99,51 @@ class Group extends React.Component<{}, State> {
         groupData: _groupData
       })
 
-      const response = await firebase.firestore().collection('units')
+      this.observer = firebase.firestore().collection('units')
                       .doc(unitId).collection('groups')
                       .doc(groupId).collection('pupils')
-                      .get(getOptions);
-
-      const _pupils = [];
-      response.docs.forEach( (pupilDoc) => {
-
-        const pupilData = pupilDoc.data();
-        const _pupil = new Pupil(pupilDoc.id,
-                                 pupilData.name,
-                                 pupilData.pupilId,
-                                 pupilData.phoneNumber,
-                                 pupilData.birthDay,
-                                 pupilData.whenRegistered,
-                                 pupilData.parentId,
-                                 pupilData.address);
-
-        _pupils.push(_pupil);
-      })
-
-      if( _pupils.length == 0 ) {
-        this.setState({
-            dataStatus: 'עדיין לא נרשם אף אחד'
-        });
-      } else {
-        this.setState({
-          pupils: _pupils
-        });
-      }
+                      .onSnapshot( snapShot => {
+                        ::this.pupilsFromDocs(snapShot.docs);
+                      });
 
     } catch( err ) {
       console.error(err);
     }
 
+  }
+
+  componentWillUnmount() {
+    if( this.observer )
+      this.observer();
+  }
+
+  pupilsFromDocs(docs) {
+
+    const _pupils = [];
+    docs.forEach( (pupilDoc) => {
+
+      const pupilData = pupilDoc.data();
+      const _pupil = new Pupil(pupilDoc.id,
+                               pupilData.name,
+                               pupilData.pupilId,
+                               pupilData.phoneNumber,
+                               pupilData.birthDay,
+                               pupilData.whenRegistered,
+                               pupilData.parentId,
+                               pupilData.address);
+
+      _pupils.push(_pupil);
+    })
+
+    if( _pupils.length == 0 ) {
+      this.setState({
+          dataStatus: 'עדיין לא נרשם אף אחד'
+      });
+    } else {
+      this.setState({
+        pupils: _pupils
+      });
+    }
   }
 
   exportExcel() {
@@ -155,7 +165,7 @@ class Group extends React.Component<{}, State> {
       pupilData.push(pupil.whenRegistered);
       pupilData.push(pupil.parentId);
       pupilData.push(pupil.address);
-      
+
       _export.data.push(pupilData);
     })
 
@@ -229,6 +239,15 @@ class Group extends React.Component<{}, State> {
   render() {
     return (
       <div>
+        <UncontrolledTooltip placement='auto'
+          autohide={false}
+          style={{
+            backgroundColor: 'black',
+            color: 'white'
+          }}
+          target='btnExportExcel'>
+            ייצוא לקובץ חיצוני
+        </UncontrolledTooltip>
         <div className='panel-header panel-header-sm'></div>
         <div className='content container h-100'>
           <Row>
@@ -242,7 +261,7 @@ class Group extends React.Component<{}, State> {
                 <CardBody>
                   <Row>
                     <Col md='12' className="text-right my-auto">
-                      <Button color='primary'
+                      <Button color='primary' id='btnExportExcel'
                               onClick={::this.exportExcel}>Excel</Button>
                     </Col>
                   </Row>
