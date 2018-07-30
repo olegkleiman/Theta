@@ -96,6 +96,7 @@ app.post('/pupil', (req, res) => {
     "parentId": "string",
     "phoneNumber": "number",
     "paymentApprovalNumber": "string",
+    "medicalLimitations": "boolean",
     "whenRegistered": "date"
   };
   const v = new Validator();
@@ -106,13 +107,14 @@ app.post('/pupil', (req, res) => {
   const when = moment(req.body.whenRegistered, "DD/MM/YYYY");
   const pupil = {
     name: req.body.name,
-    pupilId: ( req.body.pupilId ) ? req.body.pupilId : '<none>',
-    address: ( req.body.address ) ? req.body.address : '<none>',
-    birthDay: ( req.body.birthDay ) ? req.body.birthDay : '<none>',
-    parentId: (req.body.parentId) ? req.body.parentId : '<none>',
+    pupilId: ( req.body.pupilId ) ? req.body.pupilId : '',
+    address: ( req.body.address ) ? req.body.address : '',
+    birthDay: ( req.body.birthDay ) ? req.body.birthDay : '',
+    parentId: (req.body.parentId) ? req.body.parentId : '',
     paymentApprovalNumber: (req.body.paymentApprovalNumber) ?
-        req.body.paymentApprovalNumber : '<none',
+        req.body.paymentApprovalNumber : '',
     phoneNumber: req.body.phoneNumber,
+    medicalLimitations: req.body.medicalLimitations ? req.body.medicalLimitations : false,
     whenRegistered: new Date(when.valueOf()) // valueOf() is actually unix() * 1000
   }
 
