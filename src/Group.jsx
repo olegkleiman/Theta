@@ -37,11 +37,6 @@ class Pupil {
   }
 }
 
-// type GroupDate = {
-//   name: string,
-//   symbol: string
-// };
-
 class GroupData {
   name: String;
   symbol: String;
@@ -49,10 +44,14 @@ class GroupData {
 
   constructor(name: String,
               symbol: String,
-              capacity: Number) {
+              capacity: Number,
+              openFrom: Timestamp,
+              openTill: Timestamp) {
     this.name = name;
     this.symbol = symbol;
     this.capacity = capacity;
+    this.openFrom = moment.unix(openFrom.seconds);
+    this.openTill = moment.unix(openTill.seconds);
   }
 }
 
@@ -68,9 +67,11 @@ class Group extends React.Component<{}, State> {
     pupils: [],
     groupData: {
       name: '',
-      symbol: ''
+      symbol: '',
+      openFrom: moment(),
+      openTill: moment()
     },
-    dataStatus: 'Loading...'
+    dataStatus: 'טעינת נתונים..'
   }
 
   async componentDidMount() {
@@ -91,7 +92,9 @@ class Group extends React.Component<{}, State> {
       let data = doc.data();
       const _groupData = new GroupData(data.name,
                                        data.symbol,
-                                       data.capacity);
+                                       data.capacity,
+                                       data.opened,
+                                       data.openedTill);
       this.setState({
         groupData: _groupData
       })
@@ -119,7 +122,7 @@ class Group extends React.Component<{}, State> {
 
       if( _pupils.length == 0 ) {
         this.setState({
-            dataStatus: 'No pupils were registered yet'
+            dataStatus: 'עדיין לא נרשם אף אחד'
         });
       } else {
         this.setState({
@@ -135,31 +138,41 @@ class Group extends React.Component<{}, State> {
 
   exportExcel() {
 
+    console.log(this.state.pupils);
+
     const _data = {
-      cols: [{ name: "A", key: 0 }, { name: "B", key: 1 }, { name: "C", key: 2 }],
-      data: [
-        [ "id",    "name", "value" ],
-        [    1, "sheetjs",    7262 ],
-        [    2, "js-xlsx",    6969 ]
-      ]
+      /* Array of Arrays e.g. [["a","b"],[1,2]] */
+     data: [
+       [   "שם",    "מזהה", "מספר טלפון" ],
+       [    1, "sheetjs",    7262 ],
+       [    2, "js-xlsx",    6969 ]
+     ],
+      /* Array of column objects e.g. { name: "C", K: 2 } */
+      cols: [{ name: "A", key: 0 }, { name: "B", key: 1 }, { name: "C", key: 2 }]
     };
 
-    console.log(_data);
-
+    var workbook = XLSX.utils.book_new();
     /* convert from array of arrays to workbook */
-    var worksheet = XLSX.utils.aoa_to_sheet(_data);
-    var new_workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(new_workbook, worksheet, "SheetJS")
+    var worksheet = XLSX.utils.aoa_to_sheet(_data.data);
+    XLSX.utils.book_append_sheet(workbook, worksheet, "SheetJS")
+    worksheet = XLSX.utils.json_to_sheet([
+  { A:"S", B:"h", C:"e", D:"e", E:"t", F:"J", G:"S" },
+  { A: 1,  B: 2,  C: 3,  D: 4,  E: 5,  F: 6,  G: 7  },
+  { A: 2,  B: 3,  C: 4,  D: 5,  E: 6,  F: 7,  G: 8  }
+], {header:["A","B","C","D","E","F","G"], skipHeader:true});
+    XLSX.utils.book_append_sheet(workbook, worksheet, "SheetJS2")
 
     /* write a workbook */
-    const wbout = XLSX.write(new_workbookb, {type:'binary', bookType:"xlsx"});
-    writeFile(file, wbout, 'ascii')
-    .then( (r) => {
-      console.log(r);
-    })
-    .catch( (e) => {
-      console.error(err);
-    });
+    // const wbout = XLSX.write(workbook, {bookType:'xlsx', type:'buffer'});
+    // console.log(wbout);
+    XLSX.writeFile(workbook, "sheetjs.xlsx");
+    // writeFile(file, wbout, 'ascii')
+    // .then( (r) => {
+    //   console.log(r);
+    // })
+    // .catch( (e) => {
+    //   console.error(err);
+    // });
   }
 
   async handleUpdate(cellInfo, e) {
@@ -221,8 +234,9 @@ class Group extends React.Component<{}, State> {
             <Col className='col-md-12'>
               <Card>
                 <div className='card-header'>
-                  <h5 className='title' dir='rtl'>{this.state.groupData.name}({this.state.groupData.symbol})</h5>
-                  <h6>Capacity: {this.state.groupData.capacity} pupils</h6>
+                  <h5 className='title' dir='rtl'>רישום תלמידים לכיתה {this.state.groupData.name} (מזהה {this.state.groupData.symbol}) </h5>
+                  <h5 className='title'>קיבולת: {this.state.groupData.capacity} ילדים</h5>
+                  <h5 className='title'>תאריכי פעילות: מ {this.state.groupData.openFrom.format('DD/MM/YYYY')} עד {this.state.groupData.openTill.format('DD/MM/YYYY')}</h5>
                 </div>
                 <CardBody>
                   <Row>
@@ -252,7 +266,13 @@ class Group extends React.Component<{}, State> {
                             }
                           }
                         }}
-
+                        loadingText='טוען נתונים...'
+                        noDataText='טוען נתונים...'
+                        previousText = 'קודם'
+                        nextText = 'הבא'
+                        pageText = 'עמוד'
+                        ofText = 'מתוך'
+                        rowsText = 'שורות'
                         columns={[{
                           Header: 'שם',
                           accessor: 'name',
