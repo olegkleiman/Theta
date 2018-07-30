@@ -138,41 +138,41 @@ class Group extends React.Component<{}, State> {
 
   exportExcel() {
 
-    console.log(this.state.pupils);
-
     const _data = {
       /* Array of Arrays e.g. [["a","b"],[1,2]] */
      data: [
-       [   "שם",    "מזהה", "מספר טלפון" , ""],
+       ["", "שם", "ת.ז.", "מספר טלפון", "תאריך לידה"],
+       //[   "שם",    "מזהה", "מספר טלפון" , ""],
      ],
       /* Array of column objects e.g. { name: "C", K: 2 } */
-      cols: [{ name: "שם", key: 0 }, { name: "B", key: 1 }, { name: "C", key: 2 }]
+      //cols: [{ name: "שם", key: 0 }, { name: "B", key: 1 }, { name: "C", key: 2 }]
     };
 
     this.state.pupils.forEach( (pupil, index) => {
       const pupilData = [];
-      pupilData.push(2 + index); // reserve 1 for caption row
+      pupilData.push(1 + index); // reserve 1 for caption row
       pupilData.push(pupil.name);
       pupilData.push(pupil.id);
       pupilData.push(pupil.phoneNumber);
+      pupilData.push(pupil.birthDay);
       _data.data.push(pupilData);
     })
 
+    /* create a new blank workbook */
     var workbook = XLSX.utils.book_new();
+    console.log(workbook.Views);
     /* convert from array of arrays to workbook */
     var worksheet = XLSX.utils.aoa_to_sheet(_data.data);
-    XLSX.utils.book_append_sheet(workbook, worksheet, "SheetJS")
-    XLSX.utils.book_append_sheet(workbook, worksheet, "SheetJS2")
+    XLSX.utils.book_append_sheet(workbook, worksheet, this.state.groupData.name);
+
+    /* create view to RTL */
+    if(!workbook.Workbook) workbook.Workbook = {};
+    if(!workbook.Workbook.Views) workbook.Workbook.Views = [];
+    if(!workbook.Workbook.Views[0]) workbook.Workbook.Views[0] = {};
+    workbook.Workbook.Views[0].RTL = true;
 
     /* write a workbook */
-    XLSX.writeFile(workbook, "sheetjs.xlsx");
-    // writeFile(file, wbout, 'ascii')
-    // .then( (r) => {
-    //   console.log(r);
-    // })
-    // .catch( (e) => {
-    //   console.error(err);
-    // });
+    XLSX.writeFile(workbook, `${this.state.groupData.name}.xlsx`);
   }
 
   async handleUpdate(cellInfo, e) {
