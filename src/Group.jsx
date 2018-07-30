@@ -138,14 +138,11 @@ class Group extends React.Component<{}, State> {
 
   exportExcel() {
 
-    const _data = {
+    const _export = {
       /* Array of Arrays e.g. [["a","b"],[1,2]] */
      data: [
-       ["", "שם", "ת.ז.", "מספר טלפון", "תאריך לידה"],
-       //[   "שם",    "מזהה", "מספר טלפון" , ""],
+       ["", "שם", "ת.ז.", "מספר טלפון", "תאריך לידה", "תאריך הרשמה", "מזהה הורה", "כתובת"],
      ],
-      /* Array of column objects e.g. { name: "C", K: 2 } */
-      //cols: [{ name: "שם", key: 0 }, { name: "B", key: 1 }, { name: "C", key: 2 }]
     };
 
     this.state.pupils.forEach( (pupil, index) => {
@@ -155,14 +152,18 @@ class Group extends React.Component<{}, State> {
       pupilData.push(pupil.id);
       pupilData.push(pupil.phoneNumber);
       pupilData.push(pupil.birthDay);
-      _data.data.push(pupilData);
+      pupilData.push(pupil.whenRegistered);
+      pupilData.push(pupil.parentId);
+      pupilData.push(pupil.address);
+      
+      _export.data.push(pupilData);
     })
 
     /* create a new blank workbook */
     var workbook = XLSX.utils.book_new();
     console.log(workbook.Views);
     /* convert from array of arrays to workbook */
-    var worksheet = XLSX.utils.aoa_to_sheet(_data.data);
+    var worksheet = XLSX.utils.aoa_to_sheet(_export.data);
     XLSX.utils.book_append_sheet(workbook, worksheet, this.state.groupData.name);
 
     /* create view to RTL */
