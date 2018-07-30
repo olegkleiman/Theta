@@ -205,23 +205,48 @@ exports.units = functions.https.onRequest((req, res) => {
 
 });
 
-exports.createPupil = functions.firestore
+exports.unregisterPupil  = functions.firestore
+    .document('units/{unitId}/groups/{groupId}/pupils/{pupilId}')
+    .onDelete((snap, context) => {
+
+      console.log('onDelete');
+
+      const doc = firestore.doc(`units/${context.params.unitId}/groups/${context.params.groupId}`);
+      doc.get()
+      .then( _doc => {
+         const docData = _doc.data();
+
+         doc.update({
+           registeredPupils: docData.registeredPupils - 1
+         })
+      })
+
+      return true;
+
+    })
+
+exports.registerPupil = functions.firestore
   .document('units/{unitId}/groups/{groupId}/pupils/{pupilId}')
   .onCreate( (snap, context) => {
-     const newDoc = snap.data();
+     //const newDoc = snap.data();
+
      // console.log(`UnitId: ${context.params.unitId}`);
      // console.log(`GroupId: ${context.params.groupId}`);
-     // console.log(`PupilId: ${context.params.pupilId}`);
+     console.log(`onCreate PupilId: ${context.params.pupilId}`);
 
      const doc = firestore.doc(`units/${context.params.unitId}/groups/${context.params.groupId}`);
      doc.get()
      .then( _doc => {
         const docData = _doc.data();
-        console.log(`DocData: ${docData}`);
 
-        doc.update({
+        console.log(`Prev. counter: ${docData.registeredPupils}`);
+
+        return doc.update({
           registeredPupils: docData.registeredPupils + 1
         })
+     })
+     .then( res => {
+       console.log(`Update result: ${res}`);
      })
 
      return true;
