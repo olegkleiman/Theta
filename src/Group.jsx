@@ -368,10 +368,6 @@ class Group extends React.Component<{}, State> {
                           Header: 'מספר טלפון',
                           accessor: 'phoneNumber'
                         }, {
-                          Header: 'מ. רפואיות',
-                          accessor: 'medicalLimitations',
-                          Cell: ::this.renderCheckable
-                        }, {
                           Header: 'תאריך לידה',
                           accessor: 'birthDay',
                           Cell: cellInfo => ::this.renderDatePicker(cellInfo, cellInfo.original.birthDay)
