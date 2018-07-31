@@ -114,7 +114,7 @@ app.post('/pupil', (req, res) => {
     paymentApprovalNumber: (req.body.paymentApprovalNumber) ?
         req.body.paymentApprovalNumber : '',
     phoneNumber: req.body.phoneNumber,
-    medicalLimitations: req.body.medicalLimitations ? req.body.medicalLimitations : false,
+    medicalLimitations: req.body.medicalLimitations ? req.body.medicalLimitations : true,
     whenRegistered: new Date(when.valueOf()) // valueOf() is actually unix() * 1000
   }
 
