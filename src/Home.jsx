@@ -2,10 +2,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from "react-router-dom";
-import {
-  Container,
-  Row,
-  Card
+import { Container, Row, Col,
+  Card, CardBody, CardText, CardTitle, CardFooter
 } from 'reactstrap';
 
 import firebase from './firebase.js';
@@ -14,18 +12,10 @@ type State = {
   activities: []
 }
 
-type Props = {
+class Home extends React.Component<{},State> {
 
-}
-
-class Home extends React.Component<State, Props> {
-
-  constructor() {
-    super();
-
-    this.state = {
-      activities: []
-    }
+  state = {
+    activities: []
   }
 
   componentDidMount() {
@@ -78,34 +68,40 @@ class Home extends React.Component<State, Props> {
               <div className='panel-header panel-header-sm'></div>
               <div className='content container h-100'>
                   <Row>
-                    <div className='col col-md-12'>
-                      <div className='card'>
+                    <Col md='12'>
+                      <Card>
                         <div className='card-header'>
                           <h5 className='title'>המשימות היומיות שלך</h5>
                         </div>
-                        <div className='card-body'>
+                        <CardBody>
                           <Row>
                             {
                               this.state.activities.map( (activity, index) => {
                                   return (
                                     <div className='col-3' key={index}>
-                                      <div className='card card-user'>
-                                        <div className='card-body'>
+                                      <Card body>
+                                        <CardBody>
                                           <div>
                                             <a onClick={ () => ::this.activitySelected(activity.name) } href={activity.link}>
-                                              <h5><b>{activity.name}</b></h5>
-                                              <p className='card-text'>{activity.description}</p>
+                                              <CardTitle>{activity.name}</CardTitle>
+                                              <CardText>&nbsp;</CardText>
                                             </a>
                                           </div>
-                                        </div>
-                                      </div>
+                                        </CardBody>
+                                        <CardFooter className='card-footer'>
+                                          <a className='card-footer-link'
+                                             onClick={ () => ::this.activitySelected(activity.name) } href={activity.link}>
+                                            {activity.description}
+                                          </a>
+                                        </CardFooter>
+                                      </Card>
                                     </div>)
                               })
                             }
                           </Row>
-                        </div>
-                      </div>
-                    </div>
+                        </CardBody>
+                      </Card>
+                    </Col>
                   </Row>
 
               </div>
