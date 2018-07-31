@@ -19,6 +19,7 @@ class Pupil {
               name: String,
               id: String,
               phoneNumber: String,
+              medicalLimitations: Boolean,
               birthDay: String,
               whenRegistered: Timestamp,
               parentId: String,
@@ -27,6 +28,7 @@ class Pupil {
     this.name = name;
     this.id = id;
     this.phoneNumber = phoneNumber;
+    this.medicalLimitations = medicalLimitations;
     this.birthDay = birthDay;
 
     this.whenRegistered = ( whenRegistered ) ?
@@ -127,6 +129,7 @@ class Group extends React.Component<{}, State> {
                                pupilData.name,
                                pupilData.pupilId,
                                pupilData.phoneNumber,
+                               pupilData.medicalLimitations,
                                pupilData.birthDay,
                                pupilData.whenRegistered,
                                pupilData.parentId,
@@ -186,41 +189,60 @@ class Group extends React.Component<{}, State> {
     XLSX.writeFile(workbook, `${this.state.groupData.name}.xlsx`);
   }
 
+  async updateFirestore(pupilIndex: Number,
+                  fieldName: String,
+                  value) {
+    if( value != null ) {
+
+      const groupId = this.props.match.params.groupid;
+      const unitId = this.props.match.params.unitid;
+
+      const data = [...this.state.pupils];
+      data[pupilIndex][fieldName] = value;
+      this.setState({
+        pupils: data
+      });
+
+      const pupilRecordId = data[pupilIndex].recordId;
+
+      try {
+        let json = {};
+        const updateField = fieldName;
+        json[updateField] = value;
+
+        await firebase.firestore().collection('units')
+                        .doc(unitId).collection('groups')
+                        .doc(groupId).collection('pupils')
+                        .doc(pupilRecordId)
+                        .update(json);
+
+      } catch( err ) {
+        console.error(err);
+      }
+
+    }
+  }
+
+  toggleIsMedicalLimitations(index: Number) {
+
+    const pupilData = this.state.pupils[index];
+    pupilData.medicalLimitations = !pupilData.medicalLimitations;
+    this.setState({
+      pupils: this.state.pupils
+    });
+
+    this.updateFirestore(index,
+                        'medicalLimitations',
+                        pupilData.medicalLimitations);
+  }
+
   async handleUpdate(cellInfo, e) {
     if( e.key === 'Enter' || e.type === 'blur') {
 
       e.preventDefault();
 
       const value = e.target.innerHTML;
-
-      if( value ) {
-
-        const groupId = this.props.match.params.groupid;
-        const unitId = this.props.match.params.unitid;
-
-        const data = [...this.state.pupils];
-        data[cellInfo.index][cellInfo.column.id] = value;
-        this.setState({
-          pupils: data
-        });
-
-        const pupilRecordId = data[cellInfo.index].recordId;
-
-        try {
-
-          let json = {};
-          const updateField = cellInfo.column.id;
-          json[updateField] = value;
-
-          await firebase.firestore().collection('units')
-                          .doc(unitId).collection('groups')
-                          .doc(groupId).collection('pupils')
-                          .doc(pupilRecordId)
-                          .update(json);
-        } catch( err ) {
-            console.error( err );
-        }
-      }
+      this.updateFirestore(cellInfo.index, cellInfo.column.id, value);
     }
   }
 
@@ -234,6 +256,28 @@ class Group extends React.Component<{}, State> {
         onBlur={ e => ::this.handleUpdate(cellInfo, e) }>
         {value}
       </div>)
+  }
+
+  renderCheckable(cellInfo) {
+
+    const pupilData = this.state.pupils[cellInfo.index];
+    const _isLimitations = pupilData.medicalLimitations;
+
+    return (
+      <div className='form-check'
+           style={{
+             marginTop: '-16px'
+           }}>
+          <label className='form-check-label'>
+            <input className='form-check-input'
+                  type='checkbox'
+                  checked={_isLimitations}
+                  onChange={ () => ::this.toggleIsMedicalLimitations(cellInfo.index) }
+            />
+            <span className='form-check-sign'></span>
+          </label>
+      </div>)
+
   }
 
   render() {
@@ -303,6 +347,10 @@ class Group extends React.Component<{}, State> {
                         }, {
                           Header: 'מספר טלפון',
                           accessor: 'phoneNumber'
+                        }, {
+                          Header: 'מ. רפואיות',
+                          accessor: 'medicalLimitations',
+                          Cell: ::this.renderCheckable
                         }, {
                           Header: 'תאריך לידה',
                           accessor: 'birthDay'
