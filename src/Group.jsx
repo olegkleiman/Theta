@@ -4,6 +4,7 @@ import { Button, Row, Col, Input,
          Card, CardBody, UncontrolledTooltip
 } from 'reactstrap';
 import ReactTable from 'react-table';
+import Datetime from 'react-datetime';
 import moment from 'moment';
 import XLSX from 'xlsx';
 import firebase from './firebase.js';
@@ -258,6 +259,17 @@ class Group extends React.Component<{}, State> {
       </div>)
   }
 
+  renderDatePicker(cellInfo, value) {
+    return(
+      <div style={{ backgroundColor: "#fafafa" }}
+            contentEditable
+            suppressContentEditableWarning
+            onKeyDown={ e => ::this.handleUpdate(cellInfo, e) }
+            onBlur={ e => ::this.handleUpdate(cellInfo, e) }>
+          {value}
+      </div>);
+  }
+
   renderCheckable(cellInfo) {
 
     const pupilData = this.state.pupils[cellInfo.index];
@@ -274,9 +286,17 @@ class Group extends React.Component<{}, State> {
                   checked={_isLimitations}
                   onChange={ () => ::this.toggleIsMedicalLimitations(cellInfo.index) }
             />
-            <span className='form-check-sign'></span>
+            <span className='form-check-sign'
+                  style={{
+                    paddingLeft: '10px;'
+                  }}>
+            </span>
           </label>
       </div>)
+
+  }
+
+  birthDayChanged() {
 
   }
 
@@ -353,7 +373,8 @@ class Group extends React.Component<{}, State> {
                           Cell: ::this.renderCheckable
                         }, {
                           Header: 'תאריך לידה',
-                          accessor: 'birthDay'
+                          accessor: 'birthDay',
+                          Cell: cellInfo => ::this.renderDatePicker(cellInfo, cellInfo.original.birthDay)
                         },{
                           Header: 'תאריך הרשמה',
                           accessor: 'whenRegistered'
