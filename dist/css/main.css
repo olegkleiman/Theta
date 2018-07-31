@@ -77,3 +77,12 @@ body, h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4 {
 /* .sidebar-mini .sidebar,
 .sidebar-mini .sidebar .sidebar-wrapper {
   width: 80px; } */
+
+.card-footer {
+  background-color: #2ca8ff !important;
+  color: white !important;
+}
+
+.card-footer-link {
+  color: white !important;
+}
