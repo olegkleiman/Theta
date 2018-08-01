@@ -80,7 +80,7 @@ class Office extends React.Component<{}, State>  {
                   <div className='col col-md-12'>
                     <Card body>
                       <CardHeader>
-                        <h4 className='title'>רישום ומנהלה</h4>
+                        <h5 className='title'>רישום ומנהלה</h5>
                       </CardHeader>
                       <div className='card-body'>
                         <Row>
