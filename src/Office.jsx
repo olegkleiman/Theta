@@ -3,20 +3,17 @@ import React from 'react';
 import { connect } from 'react-redux';
 import firebase from './firebase.js';
 
-import {
-  Row,
-  Col
+import { Container, Row, Col,
+  Card, CardHeader, CardBody, CardText, CardTitle, CardFooter
 } from 'reactstrap';
+
 
 type State = {
   subActivities: []
 }
 
-type Props = {
 
-}
-
-class Office extends React.Component<Props, State>  {
+class Office extends React.Component<{}, State>  {
 
   state = {
     subActivities: []
@@ -81,33 +78,40 @@ class Office extends React.Component<Props, State>  {
               <div className='content container h-100'>
                 <Row>
                   <div className='col col-md-12'>
-                    <div className='card'>
-                      <div className='card-header'>
-                        <h5 className='title'>מנהלה</h5>
-                      </div>
+                    <Card body>
+                      <CardHeader>
+                        <h4 className='title'>רישום ומנהלה</h4>
+                      </CardHeader>
                       <div className='card-body'>
                         <Row>
                           {
                             this.state.subActivities.map(( activity, index) => {
                               return (
                                 <Col xs='3' key={index}>
-                                  <div className='card card-user'>
-                                    <div className='card-body'>
+                                  <Card body outline>
+                                    <CardBody>
                                       <div>
-                                        <a onClick={ () => ::this.activitySelected(activity.description) }
+                                        <a onClick={ () => ::this.activitySelected(activity.name) }
                                             href={activity.link}>
-                                          <h5>{activity.name}</h5>
+                                          <CardTitle>{activity.name}</CardTitle>
                                         </a>
                                       </div>
-                                    </div>
-                                  </div>
+                                    </CardBody>
+                                    <CardFooter className='card-footer'>
+                                      <a className='card-footer-link'
+                                          onClick={ () => ::this.activitySelected(activity.name) }
+                                          href={activity.link}>
+                                          {activity.description}
+                                      </a>
+                                    </CardFooter>
+                                  </Card>
                                 </Col>
                               )
                             })
                           }
                         </Row>
                       </div>
-                    </div>
+                    </Card>
                   </div>
                 </Row>
               </div>
