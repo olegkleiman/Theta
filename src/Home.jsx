@@ -88,12 +88,12 @@ class Home extends React.Component<{},State> {
                                             </a>
                                           </div>
                                         </CardBody>
-                                        <CardFooter className='card-footer'>
-                                          <a className='card-footer-link'
-                                             onClick={ () => ::this.activitySelected(activity.name) } href={activity.link}>
-                                            {activity.description}
-                                          </a>
-                                        </CardFooter>
+                                        <a className='card-footer-link'
+                                           onClick={ () => ::this.activitySelected(activity.name) } href={activity.link}>
+                                          <CardFooter className='card-footer'>
+                                              {activity.description}
+                                          </CardFooter>
+                                        </a>                                        
                                       </Card>
                                     </div>)
                               })
