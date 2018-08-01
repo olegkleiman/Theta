@@ -71,7 +71,7 @@ class Home extends React.Component<{},State> {
                     <Col md='12'>
                       <Card>
                         <div className='card-header'>
-                          <h5 className='title'>המשימות היומיות שלך</h5>
+                          <h4 className='title'>המשימות היומיות שלך</h4>
                         </div>
                         <CardBody>
                           <Row>
