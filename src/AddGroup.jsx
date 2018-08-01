@@ -114,7 +114,8 @@ class AddGroup extends React.Component<{}, State> {
       opened: this.state.fromDate.toDate(),
       openedTill: this.state.tillDate.toDate(),
       price: event.target.price.value,
-      sec_role: `group_${event.target.symbol.value}`
+      sec_role: `group_${event.target.symbol.value}`,
+      registeredPupils: 0
     }
 
     const _group = await ::this.validateGroup(group)
@@ -226,7 +227,7 @@ class AddGroup extends React.Component<{}, State> {
                           <br />
                           <Row>
                             <Col md={{ size: 2, offset: 2 }} className="text-right my-auto">
-                              סמל
+                              מזהה
                             </Col>
                             <Col md='4'>
                                 <Input id='symbol' name='symbol'
