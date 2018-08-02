@@ -15,7 +15,8 @@ type State = {
   selectedAuthority: ?String,
   authorities: String[],
   authoritiesLoaded: Boolean,
-  unitType: String
+  unitType: String,
+  eduType: String
 }
 
 class AddUnit extends React.Component<{}, State> {
@@ -25,7 +26,8 @@ class AddUnit extends React.Component<{}, State> {
     selectedAuthority: '',
     authorities: [],
     authoritiesLoaded: false,
-    unitType: ''
+    unitType: '',
+    eduType: ''
   }
 
   async componentDidMount() {
@@ -65,7 +67,7 @@ class AddUnit extends React.Component<{}, State> {
       symbol: symbol,
       sec_role: 'unit_' + symbol,
       type: this.state.unitType,
-      education_type: 'edu_type'
+      education_type: this.state.eduType
     }
 
     const _unit = await ::this.validateUnit(unit);
@@ -122,6 +124,7 @@ class AddUnit extends React.Component<{}, State> {
   render() {
 
     const unitTypes = ['בי"ס', 'גן', 'בי"ס יוח"א '];
+    const eduTypes = ['רגיל', 'מיוחד'];
 
     let isThisField = this.state.invalidField === 'symbol';
     const symbolClassNames = classNames({
@@ -194,6 +197,18 @@ class AddUnit extends React.Component<{}, State> {
                             </Col>
                           </Row>
                           <br />
+                          <Row>
+                            <Col md={{ size: 2, offset: 2 }} className="text-right my-auto">
+                              <div className='info-text'>סוג חינוך</div>
+                            </Col>
+                            <Col md='4' className="text-left">
+                              <DropdownList
+                                data={eduTypes}
+                                onChange={ value => this.setState({
+                                                                    eduType: value
+                                                                  }) }/>
+                            </Col>
+                          </Row>
                           <Row>
                             <Col md={{ size: 1, offset: 10}}>
                               <Button type="submit" color='primary'>הוסף</Button>
