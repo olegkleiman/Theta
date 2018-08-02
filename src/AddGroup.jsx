@@ -169,7 +169,7 @@ class AddGroup extends React.Component<{}, State> {
       if( response.docs.length != 0 ) {
         const userDoc = response.docs[0];
         const secRoles = this.props.secRoles;
-        secRoles.push(`group_${group.symbol}`);
+        secRoles.push(group.sec_role);
 
         await firebase.firestore().collection('users')
               .doc(userDoc.id)
