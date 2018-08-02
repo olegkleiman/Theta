@@ -30,7 +30,6 @@
     "babel-preset-stage-2": "^6.24.1",
     "classnames": "^2.2.5",
     "css-loader": "^0.28.11",
-    "file-loader": "^1.1.11",
     "firebase": "^4.13.1",
     "material-ui": "^1.0.0-beta.44",
     "moment": "^2.22.2",
@@ -42,6 +41,7 @@
     "react-redux": "^5.0.7",
     "react-router-dom": "^4.2.2",
     "react-table": "^6.8.6",
+    "react-widgets": "^4.4.3",
     "reactstrap": "^5.0.0",
     "redux": "^4.0.0",
     "style-loader": "^0.21.0",
@@ -50,6 +50,8 @@
     "xlsx": "^0.13.0"
   },
   "devDependencies": {
+    "file-loader": "^1.1.11",
+    "ttf-loader": "^1.0.2",
     "webpack-cli": "^2.0.15"
   }
 }
