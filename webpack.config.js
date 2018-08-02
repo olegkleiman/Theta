@@ -48,6 +48,17 @@ var config = {
             loader: "css-loader" // translates CSS into CommonJS
           }
         ]
+      },
+      {
+        test: /\.(eot|ttf|woff)$/,
+        use: [
+          {
+            loader: 'file-loader?name=dist/fonts/[name].[ext]',
+            options: {
+              name: './font/[hash].[ext]',
+            },
+          },
+        ]
       }
     ]
   },
