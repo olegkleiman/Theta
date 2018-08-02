@@ -3,6 +3,8 @@ import React from 'react';
 import firebase from './firebase.js';
 import { Card, Row, Col } from 'reactstrap';
 import ReactTable from 'react-table';
+import Pagination from './TablePagination';
+import UserPermissions from './UserPermissions';
 
 type State = {
   users: []
@@ -96,7 +98,27 @@ class UserList extends React.PureComponent<{}, State> {
 
     const { users, sorting } = this.state;
 
-    const _columns = [
+    const _columns = [{
+        Header: '',
+        expander: true,
+        width: 65,
+        Expander: ({ isExpanded, ...rest}) =>
+        <div style={{
+            lineHeight: '34px'
+          }}>
+          { isExpanded ?
+            <span className='expanderIcon'>&#x2299;</span> :
+            <span className='expanderIcon'>&#x2295;</span>
+          }
+        </div>,
+        style: {
+          cursor: 'pointer',
+          fontSize: 25,
+          padding: 0,
+          userSelect: 'none',
+          textAlign: 'center'
+        }
+      },
       { Header: 'שם פרטי', accessor: 'first_name' },
       { Header: 'שם משפחה', accessor: 'last_name' },
       { Header: 'תפקיד', accessor: 'role' },
@@ -112,6 +134,9 @@ class UserList extends React.PureComponent<{}, State> {
               <Col md='12'>
                 <ReactTable
                   className="-striped -highlight tableInCard col col-12"
+                  PaginationComponent={Pagination}
+                  filterable
+                  pageSize={10}
                   data={users}
                   columns={_columns}
                   getTheadThProps = { () => {
@@ -122,12 +147,21 @@ class UserList extends React.PureComponent<{}, State> {
                     }
                   }}
                   loadingText='טוען נתונים...'
-                  noDataText='אין נתונים'
+                  noDataText='טוען נתונים...'
                   previousText = 'קודם'
                   nextText = 'הבא'
                   pageText = 'עמוד'
                   ofText = 'מתוך'
                   rowsText = 'שורות'
+                  SubComponent={ row => {
+                    console.log(row.original.id);
+                    return (
+                      <div style={{ padding: "20px" }}>
+                          <br />
+                          <UserPermissions userId={row.original.id} />
+                      </div>
+                    )
+                  }}
                   />
               </Col>
             </Row>
