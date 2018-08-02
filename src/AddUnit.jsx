@@ -47,7 +47,7 @@ class AddUnit extends React.Component<{}, State> {
 
   onAuthorityChanged = (authority) => {
     this.setState({
-      selectedAuthority: authority
+      selectedAuthority: authority.name
     });
   }
 
@@ -58,7 +58,7 @@ class AddUnit extends React.Component<{}, State> {
     const symbol = event.target.symbol.value;
 
     const unit = {
-      authority: 'authority',
+      authority: this.state.selectedAuthority,
       name_he: event.target.unitName.value,
       symbol: symbol,
       sec_role: 'unit_' + symbol,
@@ -119,6 +119,8 @@ class AddUnit extends React.Component<{}, State> {
 
   render() {
 
+    const unitTypes = ['בי"ס', 'גן', 'בי"ס יוח"א '];
+
     let isThisField = this.state.invalidField === 'symbol';
     const symbolClassNames = classNames({
       'text-left my-auto' : true,
@@ -145,7 +147,7 @@ class AddUnit extends React.Component<{}, State> {
                             <Col md={{ size: 2, offset: 2 }} className="text-right my-auto">
                               <div className='info-text'>רשות</div>
                             </Col>
-                            <Col md='4'>
+                            <Col md='4' className="text-left">
                               <DropdownList busy={!this.state.authoritiesLoaded}
                                 textField='name'
                                 groupBy='region'
@@ -177,6 +179,15 @@ class AddUnit extends React.Component<{}, State> {
                             </Col>
                           </Row>
                           <br />
+                          <Row>
+                            <Col md={{ size: 2, offset: 2 }} className="text-right my-auto">
+                              <div className='info-text'>סוג מוסד</div>
+                            </Col>
+                            <Col md='4' className="text-left">
+                              <DropdownList
+                                data={unitTypes}/>
+                            </Col>
+                          </Row>
                           <Row>
                             <Col md={{ size: 1, offset: 10}}>
                               <Button type="submit" color='primary'>הוסף</Button>
