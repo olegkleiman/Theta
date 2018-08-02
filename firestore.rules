@@ -8,6 +8,10 @@ service cloud.firestore {
       allow create: if request.auth.uid != null;
     }
 
+    match /authorities {
+    	allow read : if request.auth.uid != null;
+    }
+
     match /external_sources {
     	allow read : if request.auth.uid != null;
     }
