@@ -150,7 +150,7 @@ class AddUnit extends React.Component<{}, State> {
                               <div className='info-text'>רשות</div>
                             </Col>
                             <Col md='4' className="text-left">
-                              <DropdownList busy={!this.state.authoritiesLoaded}
+                              <DropdownList filter busy={!this.state.authoritiesLoaded}
                                 textField='name'
                                 groupBy='region'
                                 data={this.state.authorities}
