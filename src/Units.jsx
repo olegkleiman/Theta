@@ -104,6 +104,11 @@ class Units extends React.Component<{}, State> {
     });
   }
 
+  addUnit() {
+    this.props.history.push('/dashboard/addunit/');
+  }
+
+
   render() {
 
     let unit = this.state.selectedUnit.id == '' ? null
@@ -116,7 +121,9 @@ class Units extends React.Component<{}, State> {
       expander: true,
       width: 65,
       Expander: ({ isExpanded, ...rest}) =>
-        <div>
+        <div style={{
+            lineHeight: '34px'
+          }}>
           { isExpanded ?
             <span className='expanderIcon'>&#x2299;</span> :
             <span className='expanderIcon'>&#x2295;</span>
@@ -157,6 +164,11 @@ class Units extends React.Component<{}, State> {
                       </div>
                       <div className='card-body'>
                         <Row>
+                          <Col md='12' className='d-flex justify-content-end'>
+                            <Button color='primary'
+                                    className='align-self-end'
+                                    onClick={::this.addUnit}>הוסף מוסד +</Button>
+                          </Col>
                           <Col md='12'>
                             <div className='card'>
                               <div className='card-body'>
