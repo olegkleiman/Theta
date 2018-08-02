@@ -7,19 +7,28 @@ import withAuth from './FirebaseAuth';
 
 type State = {
   unitRoles: String[],
-  groupRoles: String[]
+  groupRoles: String[],
+  selectedGroup: String,
+  selectedUnit: String
 }
 
 class UserPermissions extends React.Component<{}, State> {
+
+  state = {
+    unitRoles: [],
+    groupRoles: [],
+    selectedGroup: '',
+    selectedUnit: ''
+  }
 
   async componentDidMount() {
     try {
 
       const response = await firebase.firestore().collection('users')
-                       .where("email", "==", this.props.userId)
+                       .doc(this.props.userId)
                       .get();
-      if( response.docs.length > 0 ) {
-         const userData = response.docs[0];
+      if( response.exists > 0 ) {
+         const userData = response.data();
          const secRoles = userData.sec_roles;
          const unitRoles = [];
          const groupRoles = [];
@@ -44,6 +53,28 @@ class UserPermissions extends React.Component<{}, State> {
 
   }
 
+  handleGroupPermissionCreate = (name) => {
+
+    const groupRoles = [...this.state.groupRoles, name];
+
+    this.setState({
+      selectedGroup: name,
+      groupRoles: groupRoles
+    })
+
+  }
+
+  handleUnitPermissionCreate = (name) => {
+
+    const unitRoles = [...this.state.unitRoles, name];
+
+    this.setState({
+      selectedUnit: name,
+      unitRoles: groupRoles
+    })
+
+  }
+
   render() {
 
     return(
@@ -58,10 +89,26 @@ class UserPermissions extends React.Component<{}, State> {
         </Row>
         <Row>
           <Col md='6'>
-            <DropdownList />
+            <DropdownList
+                filter
+                data={this.state.groupRoles}
+                value={this.state.selectedGroup}
+                onChange={ name => this.setState({
+                  selectedGroup: name
+                }) }
+                onCreate={ name => ::this.handleGroupPermissionCreate(name) }
+                allowCreate="onFilter"/>
           </Col>
           <Col md='6'>
-            <DropdownList />
+            <DropdownList
+                filter
+                data={this.state.unitRoles}
+                value={this.state.selectedUnit}
+                onChange={ name => this.setState({
+                  selectedUnit: name
+                }) }
+                onCreate={ name => ::this.handleUnitPermissionCreate(name) }
+                allowCreate="onFilter"/>
           </Col>
         </Row>
       </Card>)
