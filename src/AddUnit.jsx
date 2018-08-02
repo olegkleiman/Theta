@@ -14,7 +14,8 @@ type State = {
   invalidField: String,
   selectedAuthority: ?String,
   authorities: String[],
-  authoritiesLoaded: Boolean
+  authoritiesLoaded: Boolean,
+  unitType: String
 }
 
 class AddUnit extends React.Component<{}, State> {
@@ -23,7 +24,8 @@ class AddUnit extends React.Component<{}, State> {
     invalidField: '',
     selectedAuthority: '',
     authorities: [],
-    authoritiesLoaded: false
+    authoritiesLoaded: false,
+    unitType: ''
   }
 
   async componentDidMount() {
@@ -62,7 +64,7 @@ class AddUnit extends React.Component<{}, State> {
       name_he: event.target.unitName.value,
       symbol: symbol,
       sec_role: 'unit_' + symbol,
-      type: 'type',
+      type: this.state.unitType,
       education_type: 'edu_type'
     }
 
@@ -185,9 +187,13 @@ class AddUnit extends React.Component<{}, State> {
                             </Col>
                             <Col md='4' className="text-left">
                               <DropdownList
-                                data={unitTypes}/>
+                                data={unitTypes}
+                                onChange={ value => this.setState({
+                                                                    unitType: value
+                                                                  }) }/>
                             </Col>
                           </Row>
+                          <br />
                           <Row>
                             <Col md={{ size: 1, offset: 10}}>
                               <Button type="submit" color='primary'>הוסף</Button>
