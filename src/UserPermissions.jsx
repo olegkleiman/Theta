@@ -185,7 +185,7 @@ class UserPermissions extends React.Component<{}, State> {
               <Tooltip placement='auto'
                 autohide={false}
                 isOpen={this.state.groupDeleteTooltipOpen}
-                toggle={this.toogleGroupDeleteTooltip}
+                toggle={::this.toogleGroupDeleteTooltip}
                 container='groupTooltipContainer'
                 style={{
                   backgroundColor: 'black',
@@ -217,7 +217,7 @@ class UserPermissions extends React.Component<{}, State> {
               <Tooltip placement='auto'
                 autohide={false}
                 isOpen={this.state.unitDeleteTooltipOpen}
-                toggle={this.toogleUnitDeleteTooltip}
+                toggle={::this.toogleUnitDeleteTooltip}
                 container='unitTooltipContainer'
                 style={{
                   backgroundColor: 'black',
