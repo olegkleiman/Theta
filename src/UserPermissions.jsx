@@ -197,6 +197,8 @@ class UserPermissions extends React.Component<{}, State> {
             </Col>
             <Col md='1' id='groupTooltipContainer' style={{
                 lineHeight: '2.5em'
+                paddingRight: '0',
+                textAlign: 'start'
               }}>
               <i className={groupDeleteClassNames} id='groupDeleteElement'
                 onClick={::this.deleteGroupPermissions}></i>
@@ -224,7 +226,9 @@ class UserPermissions extends React.Component<{}, State> {
                   allowCreate="onFilter"/>
             </Col>
             <Col md='1' id='unitTooltipContainer' style={{
-                lineHeight: '2.5em'
+                lineHeight: '2.5em',
+                paddingRight: '0',
+                textAlign: 'start'
               }}>
               <i className={unitDeleteClassNames} id='unitDeleteElement'
                 onClick={::this.deleteUnitPermissions}></i>
