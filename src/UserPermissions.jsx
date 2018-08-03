@@ -86,6 +86,18 @@ class UserPermissions extends React.Component<{}, State> {
 
   }
 
+  toogleGroupDeleteTooltip() {
+    this.setState({
+      groupDeleteTooltipOpen: !this.state.groupDeleteTooltipOpen
+    });
+  }
+
+  toogleUnitDeleteTooltip() {
+    this.setState({
+      unitDeleteTooltipOpen: !this.state.unitDeleteTooltipOpen
+    });
+  }
+
   deleteGroupPermissions() {
     console.log('DGP');
   }
@@ -155,6 +167,7 @@ class UserPermissions extends React.Component<{}, State> {
               <Tooltip placement='auto'
                 autohide={true}
                 isOpen={this.state.allowGroupDelete}
+                toogle={this.toogleGroupDeleteTooltip}
                 container='groupTooltipContainer'
                 style={{
                   backgroundColor: 'black',
@@ -185,6 +198,7 @@ class UserPermissions extends React.Component<{}, State> {
               <Tooltip placement='auto'
                 autohide={true}
                 isOpen={this.state.allowUnitDelete}
+                toogle={this.toogleUnitDeleteTooltip}
                 container='unitTooltipContainer'
                 style={{
                   backgroundColor: 'black',
