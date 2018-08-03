@@ -86,14 +86,36 @@ class UserPermissions extends React.Component<{}, State> {
 
   }
 
+  groupChanged = (name) => {
+
+    const allowDelete = ( name === '' ) ? false: true;
+
+    this.setState({
+      selectedGroup: name,
+      allowGroupDelete: allowDelete,
+      groupDeleteTooltipOpen: true
+    })
+
+  }
+
+  unitChanged = (name) => {
+
+    const allowDelete = ( name === '' ) ? false: true;
+
+    this.setState({
+      selectedUnit: name,
+      allowUnitDelete: allowDelete,
+      unitDeleteTooltipOpen: true
+    })
+  }
+
   toogleGroupDeleteTooltip(ev) {
-    console.log(ev);
     this.setState({
       groupDeleteTooltipOpen: !this.state.groupDeleteTooltipOpen
     });
   }
 
-  toogleUnitDeleteTooltip() {
+  toogleUnitDeleteTooltip(ev) {
     this.setState({
       unitDeleteTooltipOpen: !this.state.unitDeleteTooltipOpen
     });
@@ -169,11 +191,7 @@ class UserPermissions extends React.Component<{}, State> {
                   itemComponent={ListGroups}
                   data={this.state.groupRoles}
                   value={this.state.selectedGroup}
-                  onChange={ name => this.setState({
-                    selectedGroup: name,
-                    allowGroupDelete: !this.state.allowGroupDelete,
-                    groupDeleteTooltipOpen: true
-                  }) }
+                  onChange={::this.groupChanged}
                   onCreate={ name => ::this.handleGroupPermissionCreate(name) }
                   allowCreate="onFilter"/>
             </Col>
@@ -182,7 +200,7 @@ class UserPermissions extends React.Component<{}, State> {
               }}>
               <i className={groupDeleteClassNames} id='groupDeleteElement'
                 onClick={::this.deleteGroupPermissions}></i>
-              <Tooltip placement='auto'
+              <Tooltip placement='top'
                 autohide={false}
                 isOpen={this.state.groupDeleteTooltipOpen}
                 toggle={::this.toogleGroupDeleteTooltip}
@@ -201,11 +219,7 @@ class UserPermissions extends React.Component<{}, State> {
                   filter
                   data={this.state.unitRoles}
                   value={this.state.selectedUnit}
-                  onChange={ name => this.setState({
-                    selectedUnit: name,
-                    allowUnitDelete: !this.state.allowUnitDelete,
-                    unitDeleteTooltipOpen: true
-                  }) }
+                  onChange={::this.unitChanged}
                   onCreate={ name => ::this.handleUnitPermissionCreate(name) }
                   allowCreate="onFilter"/>
             </Col>
@@ -214,7 +228,7 @@ class UserPermissions extends React.Component<{}, State> {
               }}>
               <i className={unitDeleteClassNames} id='unitDeleteElement'
                 onClick={::this.deleteUnitPermissions}></i>
-              <Tooltip placement='auto'
+              <Tooltip placement='top'
                 autohide={false}
                 isOpen={this.state.unitDeleteTooltipOpen}
                 toggle={::this.toogleUnitDeleteTooltip}
