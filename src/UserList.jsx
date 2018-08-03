@@ -1,7 +1,7 @@
 // @flow
 import React from 'react';
 import firebase from './firebase.js';
-import { Card, Row, Col } from 'reactstrap';
+import { Card, CardHeader, CardBody, Row, Col } from 'reactstrap';
 import ReactTable from 'react-table';
 import Pagination from './TablePagination';
 import UserPermissions from './UserPermissions';
@@ -130,7 +130,11 @@ class UserList extends React.PureComponent<{}, State> {
         <div className='panel-header panel-header-sm'></div>
         <div className='content'>
           <Card>
-            <Row>
+            <CardHeader>
+              <h5 className='title'>רשימת משתמשים</h5>
+            </CardHeader>
+            <CardBody>
+              <Row>
               <Col md='12'>
                 <ReactTable
                   className="-striped -highlight tableInCard col col-12"
@@ -165,6 +169,7 @@ class UserList extends React.PureComponent<{}, State> {
                   />
               </Col>
             </Row>
+            </CardBody>
           </Card>
         </div>
       </div>
