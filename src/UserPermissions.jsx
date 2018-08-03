@@ -83,13 +83,13 @@ class UserPermissions extends React.Component<{}, State> {
   render() {
 
     const groupDeleteClassNames = classNames({
-      'visibility': this.state.allowGroupDelete ? 'visible' : 'hidden',
+      'd-none': !this.state.allowGroupDelete,
       'now-ui-icons': true,
       'ui-1_simple-remove': true
     });
 
     const unitDeleteClassNames = classNames({
-      'visibility':  this.state.allowUnitDelete ? 'visible' : 'hidden',
+      'd-none': !this.state.allowUnitDelete,
       'now-ui-icons': true,
       'ui-1_simple-remove': true
     });
