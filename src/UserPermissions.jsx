@@ -86,7 +86,8 @@ class UserPermissions extends React.Component<{}, State> {
 
   }
 
-  toogleGroupDeleteTooltip() {
+  toogleGroupDeleteTooltip(ev) {
+    console.log(ev);
     this.setState({
       groupDeleteTooltipOpen: !this.state.groupDeleteTooltipOpen
     });
@@ -98,12 +99,28 @@ class UserPermissions extends React.Component<{}, State> {
     });
   }
 
-  deleteGroupPermissions() {
-    console.log('DGP');
+  async deleteGroupPermissions() {
+
+    const response = await firebase.firestore().collection('users')
+                     .doc(this.props.userId)
+                     .get();
+    if( response.exists > 0 ) {
+        const userData = response.data();
+        const secRoles = userData.sec_roles;
+    }
+
   }
 
-  deleteUnitPermissions() {
-    console.log('DGP');
+  async deleteUnitPermissions() {
+
+    const response = await firebase.firestore().collection('users')
+                     .doc(this.props.userId)
+                     .get();
+    if( response.exists > 0 ) {
+      const userData = response.data();
+      const secRoles = userData.sec_roles;
+    }
+
   }
 
   render() {
@@ -168,7 +185,7 @@ class UserPermissions extends React.Component<{}, State> {
               <Tooltip placement='auto'
                 autohide={false}
                 isOpen={this.state.groupDeleteTooltipOpen}
-                toogle={this.toogleGroupDeleteTooltip}
+                toggle={this.toogleGroupDeleteTooltip}
                 container='groupTooltipContainer'
                 style={{
                   backgroundColor: 'black',
@@ -200,7 +217,7 @@ class UserPermissions extends React.Component<{}, State> {
               <Tooltip placement='auto'
                 autohide={false}
                 isOpen={this.state.unitDeleteTooltipOpen}
-                toogle={this.toogleUnitDeleteTooltip}
+                toggle={this.toogleUnitDeleteTooltip}
                 container='unitTooltipContainer'
                 style={{
                   backgroundColor: 'black',
