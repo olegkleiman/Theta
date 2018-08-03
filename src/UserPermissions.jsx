@@ -154,7 +154,8 @@ class UserPermissions extends React.Component<{}, State> {
                   value={this.state.selectedGroup}
                   onChange={ name => this.setState({
                     selectedGroup: name,
-                    allowGroupDelete: !this.state.allowGroupDelete
+                    allowGroupDelete: !this.state.allowGroupDelete,
+                    groupDeleteTooltipOpen: true
                   }) }
                   onCreate={ name => ::this.handleGroupPermissionCreate(name) }
                   allowCreate="onFilter"/>
@@ -165,8 +166,8 @@ class UserPermissions extends React.Component<{}, State> {
               <i className={groupDeleteClassNames} id='groupDeleteElement'
                 onClick={::this.deleteGroupPermissions}></i>
               <Tooltip placement='auto'
-                autohide={true}
-                isOpen={this.state.allowGroupDelete}
+                autohide={false}
+                isOpen={this.state.groupDeleteTooltipOpen}
                 toogle={this.toogleGroupDeleteTooltip}
                 container='groupTooltipContainer'
                 style={{
@@ -185,7 +186,8 @@ class UserPermissions extends React.Component<{}, State> {
                   value={this.state.selectedUnit}
                   onChange={ name => this.setState({
                     selectedUnit: name,
-                    allowUnitDelete: !this.state.allowUnitDelete
+                    allowUnitDelete: !this.state.allowUnitDelete,
+                    unitDeleteTooltipOpen: true
                   }) }
                   onCreate={ name => ::this.handleUnitPermissionCreate(name) }
                   allowCreate="onFilter"/>
@@ -196,8 +198,8 @@ class UserPermissions extends React.Component<{}, State> {
               <i className={unitDeleteClassNames} id='unitDeleteElement'
                 onClick={::this.deleteUnitPermissions}></i>
               <Tooltip placement='auto'
-                autohide={true}
-                isOpen={this.state.allowUnitDelete}
+                autohide={false}
+                isOpen={this.state.unitDeleteTooltipOpen}
                 toogle={this.toogleUnitDeleteTooltip}
                 container='unitTooltipContainer'
                 style={{
