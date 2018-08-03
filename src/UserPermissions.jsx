@@ -3,13 +3,16 @@ import React from 'react';
 import firebase from './firebase.js';
 import { Card, Row, Col } from 'reactstrap';
 import DropdownList from 'react-widgets/lib/DropdownList';
+import classNames from 'classnames';
 import withAuth from './FirebaseAuth';
 
 type State = {
   unitRoles: String[],
   groupRoles: String[],
   selectedGroup: String,
-  selectedUnit: String
+  selectedUnit: String,
+  allowGroupDelete: Boolean,
+  allowUnitDelete: Boolean
 }
 
 class UserPermissions extends React.Component<{}, State> {
@@ -18,7 +21,9 @@ class UserPermissions extends React.Component<{}, State> {
     unitRoles: [],
     groupRoles: [],
     selectedGroup: '',
-    selectedUnit: ''
+    selectedUnit: '',
+    allowGroupDelete: false,
+    allowUnitDelete: false
   }
 
   async componentDidMount() {
@@ -77,38 +82,78 @@ class UserPermissions extends React.Component<{}, State> {
 
   render() {
 
+    const groupDeleteClassNames = classNames({
+      'visibility': this.state.allowGroupDelete ? 'visible' : 'hidden',
+      'now-ui-icons': true,
+      'ui-1_simple-remove': true
+    });
+
+    const unitDeleteClassNames = classNames({
+      'visibility':  this.state.allowUnitDelete ? 'visible' : 'hidden',
+      'now-ui-icons': true,
+      'ui-1_simple-remove': true
+    });
+
+    let ListGroups = ({ item }) => (
+      <span>
+        <strong>{item.substr(6, item.length)}</strong>
+      </span>
+    );
+
+    let filterGroupName = (item, value) => {
+      const groupSymbol = item.substr(6, item.length);
+      return groupSymbol.indexOf(value) === 0;
+    }
+
     return(
       <Card>
+        <div className='card-header'>
+          <h5 className='title'>ניהול הרשאות</h5>
+        </div>
+
         <Row>
+          <Col md='6'>
+            <label className='form-control-label'>כיתות</label>
+          </Col>
           <Col md='6'>
             <label className='form-control-label'>מוסדות</label>
           </Col>
-          <Col>
-            <label className='form-control-label'>כיתות</label>
-          </Col>
         </Row>
         <Row>
-          <Col md='6'>
+          <Col md='5'>
             <DropdownList
-                filter
+                filter={filterGroupName}
+                itemComponent={ListGroups}
                 data={this.state.groupRoles}
                 value={this.state.selectedGroup}
                 onChange={ name => this.setState({
-                  selectedGroup: name
+                  selectedGroup: name,
+                  allowGroupDelete: !this.state.allowGroupDelete
                 }) }
                 onCreate={ name => ::this.handleGroupPermissionCreate(name) }
                 allowCreate="onFilter"/>
           </Col>
-          <Col md='6'>
+          <Col md='1' style={{
+              lineHeight: '3em'
+            }}>
+            <i className={groupDeleteClassNames}></i>
+          </Col>
+          <Col md='5'>
             <DropdownList
                 filter
                 data={this.state.unitRoles}
                 value={this.state.selectedUnit}
                 onChange={ name => this.setState({
-                  selectedUnit: name
+                  selectedUnit: name,
+                  allowUnitDelete: !this.state.allowUnitDelete
                 }) }
                 onCreate={ name => ::this.handleUnitPermissionCreate(name) }
                 allowCreate="onFilter"/>
+          </Col>
+          <Col md='1' style={{
+              lineHeight: '3em'
+            }}>
+            <i className={unitDeleteClassNames}></i>
           </Col>
         </Row>
       </Card>)
