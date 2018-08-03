@@ -165,8 +165,19 @@ class UserPermissions extends React.Component<{}, State> {
       </span>
     );
 
+    let ListUnits = ({item}) => (
+      <span>
+        <strong>{item.substr(5, item.length)}</strong>
+      </span>
+    )
+
     let filterGroupName = (item, value) => {
       const groupSymbol = item.substr(6, item.length);
+      return groupSymbol.indexOf(value) === 0;
+    }
+
+    let filterUnitName = (item, value) => {
+      const groupSymbol = item.substr(5, item.length);
       return groupSymbol.indexOf(value) === 0;
     }
 
@@ -218,7 +229,8 @@ class UserPermissions extends React.Component<{}, State> {
             </Col>
             <Col md='5'>
               <DropdownList
-                  filter
+                  filter={filterUnitName}
+                  itemComponent={ListUnits}
                   data={this.state.unitRoles}
                   value={this.state.selectedUnit}
                   onChange={::this.unitChanged}
