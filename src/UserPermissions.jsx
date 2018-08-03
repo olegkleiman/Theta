@@ -1,7 +1,9 @@
 // @flow
 import React from 'react';
 import firebase from './firebase.js';
-import { Card, Row, Col } from 'reactstrap';
+import { Card, CardHeader, CardBody,
+  Row, Col,
+  Tooltip } from 'reactstrap';
 import DropdownList from 'react-widgets/lib/DropdownList';
 import classNames from 'classnames';
 import withAuth from './FirebaseAuth';
@@ -12,7 +14,9 @@ type State = {
   selectedGroup: String,
   selectedUnit: String,
   allowGroupDelete: Boolean,
-  allowUnitDelete: Boolean
+  groupDeleteTooltipOpen: Boolean,
+  allowUnitDelete: Boolean,
+  unitDeleteTooltipOpen: Boolean
 }
 
 class UserPermissions extends React.Component<{}, State> {
@@ -23,7 +27,9 @@ class UserPermissions extends React.Component<{}, State> {
     selectedGroup: '',
     selectedUnit: '',
     allowGroupDelete: false,
-    allowUnitDelete: false
+    groupDeleteTooltipOpen: false,
+    allowUnitDelete: false,
+    unitDeleteTooltipOpen: false
   }
 
   async componentDidMount() {
@@ -80,18 +86,26 @@ class UserPermissions extends React.Component<{}, State> {
 
   }
 
+  deleteGroupPermissions() {
+    console.log('DGP');
+  }
+
+  deleteUnitPermissions() {
+    console.log('DGP');
+  }
+
   render() {
 
     const groupDeleteClassNames = classNames({
       'd-none': !this.state.allowGroupDelete,
-      'now-ui-icons': true,
-      'ui-1_simple-remove': true
+      'fa': true,
+      'fa-trash': true
     });
 
     const unitDeleteClassNames = classNames({
       'd-none': !this.state.allowUnitDelete,
-      'now-ui-icons': true,
-      'ui-1_simple-remove': true
+      'fa': true,
+      'fa-trash': true
     });
 
     let ListGroups = ({ item }) => (
@@ -107,55 +121,82 @@ class UserPermissions extends React.Component<{}, State> {
 
     return(
       <Card>
-        <div className='card-header'>
-          <h5 className='title'>ניהול הרשאות</h5>
-        </div>
+        <CardHeader>
+          <h6 className='title'>ניהול הרשאות</h6>
+        </CardHeader>
+        <CardBody>
+          <Row>
+            <Col md='6'>
+              <label className='form-control-label'>כיתות</label>
+            </Col>
+            <Col md='6'>
+              <label className='form-control-label'>מוסדות</label>
+            </Col>
+          </Row>
+          <Row>
+            <Col md='5'>
+              <DropdownList
+                  filter={filterGroupName}
+                  itemComponent={ListGroups}
+                  data={this.state.groupRoles}
+                  value={this.state.selectedGroup}
+                  onChange={ name => this.setState({
+                    selectedGroup: name,
+                    allowGroupDelete: !this.state.allowGroupDelete
+                  }) }
+                  onCreate={ name => ::this.handleGroupPermissionCreate(name) }
+                  allowCreate="onFilter"/>
+            </Col>
+            <Col md='1' id='groupTooltipContainer' style={{
+                lineHeight: '3em'
+              }}>
+              <i className={groupDeleteClassNames} id='groupDeleteElement'
+                onClick={::this.deleteGroupPermissions}></i>
+              <Tooltip placement='auto'
+                autohide={true}
+                isOpen={this.state.allowGroupDelete}
+                container='groupTooltipContainer'
+                style={{
+                  backgroundColor: 'black',
+                  color: 'white'
+                }}
+                target='groupDeleteElement'>
+                הורד הרשאות לקבוצה שנבחרה
+              </Tooltip>
 
-        <Row>
-          <Col md='6'>
-            <label className='form-control-label'>כיתות</label>
-          </Col>
-          <Col md='6'>
-            <label className='form-control-label'>מוסדות</label>
-          </Col>
-        </Row>
-        <Row>
-          <Col md='5'>
-            <DropdownList
-                filter={filterGroupName}
-                itemComponent={ListGroups}
-                data={this.state.groupRoles}
-                value={this.state.selectedGroup}
-                onChange={ name => this.setState({
-                  selectedGroup: name,
-                  allowGroupDelete: !this.state.allowGroupDelete
-                }) }
-                onCreate={ name => ::this.handleGroupPermissionCreate(name) }
-                allowCreate="onFilter"/>
-          </Col>
-          <Col md='1' style={{
-              lineHeight: '3em'
-            }}>
-            <i className={groupDeleteClassNames}></i>
-          </Col>
-          <Col md='5'>
-            <DropdownList
-                filter
-                data={this.state.unitRoles}
-                value={this.state.selectedUnit}
-                onChange={ name => this.setState({
-                  selectedUnit: name,
-                  allowUnitDelete: !this.state.allowUnitDelete
-                }) }
-                onCreate={ name => ::this.handleUnitPermissionCreate(name) }
-                allowCreate="onFilter"/>
-          </Col>
-          <Col md='1' style={{
-              lineHeight: '3em'
-            }}>
-            <i className={unitDeleteClassNames}></i>
-          </Col>
-        </Row>
+            </Col>
+            <Col md='5'>
+              <DropdownList
+                  filter
+                  data={this.state.unitRoles}
+                  value={this.state.selectedUnit}
+                  onChange={ name => this.setState({
+                    selectedUnit: name,
+                    allowUnitDelete: !this.state.allowUnitDelete
+                  }) }
+                  onCreate={ name => ::this.handleUnitPermissionCreate(name) }
+                  allowCreate="onFilter"/>
+            </Col>
+            <Col md='1' id='unitTooltipContainer' style={{
+                lineHeight: '3em'
+              }}>
+              <i className={unitDeleteClassNames} id='unitDeleteElement'
+                onClick={::this.deleteUnitPermissions}></i>
+              <Tooltip placement='auto'
+                autohide={true}
+                isOpen={this.state.allowUnitDelete}
+                container='unitTooltipContainer'
+                style={{
+                  backgroundColor: 'black',
+                  color: 'white'
+                }}
+                target='unitDeleteElement'>
+                הורד הרשאות למוסד שנבחר
+              </Tooltip>
+            </Col>
+          </Row>
+          <br />
+        </CardBody>
       </Card>)
 
   }
