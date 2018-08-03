@@ -196,7 +196,7 @@ class UserPermissions extends React.Component<{}, State> {
                   allowCreate="onFilter"/>
             </Col>
             <Col md='1' id='groupTooltipContainer' style={{
-                lineHeight: '2.5em'
+                lineHeight: '2.5em',
                 paddingRight: '0',
                 textAlign: 'start'
               }}>
