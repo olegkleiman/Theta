@@ -22,6 +22,8 @@ type State = {
   eduType: String
 }
 
+@withAuth
+export default
 class AddUnit extends React.Component<{}, State> {
 
   state = {
@@ -306,4 +308,4 @@ class AddUnit extends React.Component<{}, State> {
 
 }
 
-export default withAuth(AddUnit);
+//export default withAuth(AddUnit);
