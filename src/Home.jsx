@@ -12,6 +12,9 @@ type State = {
   activities: []
 }
 
+@withRouter
+@connect()
+export default
 class Home extends React.Component<{},State> {
 
   state = {
@@ -93,7 +96,7 @@ class Home extends React.Component<{},State> {
                                           <CardFooter className='card-footer'>
                                               {activity.description}
                                           </CardFooter>
-                                        </a>                                        
+                                        </a>
                                       </Card>
                                     </div>)
                               })
@@ -109,5 +112,3 @@ class Home extends React.Component<{},State> {
   }
 
 };
-
-export default withRouter(connect()(Home));
