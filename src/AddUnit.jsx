@@ -15,6 +15,9 @@ type State = {
   selectedAuthority: ?String,
   authorities: String[],
   authoritiesLoaded: Boolean,
+  models: String[],
+  modelsLoaded: Boolean,
+  selectedModel: String,
   unitType: String,
   eduType: String
 }
@@ -26,25 +29,57 @@ class AddUnit extends React.Component<{}, State> {
     selectedAuthority: '',
     authorities: [],
     authoritiesLoaded: false,
+    models: [],
+    modelsLoaded: false,
+    selectedModel: '',
     unitType: '',
     eduType: ''
   }
 
   async componentDidMount() {
-    const response = await firebase.firestore().collection('authorities')
-                           .get();
-    const docs = response.docs;
-    const _docs = docs.map( doc => {
-      const docData = doc.data();
-      return {
-        name: docData.name,
-        region: docData.region
-      }
-    });
+
+    let _authorities = [];
+    let _authoritiesLoaded = false;
+    try {
+
+      const authorities = await firebase.firestore().collection('authorities')
+                             .get();
+      const authoritiesDocs = authorities.docs;
+      _authorities = authoritiesDocs.map( doc => {
+        const docData = doc.data();
+        return {
+          name: docData.name,
+          region: docData.region
+        }
+      });
+      _authoritiesLoaded = true;
+
+    } catch( err ) {
+      console.error(err);
+    }
+
+    let _models = [];
+    let _modelsLoaded = false;
+    try {
+
+      const models = await firebase.firestore().collection('models')
+                             .get();
+      const modelDocs = models.docs;
+      _models = modelDocs.map( doc => {
+        const modelData = doc.data();
+        return  modelData.number;
+      });
+      _modelsLoaded = true;
+
+    } catch( err ) {
+      console.error(err);
+    }
 
     this.setState({
-      authorities: _docs,
-      authoritiesLoaded: true
+      authorities: _authorities,
+      authoritiesLoaded: _authoritiesLoaded,
+      models: _models,
+      modelsLoaded: _modelsLoaded
     });
 
   }
@@ -52,6 +87,12 @@ class AddUnit extends React.Component<{}, State> {
   onAuthorityChanged = (authority) => {
     this.setState({
       selectedAuthority: authority.name
+    });
+  }
+
+  onModelChanged = (modelName) => {
+    this.setState({
+      selectedModel: modelName
     });
   }
 
@@ -66,6 +107,7 @@ class AddUnit extends React.Component<{}, State> {
       name_he: event.target.unitName.value,
       symbol: symbol,
       sec_role: 'unit_' + symbol,
+      model: this.state.selectedModel,
       type: this.state.unitType,
       education_type: this.state.eduType
     }
@@ -86,7 +128,7 @@ class AddUnit extends React.Component<{}, State> {
 
     try {
 
-      // Add new group to Firestore
+      // Add new unit to Firestore
       // const doc = await firebase.firestore().collection('units')
       //                 .add(unit);
 
@@ -111,14 +153,36 @@ class AddUnit extends React.Component<{}, State> {
       }
 
     } catch( err ) {
-
+      console.error(err);
     }
 
   }
 
   validateUnit(unit) {
-    unit.validated = true;
-    return Promise.resolve(unit);
+
+    return new Promise( (resolve, reject) => {
+
+      try {
+        firebase.firestore().collection('units')
+                    .where('symbol', '==', unit.symbol)
+                    .get()
+                    .then( query => {
+
+                      if( query.docs.length > 0 ) {
+                        unit.validated = false;
+                        unit.invalidField = 'symbol';
+                        resolve(group);
+                      } else {
+                        unit.validated = true;
+                        resolve(unit);
+                      }
+
+                    })
+        } catch( err ) {
+          reject(err);
+        }
+      })
+
   }
 
   render() {
@@ -181,6 +245,19 @@ class AddUnit extends React.Component<{}, State> {
                             <Col md='4' invalid={(this.state.invalidField === 'symbol').toString()}
                               className={symbolClassNames}>
                               Unit with this symbol is already exists
+                            </Col>
+                          </Row>
+                          <br />
+                          <Row>
+                            <Col md={{ size: 2, offset: 2 }} className="text-right my-auto">
+                              מודל
+                            </Col>
+                            <Col md='4' className="text-left">
+                              <DropdownList
+                                data={this.state.models}
+                                busy={!this.state.modelsLoaded}
+                                onChange={ model => ::this.onModelChanged(model) }
+                                />
                             </Col>
                           </Row>
                           <br />
