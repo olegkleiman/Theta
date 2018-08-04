@@ -35,6 +35,15 @@ type Props = {
   }
 }
 
+const mapStateToProps = (state) => {
+  return {
+    userName: state.userName,
+    userPictureUrl: state.userPictureUrl
+  }
+}
+
+@connect(mapStateToProps)
+export default
 class Dashboard extends React.Component<Props, State> {
 
   constructor() {
@@ -142,12 +151,3 @@ class Dashboard extends React.Component<Props, State> {
   }
 
 };
-
-function mapStateToProps(state) {
-  return {
-    userName: state.userName,
-    userPictureUrl: state.userPictureUrl
-  }
-}
-
-export default connect(mapStateToProps)(Dashboard);
