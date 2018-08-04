@@ -307,5 +307,3 @@ class AddUnit extends React.Component<{}, State> {
   }
 
 }
-
-//export default withAuth(AddUnit);
