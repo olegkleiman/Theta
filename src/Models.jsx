@@ -23,11 +23,7 @@ type State = {
   dropdownOpen: Boolean
 }
 
-type Props = {
-
-}
-
-class Models extends React.Component<Props, State> {
+class Models extends React.Component<{}, State> {
 
   state = {
     models: [],
