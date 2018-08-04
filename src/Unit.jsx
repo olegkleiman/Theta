@@ -144,23 +144,31 @@ class Unit extends React.Component<Props, State> {
                   <li className='nav-item'>
                     <a className='nav-link nav-tab active' data-toggle='tab' href='#groups'
                       role='tab' area-expanded='false'>
-                      <Row>
-                        <Col>
-                          <i className='now-ui-icons education_hat'></i>&nbsp;כיתות
-                        </Col>
-                      </Row>
+                          <i className='now-ui-icons education_hat'
+                              style={{
+                                verticalAlign: 'middle'
+                              }}></i>
+                          <span>&nbsp;כיתות</span>
                     </a>
                   </li>
                   <li className='nav-item'>
                     <a className='nav-link nav-tab' data-toggle='tab' href='#updates'
                       role='tab' area-expanded='false'>
-                          <i className='now-ui-icons ui-1_calendar-60'></i>&nbsp;עדכונים
+                          <i className='now-ui-icons ui-1_calendar-60'
+                             style={{
+                                verticalAlign: 'middle'
+                             }}></i>
+                           <span>&nbsp;עדכונים</span>
                     </a>
                   </li>
                   <li className='nav-item'>
                     <a className='nav-link nav-tab' data-toggle='tab' href='#general'
                         role='tab' area-expanded='true'>
-                          <i className='now-ui-icons ui-2_settings-90'></i>&nbsp;הגדרות כלליות
+                          <i className='now-ui-icons ui-2_settings-90'
+                              style={{
+                                verticalAlign: 'middle'
+                              }}></i>
+                            <span>&nbsp;הגדרות כלליות</span>
                     </a>
                   </li>
                 </ul>
