@@ -22,6 +22,8 @@ type State = {
   dataStatus: string
 }
 
+@withAuth
+export default
 class Units extends React.Component<{}, State> {
 
   state = {
@@ -220,5 +222,3 @@ class Units extends React.Component<{}, State> {
   }
 
 }
-
-export default withAuth(Units);
