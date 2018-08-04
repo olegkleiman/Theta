@@ -28,6 +28,9 @@ type Props = {
   docId: String
 }
 
+@withRouter
+@connect()
+export default
 class Unit extends React.Component<Props, State> {
 
   state = {
@@ -44,28 +47,16 @@ class Unit extends React.Component<Props, State> {
     docId: '',
   }
 
-  gotoGroups() {
-    this.props.dispatch({
-      type: 'PAGE_NAVIGATED',
-      data: {
-        pageName: 'Groups of ' + this.state.docData.name
-      }
-    });
+  async componentDidMount() {
 
-    this.props.history.push('/dashboard/groups/' + this.props.docId);
+     await this._loadData(this.props.docId);
 
   }
 
-  componentDidMount() {
-
-     this._loadAsyncData(this.props.docId);
-
-  }
-
-  componentDidUpdate(prevProps, prevState) {
+  async componentDidUpdate(prevProps, prevState) {
 
     if( prevProps.docId !== this.props.docId ) {
-      this._loadAsyncData(this.props.docId)
+      await this._loadData(this.props.docId)
     }
 
   }
@@ -99,7 +90,7 @@ class Unit extends React.Component<Props, State> {
   //
   // }
 
-  _loadAsyncData(docId: String) {
+  async _loadData(docId: String) {
 
     if( docId !== this.props.id ) {
 
@@ -109,19 +100,17 @@ class Unit extends React.Component<Props, State> {
 
       const self = this;
 
-      firebase.firestore().collection('units').doc(docId)
-        .get(getOptions)
-        .then( doc => {
+      const doc = await firebase.firestore().collection('units').doc(docId)
+                .get(getOptions);
+      let data = doc.data();
 
-          let data = doc.data();
+      self.setState({
+          docData: data,
+          docId: docId
+      });
 
-          self.setState({
-              docData: data,
-              docId: docId
-          })
-
-        });
     }
+
   }
 
   addGroup() {
@@ -240,4 +229,4 @@ class Unit extends React.Component<Props, State> {
 
 }
 
-export default withRouter(connect()(Unit));
+//export default withRouter(connect()(Unit));
