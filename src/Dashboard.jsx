@@ -46,13 +46,9 @@ const mapStateToProps = (state) => {
 export default
 class Dashboard extends React.Component<Props, State> {
 
-  constructor() {
-    super();
-
-    this.state = {
+  state = {
       routes: [],
       error: ''
-    }
   }
 
   componentDidMount() {
