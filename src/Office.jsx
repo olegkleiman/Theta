@@ -12,7 +12,8 @@ type State = {
   subActivities: []
 }
 
-
+@connect()
+export default
 class Office extends React.Component<{}, State>  {
 
   state = {
@@ -103,7 +104,7 @@ class Office extends React.Component<{}, State>  {
                                       <CardFooter className='card-footer'>
                                             {activity.description}
                                       </CardFooter>
-                                    </a>                                    
+                                    </a>
                                   </Card>
                                 </Col>
                               )
@@ -119,5 +120,3 @@ class Office extends React.Component<{}, State>  {
   }
 
 }
-
-export default connect()(Office);
