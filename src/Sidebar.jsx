@@ -11,6 +11,8 @@ type State = {
   currentLink: number
 };
 
+@connect()
+export default
 class Sidebar extends React.Component<{}, State> {
 
   state = {
@@ -85,6 +87,3 @@ class Sidebar extends React.Component<{}, State> {
   }
 
 }
-
-
-export default connect()(Sidebar);
