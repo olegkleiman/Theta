@@ -6,7 +6,7 @@ import { Card, CardHeader, CardBody,
   Tooltip } from 'reactstrap';
 import DropdownList from 'react-widgets/lib/DropdownList';
 import classNames from 'classnames';
-import withAuth from './FirebaseAuth';
+//import withAuth from './FirebaseAuth';
 
 type State = {
   unitRoles: String[],
@@ -64,25 +64,68 @@ class UserPermissions extends React.Component<{}, State> {
 
   }
 
-  handleGroupPermissionCreate = (name) => {
+  addFirebaseRole = async(roleName) => {
 
-    const groupRoles = [...this.state.groupRoles, name];
+    try {
 
-    this.setState({
-      selectedGroup: name,
-      groupRoles: groupRoles
-    })
+        const docRef = firebase.firestore().collection('users')
+                       .doc(this.props.userId);
+        const doc = await docRef.get();
+        if( doc.exists ) {
+          const docData = doc.data();
+          const docRoles = [...docData.sec_roles, roleName];
+
+          await docRef.update({
+            sec_roles: docRoles
+          });
+
+          return Promise.resolve(true);
+        }
+
+    } catch( err ) {
+      console.log(err);
+      return Promise.resolve(false);
+    }
 
   }
 
-  handleUnitPermissionCreate = (name) => {
+  handleGroupPermissionCreate = async(name) => {
 
-    const unitRoles = [...this.state.unitRoles, name];
+    try {
 
-    this.setState({
-      selectedUnit: name,
-      unitRoles: groupRoles
-    })
+      const isAdded = await ::this.addFirebaseRole(name);
+      if( isAdded ) {
+
+        const groupRoles = [...this.state.groupRoles, name];
+        this.setState({
+          selectedGroup: name,
+          groupRoles: groupRoles
+        });
+      }
+
+    } catch( err ) {
+      console.log(err);
+    }
+  }
+
+  handleUnitPermissionCreate = async(name) => {
+
+    try {
+
+      const isAdded = await ::this.addFirebaseRole(name);
+      if( isAdded ) {
+
+        const unitRoles = [...this.state.unitRoles, name];
+
+        this.setState({
+          selectedUnit: name,
+          unitRoles: unitRoles
+        });
+      }
+    }
+    catch( err ) {
+      console.log(err);
+    }
 
   }
 
@@ -123,24 +166,46 @@ class UserPermissions extends React.Component<{}, State> {
 
   async deleteGroupPermissions() {
 
-    const response = await firebase.firestore().collection('users')
-                     .doc(this.props.userId)
-                     .get();
-    if( response.exists > 0 ) {
-        const userData = response.data();
-        const secRoles = userData.sec_roles;
+    try {
+
+      const docRef = firebase.firestore().collection('users')
+                     .doc(this.props.userId);
+      const doc = await docRef.get();
+
+      if( doc.exists ) {
+          const userData = doc.data();
+          const secRoles = userData.sec_roles;
+          const index = secRoles.indexOf(this.state.selectedGroup);
+          if( index != -1) {
+            // splice mofifies array in-place
+            secRoles.splice(index, 1);
+            await docRef.update({
+              sec_roles: secRoles
+            });
+          }
+      }
+    } catch( err ) {
+      console.error(err);
     }
 
   }
 
   async deleteUnitPermissions() {
 
-    const response = await firebase.firestore().collection('users')
-                     .doc(this.props.userId)
-                     .get();
-    if( response.exists > 0 ) {
-      const userData = response.data();
+    const docRef = await firebase.firestore().collection('users')
+                     .doc(this.props.userId);
+    const doc = docRef.get();
+
+    if( doc.exists ) {
+      const userData = doc.data();
       const secRoles = userData.sec_roles;
+      const index = secRoles.indexOf(this.state.selectedUnit);
+      if( index != -1 ) {
+        secRoles.splice(index, 1);
+        await docRef.update({
+          sec_roles: secRoles
+        })
+      }
     }
 
   }
@@ -203,7 +268,15 @@ class UserPermissions extends React.Component<{}, State> {
                   data={this.state.groupRoles}
                   value={this.state.selectedGroup}
                   onChange={::this.groupChanged}
-                  onCreate={ name => ::this.handleGroupPermissionCreate(name) }
+                  messages={ {
+                        emptyFilter: 'לא נמצאו תוצאות סינון',
+                        createOption: (props) => {
+                          console.log(props);
+                          return  'הוספת קבוצה חדשה ' + props.searchTerm;
+                        }
+                      }
+                  }
+                  onCreate={ name => ::this.handleGroupPermissionCreate(`group_${name}`) }
                   allowCreate="onFilter"/>
             </Col>
             <Col md='1' id='groupTooltipContainer' style={{
@@ -234,7 +307,15 @@ class UserPermissions extends React.Component<{}, State> {
                   data={this.state.unitRoles}
                   value={this.state.selectedUnit}
                   onChange={::this.unitChanged}
-                  onCreate={ name => ::this.handleUnitPermissionCreate(name) }
+                  messages={ {
+                        emptyFilter: 'לא נמצאו תוצאות סינון',
+                        createOption: (props) => {
+                          console.log(props);
+                          return  'הוספת מוסד חדש ' + props.searchTerm;
+                        }
+                      }
+                  }
+                  onCreate={ name => ::this.handleUnitPermissionCreate(`unit_${name}`) }
                   allowCreate="onFilter"/>
             </Col>
             <Col md='1' id='unitTooltipContainer' style={{
@@ -266,4 +347,4 @@ class UserPermissions extends React.Component<{}, State> {
 
 };
 
-export default withAuth(UserPermissions);
+export default UserPermissions;
