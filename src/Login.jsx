@@ -18,6 +18,8 @@ const uiConfig = {
   }
 };
 
+@connect()
+export default
 class Login extends React.PureComponent {
 
   // Listen to the Firebase Auth state and set the local state.
@@ -60,5 +62,3 @@ class Login extends React.PureComponent {
 
   }
 };
-
-export default connect()(Login);
