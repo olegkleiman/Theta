@@ -192,9 +192,9 @@ class UserPermissions extends React.Component<{}, State> {
 
   async deleteUnitPermissions() {
 
-    const docRef = await firebase.firestore().collection('users')
+    const docRef = firebase.firestore().collection('users')
                      .doc(this.props.userId);
-    const doc = docRef.get();
+    const doc = await docRef.get();
 
     if( doc.exists ) {
       const userData = doc.data();
