@@ -9,7 +9,7 @@ import Groups from './Groups';
 import Pagination from './TablePagination';
 import withAuth from './FirebaseAuth';
 
-import { Button, Row, Col } from 'reactstrap';
+import { Button, Card, CardBody, Row, Col } from 'reactstrap';
 
 type State = {
   units: [],
@@ -172,8 +172,8 @@ class Units extends React.Component<{}, State> {
                                     onClick={::this.addUnit}>הוסף מוסד +</Button>
                           </Col>
                           <Col md='12'>
-                            <div className='card'>
-                              <div className='card-body'>
+                            <Card>
+                              <CardBody>
                                 <ReactTable
                                   PaginationComponent={Pagination}
                                   filterable
@@ -204,8 +204,8 @@ class Units extends React.Component<{}, State> {
                                     )
                                   }}>
                                 </ReactTable>
-                              </div>
-                            </div>
+                              </CardBody>
+                            </Card>
                           </Col>
                         </Row>
                         <Row>
