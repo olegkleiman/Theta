@@ -137,6 +137,7 @@ class Dashboard extends React.Component<Props, State> {
                 <Route path={this.props.match.path + '/office'} component={Office} />
                 <Route path={this.props.match.path + '/units'} component={Units} />
                 <Route path={this.props.match.path + '/models'} component={Models} />
+                <Route path={this.props.match.path + '/groups'} component={Groups} />
                 <Route path={this.props.match.path + '/addunit'} component={AddUnit} />
                 <Route path={this.props.match.path + '/addgroup/:unitid'} component={AddGroup} />
                 <Route path={this.props.match.path + '/group/:unitid/:groupid'} component={Group} />
