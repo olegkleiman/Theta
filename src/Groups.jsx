@@ -193,7 +193,7 @@ class Groups extends React.Component<{}, State> {
                          cellInfo.original.id,
                          cellInfo.original.unitId,
                          cellInfo.column.id,
-                         _date.unix());
+                         _date.toDate());
 
   }
 
@@ -214,15 +214,28 @@ class Groups extends React.Component<{}, State> {
       Header: 'שם',
       accessor: 'name',
       Cell: cellInfo => ::this.renderEditable(cellInfo, cellInfo.original.name),
+      style: {
+        lineHeight: '3em'
+      }
     }, {
       Header: 'מזהה',
-      accessor: 'symbol'
+      accessor: 'symbol',
+      style: {
+        lineHeight: '3em'
+      }
     }, {
       Header: 'כמות ילדים',
-      accessor: 'capacity'
+      accessor: 'capacity',
+      style: {
+        lineHeight: '3em'
+      }
+
     }, {
       Header: 'שם מוסד',
-      accessor: 'unitName'
+      accessor: 'unitName',
+      style: {
+        lineHeight: '3em'
+      }
     }, {
       Header: 'ת. התחלה',
       accessor: 'open',
@@ -232,11 +245,18 @@ class Groups extends React.Component<{}, State> {
       }
     }, {
       Header: 'ת.סיום',
-      accessor: 'openTill'
+      accessor: 'openTill',
+      Cell: cellInfo => ::this.renderDatePicker(cellInfo, cellInfo.original.open),
+      style: {
+        overflow: 'visible'
+      }
     }, {
       Header: 'מחיר',
       accessor: 'price',
-      Cell: cellInfo => ::this.renderEditable(cellInfo, cellInfo.original.price)
+      Cell: cellInfo => ::this.renderEditable(cellInfo, cellInfo.original.price),
+      style: {
+        lineHeight: '3em'
+      }
     }];
 
     const self = this;
