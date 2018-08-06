@@ -242,7 +242,7 @@ class Groups extends React.Component<{}, State> {
     }, {
       Header: 'ת. התחלה',
       accessor: 'opened',
-      Cell: cellInfo => ::this.renderDatePicker(cellInfo, cellInfo.original.open),
+      Cell: cellInfo => ::this.renderDatePicker(cellInfo, cellInfo.original.opened),
       style: {
         overflow: 'visible'
       }
