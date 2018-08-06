@@ -51,22 +51,22 @@ class Groups extends React.Component<{}, State> {
     let _authorities = [];
     let _authoritiesLoaded = false;
 
-    try {
-      const authorities = await firebase.firestore().collection('authorities')
-                             .get();
-      const authoritiesDocs = authorities.docs;
-      _authorities = authoritiesDocs.map( doc => {
-        const docData = doc.data();
-        return {
-          name: docData.name,
-          region: docData.region
-        }
-      });
-      _authoritiesLoaded = true;
-
-    } catch( err ) {
-      console.error(err);
-    }
+    // try {
+    //   const authorities = await firebase.firestore().collection('authorities')
+    //                          .get();
+    //   const authoritiesDocs = authorities.docs;
+    //   _authorities = authoritiesDocs.map( doc => {
+    //     const docData = doc.data();
+    //     return {
+    //       name: docData.name,
+    //       region: docData.region
+    //     }
+    //   });
+    //   _authoritiesLoaded = true;
+    //
+    // } catch( err ) {
+    //   console.error(err);
+    // }
 
     const _groups = [];
     try {
@@ -309,7 +309,7 @@ class Groups extends React.Component<{}, State> {
                       </CardHeader>
                       <CardBody>
                         <Row>
-                          <Col md='1'>
+                          <Col md='2'>
                             <div>סנן לפי רשות</div>
                           </Col>
                           <Col md='2'>
@@ -320,7 +320,7 @@ class Groups extends React.Component<{}, State> {
                               data={this.state.authorities}
                               />
                           </Col>
-                          <Col md={{ size: 2, offset: 5 }}
+                          <Col md={{ size: 2, offset: 4 }}
                               className='text-right my-auto' id='tooltipContainer'>
                               <Button color='primary' id='btnExportExcel'
                                       onClick={::this.exportExcel}>Excel</Button>
