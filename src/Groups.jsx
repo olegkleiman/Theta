@@ -18,7 +18,7 @@ type Group = {
     name: String,
     symbol: String,
     capacity: Number,
-    open: Date,
+    opened: Date,
     openTill: Date,
     unitName: String,
     price: Number
@@ -70,7 +70,7 @@ class Groups extends React.Component<{}, State> {
             name: groupData.name,
             symbol: groupData.symbol,
             unitName: unitName,
-            open: moment.unix(groupData.opened.seconds).format('DD/MM/YYYY'),
+            opened: moment.unix(groupData.opened.seconds).format('DD/MM/YYYY'),
             openTill: openTill,
             price: groupData.price,
             capacity: groupData.capacity
@@ -211,7 +211,7 @@ class Groups extends React.Component<{}, State> {
   render() {
 
     const columns = [{
-      Header: 'שם',
+      Header: 'שם כיתה',
       accessor: 'name',
       Cell: cellInfo => ::this.renderEditable(cellInfo, cellInfo.original.name),
       style: {
@@ -220,12 +220,15 @@ class Groups extends React.Component<{}, State> {
     }, {
       Header: 'מזהה',
       accessor: 'symbol',
+      Cell: cellInfo => ::this.renderEditable(cellInfo, cellInfo.original.symbol),
       style: {
         lineHeight: '3em'
       }
     }, {
       Header: 'כמות ילדים',
       accessor: 'capacity',
+      Cell: cellInfo => ::this.renderEditable(cellInfo, cellInfo.original.capacity),
+      width: 80,
       style: {
         lineHeight: '3em'
       }
@@ -238,7 +241,7 @@ class Groups extends React.Component<{}, State> {
       }
     }, {
       Header: 'ת. התחלה',
-      accessor: 'open',
+      accessor: 'opened',
       Cell: cellInfo => ::this.renderDatePicker(cellInfo, cellInfo.original.open),
       style: {
         overflow: 'visible'
@@ -246,7 +249,7 @@ class Groups extends React.Component<{}, State> {
     }, {
       Header: 'ת.סיום',
       accessor: 'openTill',
-      Cell: cellInfo => ::this.renderDatePicker(cellInfo, cellInfo.original.open),
+      Cell: cellInfo => ::this.renderDatePicker(cellInfo, cellInfo.original.openTill),
       style: {
         overflow: 'visible'
       }
@@ -254,6 +257,7 @@ class Groups extends React.Component<{}, State> {
       Header: 'מחיר',
       accessor: 'price',
       Cell: cellInfo => ::this.renderEditable(cellInfo, cellInfo.original.price),
+      width: 80,
       style: {
         lineHeight: '3em'
       }
