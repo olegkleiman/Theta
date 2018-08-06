@@ -21,4 +21,12 @@ const settings = {
 };
 firestore.settings(settings);
 
+firestore.enablePersistence()
+.then( () => {
+  console.log('Offline is enabled');
+})
+.catch( err => {
+  console.error(err);
+})
+
 export default firebaseApp;
