@@ -41,7 +41,7 @@ class Login extends React.PureComponent {
              this.props.dispatch({
                type: 'PAGE_NAVIGATED',
                data: {
-                 pageName: 'Home',
+                 pageName: 'ראשי',
                }
              });
 
