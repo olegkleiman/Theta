@@ -49,7 +49,7 @@ class Units extends React.Component<{}, State> {
       const userRoles = this.props.secRoles;
 
       const getOptions = {
-        source: 'server'
+        source: 'cache'
       }
 
       const self = this;
@@ -160,7 +160,7 @@ class Units extends React.Component<{}, State> {
               <div className='content container h-100'>
                 <Row>
                   <div className='col col-md-12'>
-                    <div className='card'>
+                    <Card>
                       <div className='card-header'>
                         <h5 className='title'>רשימת המוסדות</h5>
                       </div>
@@ -214,7 +214,7 @@ class Units extends React.Component<{}, State> {
                           </Col>
                         </Row>
                       </div>
-                    </div>
+                    </Card>
                   </div>
                 </Row>
               </div>
