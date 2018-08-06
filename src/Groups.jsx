@@ -30,6 +30,7 @@ type State = {
   groups: Group[],
   authorities: String[],
   authoritiesLoaded: Boolean,
+  selectedAuthority: String,
   tooltipOpen: Boolean
 }
 
@@ -39,6 +40,7 @@ class Groups extends React.Component<{}, State> {
     groups: [],
     authorities: [],
     authoritiesLoaded: false,
+    selectedAuthority: '',
     tooltipOpen: false
   }
 
@@ -241,6 +243,12 @@ class Groups extends React.Component<{}, State> {
     );
   }
 
+  onAuthorityChanged = (authority) => {
+    this.setState({
+      selectedAuthority: authority.name
+    });
+  }
+
   render() {
 
     const columns = [{
@@ -318,12 +326,16 @@ class Groups extends React.Component<{}, State> {
                               textField='name'
                               groupBy='region'
                               data={this.state.authorities}
+                              onChange={ value => ::this.onAuthorityChanged(value) }
                               />
                           </Col>
                           <Col md={{ size: 2, offset: 4 }}
                               className='text-right my-auto' id='tooltipContainer'>
                               <Button color='primary' id='btnExportExcel'
-                                      onClick={::this.exportExcel}>Excel</Button>
+                                      onClick={::this.exportExcel}>
+                                      Excel&nbsp;<i className="far fa-file-excel"></i>
+                              </Button>
+
                               <Tooltip placement='auto'
                                 autohide={false}
                                 isOpen={this.state.tooltipOpen}
@@ -338,30 +350,33 @@ class Groups extends React.Component<{}, State> {
                               </Tooltip>
                           </Col>
                           <Col md='2' className='text-right my-auto' >
-                            <Button color='primary'>הוסף כיתה +</Button>
+                            <Button color='primary'>
+                              הוסף כיתה <i className="far fa-plus-square"></i>
+                            </Button>
                           </Col>
                         </Row>
                         <Row>
                           <Col md='12'>
                             <ReactTable
-                          filterable
-                          PaginationComponent={Pagination}
-                          getTheadThProps = { () => {
-                            return {
-                              style: {
-                                'textAlign': 'right'
-                              }
-                            }
-                          }}
-                          loadingText='טוען נתונים...'
-                          noDataText='טוען נתונים...'
-                          previousText = 'קודם'
-                          nextText = 'הבא'
-                          pageText = 'עמוד'
-                          ofText = 'מתוך'
-                          rowsText = 'שורות'
-                          data={this.state.groups}
-                          columns={columns}/>
+                              filterable
+                              PaginationComponent={Pagination}
+                              getTheadThProps = { () => {
+                                return {
+                                  style: {
+                                    'textAlign': 'right',
+                                    'fontWeight': '700'
+                                  }
+                                }
+                              }}
+                              loadingText='טוען נתונים...'
+                              noDataText='טוען נתונים...'
+                              previousText = 'קודם'
+                              nextText = 'הבא'
+                              pageText = 'עמוד'
+                              ofText = 'מתוך'
+                              rowsText = 'שורות'
+                              data={this.state.groups}
+                              columns={columns}/>
                           </Col>
                         </Row>
                       </CardBody>
