@@ -169,7 +169,7 @@ class UnitGroups extends React.Component<Props, State> {
         "price": groupData.price
       };
 
-      await fetch('http://rishumon.com/api/elamayn/edit_class.php?secret=Day1%21', {
+      await fetch('https://rishumon.com/api/elamayn/edit_class.php?secret=Day1%21', {
         // headers: {
         //     "Content-Type": "application/json",
         // },
@@ -289,8 +289,8 @@ class UnitGroups extends React.Component<Props, State> {
             accessor: 'isClosed',
             Cell: ::this.renderCheckable
         }, ]}
-        loadingText='טוען נתונים...'
-        noDataText='אין נתונים'
+        loadingText = 'טוען נתונים...'
+        noDataText = 'טוען נתונים...'
         previousText = 'קודם'
         nextText = 'הבא'
         pageText = 'עמוד'
