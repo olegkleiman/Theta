@@ -19,6 +19,8 @@ type State = {
   invalidField: String
 }
 
+@withAuth
+export default
 class AddGroup extends React.Component<{}, State> {
 
   state = {
@@ -148,7 +150,7 @@ class AddGroup extends React.Component<{}, State> {
         "price": group.price
       };
 
-      await fetch('http://rishumon.com/api/elamayn/edit_class.php?secret=Day1%21', {
+      await fetch('https://rishumon.com/api/elamayn/edit_class.php?secret=Day1%21', {
         // headers: {
         //     "Content-Type": "application/json",
         // },
@@ -311,5 +313,3 @@ class AddGroup extends React.Component<{}, State> {
   }
 
 };
-
-export default withAuth(AddGroup);
