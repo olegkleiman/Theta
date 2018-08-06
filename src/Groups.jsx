@@ -44,36 +44,48 @@ class Groups extends React.Component<{}, State> {
     tooltipOpen: false
   }
 
-  async componentDidMount() {
+  async loadAuthorities() {
 
     const getOptions = {
       source: 'server'
     }
 
-    let _authorities = [];
-    let _authoritiesLoaded = false;
-
-    // try {
-    //   const authorities = await firebase.firestore().collection('authorities')
-    //                          .get();
-    //   const authoritiesDocs = authorities.docs;
-    //   _authorities = authoritiesDocs.map( doc => {
-    //     const docData = doc.data();
-    //     return {
-    //       name: docData.name,
-    //       region: docData.region
-    //     }
-    //   });
-    //   _authoritiesLoaded = true;
-    //
-    // } catch( err ) {
-    //   console.error(err);
-    // }
-
-    const _groups = [];
     try {
+
+      const authorities = await firebase.firestore().collection('authorities')
+                               .get(getOptions);
+      const authoritiesDocs = authorities.docs;
+      const _authorities = authoritiesDocs.map( doc => {
+        const docData = doc.data();
+        return {
+          name: docData.name,
+          region: docData.region
+        }
+      });
+
+      this.setState({
+        authorities: _authorities,
+        authoritiesLoaded: true
+      })
+
+    } catch( err ) {
+      return new Error(err);
+    }
+
+  }
+
+  async loadGroups() {
+
+    try {
+
+      const getOptions = {
+        source: 'server'
+      }
+
+      const _groups = [];
+
       const units = await firebase.firestore().collection('units')
-                         .get(getOptions);
+             .get(getOptions)
 
       units.docs.forEach( async(unit) => {
 
@@ -85,6 +97,7 @@ class Groups extends React.Component<{}, State> {
         const groups = await firebase.firestore().collection('units')
                       .doc(unit.id).collection('groups')
                       .get(getOptions);
+
         groups.docs.forEach( group => {
 
             const groupData = group.data();
@@ -110,14 +123,22 @@ class Groups extends React.Component<{}, State> {
         });
 
       });
-    } catch( err )  {
-      console.error(err);
+
+      this.setState({
+        groups: _groups
+      })
+
+
+    } catch( err ) {
+      return new Error(err);
     }
 
-    this.setState({
-      authorities: _authorities,
-      groups: _groups
-    })
+  }
+
+  async componentDidMount() {
+
+    this.loadAuthorities();
+    this.loadGroups();
 
   }
 
