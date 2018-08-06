@@ -18,7 +18,7 @@ Consequently, the home directory for hosting by <code>WebpackDevServer</code> is
 As usual for Webpack, the entry point of the project called <code>index.jsx</code>.
 
 ## Deploy
-When you didn't performed the changed in Firestore Rules, simle use <code>yarn deploy</code> = <code>firebase deploy --only hosting</code>
+When you didn't performed the changed in Firestore Rules, simple use <code>yarn deploy</code> = <code>firebase deploy --only hosting</code>
 
 Usually Fiebase functions are deployed separately from <i>functions</i> directory, but if you want full deploy, use <code>firebase deploy</code>
 
