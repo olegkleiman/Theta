@@ -2,7 +2,7 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
 import ReactTable from 'react-table';
-import DropdownList from 'react-widgets/lib/DropdownList';
+import Multiselect from 'react-widgets/lib/Multiselect'
 import Datetime from 'react-datetime';
 import moment from 'moment';
 import XLSX from 'xlsx';
@@ -30,7 +30,7 @@ type State = {
   groups: Group[],
   authorities: String[],
   authoritiesLoaded: Boolean,
-  selectedAuthority: String,
+  selectedAuthorities: String[],
   tooltipOpen: Boolean
 }
 
@@ -40,7 +40,7 @@ class Groups extends React.Component<{}, State> {
     groups: [],
     authorities: [],
     authoritiesLoaded: false,
-    selectedAuthority: '',
+    selectedAuthorities: [],
     tooltipOpen: false
   }
 
@@ -138,7 +138,25 @@ class Groups extends React.Component<{}, State> {
   async componentDidMount() {
 
     this.loadAuthorities();
-    this.loadGroups();
+    const self = this;
+
+    fetch('https://us-central1-theta-1524876066401.cloudfunctions.net/api/groups',
+    {
+      method: 'GET'
+    })
+    .then( response => {
+        return response.json();
+    })
+    .then( groups => {
+        self.setState({
+          groups: groups
+        })
+    })
+    .catch( error =>
+      console.error(`Fetch Error: ${error}`)
+    )
+
+    //this.loadGroups();
 
   }
 
@@ -153,7 +171,8 @@ class Groups extends React.Component<{}, State> {
     const _export = {
       /* Array of Arrays e.g. [["a","b"],[1,2]] */
      data: [
-       ["", "מחיר", "ת.סיום", "ת. התחלה", "שם מוסד", "כמות ילדים", "מזהה", "שם"],
+       ["", "שם", "מזהה", "כמות ילדים ", "שם מוסד", "ת. התחלה", "ת.סיום", "מחיר"],
+//       ["", "מחיר", "ת.סיום", "ת. התחלה", "שם מוסד", "כמות ילדים", "מזהה", "שם"],
      ],
     };
 
@@ -164,8 +183,8 @@ class Groups extends React.Component<{}, State> {
         groupData.push(group.symbol);
         groupData.push(group.capacity);
         groupData.push(group.unitName);
-        groupData.push(group.open);
-        groupData.push(group.openTill);
+        groupData.push(group.opened);
+        groupData.push(group.openedTill);
         groupData.push(group.price);
 
         _export.data.push(groupData);
@@ -264,9 +283,20 @@ class Groups extends React.Component<{}, State> {
     );
   }
 
-  onAuthorityChanged = (authority) => {
+  onAuthorityChanged = (authorities) => {
+
+    const _authorities = authorities.map( authority => {
+      return authority.name
+    });
+
+    const _groups = this.state.groups.filter( group => {
+      return _authorities.find( authorityName => {
+        return authorityName === group.authority}
+      )
+    });
+
     this.setState({
-      selectedAuthority: authority.name
+      selectedAuthorities: _authorities
     });
   }
 
@@ -337,20 +367,19 @@ class Groups extends React.Component<{}, State> {
                         <h5 className='title'>ניהול כיתות</h5>
                       </CardHeader>
                       <CardBody>
-                        <Row>
-                          <Col md='2'>
-                            <div>סנן לפי רשות</div>
-                          </Col>
-                          <Col md='2'>
-                            <DropdownList filter
+                        <Row className='align-items-center'>
+                          <Col md='3'>
+                            <Multiselect
                               busy={!this.state.authoritiesLoaded}
-                              textField='name'
                               groupBy='region'
+                              textField='name'
+                              isRtl={true}
+                              placeholder='סנן לפי הרשות'
                               data={this.state.authorities}
                               onChange={ value => ::this.onAuthorityChanged(value) }
-                              />
+                            />
                           </Col>
-                          <Col md={{ size: 2, offset: 4 }}
+                          <Col md={{ size: 2, offset: 5 }}
                               className='text-right my-auto' id='tooltipContainer'>
                               <Button color='primary' id='btnExportExcel'
                                       onClick={::this.exportExcel}>
