@@ -2,6 +2,7 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
 import ReactTable from 'react-table';
+import DropdownList from 'react-widgets/lib/DropdownList';
 import Datetime from 'react-datetime';
 import moment from 'moment';
 import XLSX from 'xlsx';
@@ -17,6 +18,7 @@ type Group = {
     unitId: String,
     name: String,
     symbol: String,
+    authority: String,
     capacity: Number,
     opened: Date,
     openedTill: Date,
@@ -26,6 +28,8 @@ type Group = {
 
 type State = {
   groups: Group[],
+  authorities: String[],
+  authoritiesLoaded: Boolean,
   tooltipOpen: Boolean
 }
 
@@ -33,6 +37,8 @@ class Groups extends React.Component<{}, State> {
 
   state = {
     groups: [],
+    authorities: [],
+    authoritiesLoaded: false,
     tooltipOpen: false
   }
 
@@ -42,45 +48,72 @@ class Groups extends React.Component<{}, State> {
       source: 'server'
     }
 
+    let _authorities = [];
+    let _authoritiesLoaded = false;
+
+    try {
+      const authorities = await firebase.firestore().collection('authorities')
+                             .get();
+      const authoritiesDocs = authorities.docs;
+      _authorities = authoritiesDocs.map( doc => {
+        const docData = doc.data();
+        return {
+          name: docData.name,
+          region: docData.region
+        }
+      });
+      _authoritiesLoaded = true;
+
+    } catch( err ) {
+      console.error(err);
+    }
+
     const _groups = [];
-    const units = await firebase.firestore().collection('units')
-                       .get(getOptions);
+    try {
+      const units = await firebase.firestore().collection('units')
+                         .get(getOptions);
 
-    units.docs.forEach( async(unit) => {
+      units.docs.forEach( async(unit) => {
 
-      const unitData = unit.data();
-      const unitId = unit.id;
-      const unitName = unitData.name_he;
+        const unitData = unit.data();
+        const unitId = unit.id;
+        const unitName = unitData.name_he;
+        const authority = unitData.authority;
 
-      const groups = await firebase.firestore().collection('units')
-                    .doc(unit.id).collection('groups')
-                    .get(getOptions);
-      groups.docs.forEach( group => {
+        const groups = await firebase.firestore().collection('units')
+                      .doc(unit.id).collection('groups')
+                      .get(getOptions);
+        groups.docs.forEach( group => {
 
-          const groupData = group.data();
-          const groupId = group.id;
+            const groupData = group.data();
+            const groupId = group.id;
 
-          const openTill = groupData.openedTill ?
-                           moment.unix(groupData.openedTill.seconds).format('DD/MM/YYYY') :
-                           '';
+            const openTill = groupData.openedTill ?
+                             moment.unix(groupData.openedTill.seconds).format('DD/MM/YYYY') :
+                             '';
 
-          _groups.push({
-            id: groupId,
-            unitId: unitId,
-            name: groupData.name,
-            symbol: groupData.symbol,
-            unitName: unitName,
-            opened: moment.unix(groupData.opened.seconds).format('DD/MM/YYYY'),
-            openedTill: openTill,
-            price: groupData.price,
-            capacity: groupData.capacity
-          });
+            _groups.push({
+              id: groupId,
+              unitId: unitId,
+              name: groupData.name,
+              symbol: groupData.symbol,
+              unitName: unitName,
+              authority: authority,
+              opened: moment.unix(groupData.opened.seconds).format('DD/MM/YYYY'),
+              openedTill: openTill,
+              price: groupData.price,
+              capacity: groupData.capacity
+            });
+
+        });
 
       });
-
-    });
+    } catch( err )  {
+      console.error(err);
+    }
 
     this.setState({
+      authorities: _authorities,
       groups: _groups
     })
 
@@ -276,7 +309,19 @@ class Groups extends React.Component<{}, State> {
                       </CardHeader>
                       <CardBody>
                         <Row>
-                          <Col md='12' className='text-right my-auto' id='tooltipContainer'>
+                          <Col md='1'>
+                            <div>סנן לפי רשות</div>
+                          </Col>
+                          <Col md='2'>
+                            <DropdownList filter
+                              busy={!this.state.authoritiesLoaded}
+                              textField='name'
+                              groupBy='region'
+                              data={this.state.authorities}
+                              />
+                          </Col>
+                          <Col md={{ size: 2, offset: 5 }}
+                              className='text-right my-auto' id='tooltipContainer'>
                               <Button color='primary' id='btnExportExcel'
                                       onClick={::this.exportExcel}>Excel</Button>
                               <Tooltip placement='auto'
@@ -291,6 +336,9 @@ class Groups extends React.Component<{}, State> {
                                 target='btnExportExcel'>
                                   ייצוא לקובץ חיצוני
                               </Tooltip>
+                          </Col>
+                          <Col md='2' className='text-right my-auto' >
+                            <Button color='primary'>הוסף כיתה +</Button>
                           </Col>
                         </Row>
                         <Row>
