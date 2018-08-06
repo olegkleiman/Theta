@@ -19,7 +19,7 @@ type Group = {
     symbol: String,
     capacity: Number,
     opened: Date,
-    openTill: Date,
+    openedTill: Date,
     unitName: String,
     price: Number
 }
@@ -71,7 +71,7 @@ class Groups extends React.Component<{}, State> {
             symbol: groupData.symbol,
             unitName: unitName,
             opened: moment.unix(groupData.opened.seconds).format('DD/MM/YYYY'),
-            openTill: openTill,
+            openedTill: openTill,
             price: groupData.price,
             capacity: groupData.capacity
           });
@@ -248,8 +248,8 @@ class Groups extends React.Component<{}, State> {
       }
     }, {
       Header: 'ת.סיום',
-      accessor: 'openTill',
-      Cell: cellInfo => ::this.renderDatePicker(cellInfo, cellInfo.original.openTill),
+      accessor: 'openedTill',
+      Cell: cellInfo => ::this.renderDatePicker(cellInfo, cellInfo.original.openedTill),
       style: {
         overflow: 'visible'
       }
