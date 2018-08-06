@@ -22,7 +22,7 @@ class Office extends React.Component<{}, State>  {
 
   componentDidMount() {
     const getOptions = {
-      source: 'server'
+      source: 'cache'
     }
 
     const self = this;
