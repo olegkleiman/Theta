@@ -2,10 +2,14 @@
 import React from 'react';
 import { Button, Row, Col, Container, Form, FormGroup,
   Card, CardBody, CardTitle,
-  Input, InputGroup, InputGroupAddon
+  Input, InputGroup, InputGroupAddon,
+  Alert
 } from 'reactstrap';
 import Datetime from 'react-datetime';
 import 'react-datetime/css/react-datetime.css';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { css } from 'glamor';
 import moment from 'moment';
 import _ from 'moment/locale/he';
 import classNames from 'classnames';
@@ -16,7 +20,8 @@ type State = {
   unitName: String,
   fromDate: moment,
   tillDate: moment,
-  invalidField: String
+  invalidField: String,
+  status: ''
 }
 
 @withAuth
@@ -25,7 +30,8 @@ class AddGroup extends React.Component<{}, State> {
 
   state = {
     unitName: '',
-    invalidField: ''
+    invalidField: '',
+    status: ''
   }
 
   async componentDidMount() {
@@ -77,6 +83,30 @@ class AddGroup extends React.Component<{}, State> {
       return group;
     }
 
+    if( group.name === '' ) {
+      group.validated = false;
+      group.invalidField = 'groupName';
+      return group;
+    }
+
+    if( group.capacity === '' ) {
+      group.validated = false;
+      group.invalidField = 'groupCapacity';
+      return group;
+    }
+
+    if( group.price === '' ) {
+      group.validated = false;
+      group.invalidField = 'groupPrice';
+      return group;
+    }
+
+    if( group.symbol === '' ) {
+      group.validated = false;
+      group.invalidField = 'groupSymbol';
+      return group;
+    }
+
     return new Promise( (resolve, reject) => {
 
       try {
@@ -96,6 +126,10 @@ class AddGroup extends React.Component<{}, State> {
                       }
 
                     })
+                    .catch( err => {
+                      console.error( err );
+                      reject(err);
+                    })
 
       } catch( err ) {
         reject(err);
@@ -108,6 +142,25 @@ class AddGroup extends React.Component<{}, State> {
   onFormSubmit = async(event) => {
 
     event.preventDefault(); // stop from further submit
+
+    this.setState({
+      status: 'נתוני כיתה מתווספים למערכת. נא להמתין...'
+    })
+
+    if( !this.state.fromDate ) {
+        this.setState({
+          invalidField: 'openedFrom',
+          status: ''
+        });
+        return;
+    }
+    if( !this.state.tillDate ) {
+        this.setState({
+          invalidField: 'openedTill',
+          status: ''
+        });
+        return;
+    }
 
     const group = {
       name: event.target.groupName.value,
@@ -124,14 +177,21 @@ class AddGroup extends React.Component<{}, State> {
     if( !_group.validated ) {
 
       this.setState({
-        invalidField: group.invalidField
-      },
-      () => {
-              console.log('Form is invalid.');
+        invalidField: group.invalidField,
+        status: ''
       });
 
       return;
     }
+
+    const toastId = toast.success("כיתה חדשה מתווספת למערכת", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: false,
+        draggable: false
+    });
 
     const unitId = this.props.match.params.unitid;
 
@@ -179,10 +239,29 @@ class AddGroup extends React.Component<{}, State> {
                  sec_roles: secRoles
               })
 
-        this.props.history.push(`/dashboard/units`);
+              toast.update(this.toastId,
+                    {
+                      render: 'כיתה חדשה התווספה',
+                      type: toast.TYPE.SUCCESS,
+                      autoClose: 3000,
+                      className: css({
+                        transform: "rotateY(360deg)",
+                        transition: "transform 0.6sec"
+                      })
+                    });
+
+        setTimeout( () => this.props.history.push(`/dashboard/units`),
+                   1500);
       }
     } catch( err ) {
       console.error(err);
+      toast.update(this.toastId,
+                    {
+                      render: 'פעולה נכשלה עקב בעיית התקשורת.',
+                      type: toast.TYPE.ERROR,
+                      autoClose: 5000,
+                    }
+                  );
     }
   }
 
@@ -190,6 +269,22 @@ class AddGroup extends React.Component<{}, State> {
 
     let isThisField = this.state.invalidField === 'symbol';
     const groupSymbolClassNames = classNames({
+      'text-left my-auto' : true,
+      'text-danger': isThisField,
+      'visible': isThisField,
+      'invisible': !isThisField
+    });
+
+    isThisField = this.state.invalidField === 'groupName';
+    const groupNameClassNames = classNames({
+      'text-left my-auto' : true,
+      'text-danger': isThisField,
+      'visible': isThisField,
+      'invisible': !isThisField
+    });
+
+    isThisField = this.state.invalidField === 'openedFrom';
+    const fromClassNames = classNames({
       'text-left my-auto' : true,
       'text-danger': isThisField,
       'visible': isThisField,
@@ -204,7 +299,34 @@ class AddGroup extends React.Component<{}, State> {
       'invisible': !isThisField
     });
 
+    isThisField = this.state.invalidField === 'groupCapacity';
+    const capacityClassNames = classNames({
+      'text-left my-auto' : true,
+      'text-danger': isThisField,
+      'visible': isThisField,
+      'invisible': !isThisField
+    })
+
+    isThisField = this.state.invalidField === 'groupPrice';
+    const priceClassNames = classNames({
+      'text-left my-auto' : true,
+      'text-danger': isThisField,
+      'visible': isThisField,
+      'invisible': !isThisField
+    })
+
     return (<div>
+      <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop
+          closeOnClick
+          rtl
+          pauseOnVisibilityChange={false}
+          draggable={false}
+          pauseOnHover={false}
+          />
       <div className='panel-header panel-header-sm'></div>
       <div className='content container h-100'>
         <Row>
@@ -225,6 +347,10 @@ class AddGroup extends React.Component<{}, State> {
                             <Col md={{ size: 4 }}>
                               <Input id='groupName' name='groupName'></Input>
                             </Col>
+                            <Col md='4' invalid={(this.state.invalidField === 'groupName').toString()}
+                              className={groupNameClassNames}>
+                              אנא הזן ערך
+                            </Col>
                           </Row>
                           <br />
                           <Row>
@@ -237,7 +363,7 @@ class AddGroup extends React.Component<{}, State> {
                             </Col>
                             <Col md='4' invalid={(this.state.invalidField === 'symbol').toString()}
                               className={groupSymbolClassNames}>
-                              Group with this symbol is already exists
+                              כיתה עם מזהה כזה כבר קיימת במערכת
                             </Col>
                           </Row>
                           <br />
@@ -250,6 +376,10 @@ class AddGroup extends React.Component<{}, State> {
                                         onChange={::this._fromDateChanged}
                                         timeFormat={false}
                                         local='he' />
+                            </Col>
+                            <Col md='4' invlalid={(this.state.invalidField === 'openedFrom').toString()}
+                              className={fromClassNames}>
+                              אנא הזן תאריך
                             </Col>
                           </Row>
                           <br />
@@ -265,7 +395,7 @@ class AddGroup extends React.Component<{}, State> {
                             </Col>
                             <Col md='4' invlalid={(this.state.invalidField === 'openedTill').toString()}
                                 className={tillClassNames}>
-                              No time left to enjoy this group :)
+                              לא נותר זמן ליהנות בקבוצה זו
                             </Col>
                           </Row>
                           <br />
@@ -276,6 +406,10 @@ class AddGroup extends React.Component<{}, State> {
                             <Col md='4'>
                               <Input id='groupCapacity' name='groupCapacity'
                                      type='number' placeholder="רק מספרים שלמים" />
+                            </Col>
+                            <Col md='4' invlalid={(this.state.invalidField === 'groupCapacity').toString()}
+                              className={capacityClassNames}>
+                              אנא הזן ערך
                             </Col>
                           </Row>
                           <br />
@@ -290,6 +424,10 @@ class AddGroup extends React.Component<{}, State> {
                                        placeholder="מספרים כמחיר, כמו 650.40, 510" />
                                 <InputGroupAddon addonType="append">₪</InputGroupAddon>
                               </InputGroup>
+                            </Col>
+                            <Col md='4' invlalid={(this.state.invalidField === 'groupPrice').toString()}
+                              className={priceClassNames}>
+                              אנא הזן ערך
                             </Col>
                           </Row>
                           <Row>
