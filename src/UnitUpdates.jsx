@@ -7,7 +7,8 @@ import firebase from './firebase.js';
 type State = {
   columns: [],
   updates: [],
-  sorting: []
+  sorting: [],
+  loading: Boolean
 }
 
 type Props = {
@@ -39,7 +40,8 @@ class UnitUpdates extends React.Component<Props, State> {
     //rows: _rows,
     updates: [],
     sorting: [{ columnName: 'pupils', direction: 'asc' }],
-    dateColumns: ['update_date']
+    dateColumns: ['update_date'],
+    loading: true
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -77,7 +79,8 @@ class UnitUpdates extends React.Component<Props, State> {
       });
 
       this.setState({
-        updates: _updates
+        updates: _updates,
+        loading: false
       });
 
     });
@@ -163,7 +166,8 @@ class UnitUpdates extends React.Component<Props, State> {
           data={updates}
           defaultPageSize={5}
           loadingText='טוען נתונים...'
-          noDataText='אין נתונים'
+          noDataText='אין נתונים להצגה'
+          loading = {this.state.loading}
           className="-striped -highlight"
           previousText = 'קודם'
           nextText = 'הבא'

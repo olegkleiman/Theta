@@ -14,6 +14,7 @@ import Model from './Model';
 
 type State = {
   models: [],
+  loading: Boolean,
   selectedModel: {
     modelNumber: String,
     id: ''
@@ -25,6 +26,7 @@ class Models extends React.Component<{}, State> {
 
   state = {
     models: [],
+    loading: true,
     selectedModel: {
       modelNumber: '',
       id: ''
@@ -57,6 +59,7 @@ class Models extends React.Component<{}, State> {
     });
 
     self.setState({
+      loading: false,
       models: _models
     });
 
@@ -112,6 +115,9 @@ class Models extends React.Component<{}, State> {
                             <ReactTable
                               PaginationComponent={Pagination}
                               filterable
+                              loadingText='טוען נתונים...'
+                              noDataText='אין נתונים להצגה'
+                              loading = {this.state.loading}
                               className="-striped -highlight"
                               data={this.state.models}
                               columns={columns}

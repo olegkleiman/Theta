@@ -31,6 +31,7 @@ type State = {
   authorities: String[],
   authoritiesLoaded: Boolean,
   selectedAuthorities: String[],
+  loading: Boolean,
   tooltipOpen: Boolean
 }
 
@@ -41,6 +42,7 @@ class Groups extends React.Component<{}, State> {
     authorities: [],
     authoritiesLoaded: false,
     selectedAuthorities: [],
+    loading: true,
     tooltipOpen: false
   }
 
@@ -125,6 +127,7 @@ class Groups extends React.Component<{}, State> {
       });
 
       this.setState({
+        loading: false,
         groups: _groups
       })
 
@@ -149,6 +152,7 @@ class Groups extends React.Component<{}, State> {
     })
     .then( groups => {
         self.setState({
+          loading: false,
           groups: groups
         })
     })
@@ -418,8 +422,9 @@ class Groups extends React.Component<{}, State> {
                                   }
                                 }
                               }}
+                              loading = {this.state.loading}
                               loadingText='טוען נתונים...'
-                              noDataText='טוען נתונים...'
+                              noDataText='אין נתונים להצגה'
                               previousText = 'קודם'
                               nextText = 'הבא'
                               pageText = 'עמוד'

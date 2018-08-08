@@ -7,14 +7,16 @@ import Pagination from './TablePagination';
 import UserPermissions from './UserPermissions';
 
 type State = {
-  users: []
+  users: [],
+  loading: Boolean
 }
 
 class UserList extends React.PureComponent<{}, State> {
 
   state = {
     users: [],
-    sorting: [{ columnName: 'first_name', direction: 'asc' }]
+    sorting: [{ columnName: 'first_name', direction: 'asc' }],
+    loading: true
   }
 
   // constructor(props) {
@@ -44,6 +46,7 @@ class UserList extends React.PureComponent<{}, State> {
       });
 
       this.setState({
+        loading: false,
         users: _users
       })
 
@@ -151,7 +154,8 @@ class UserList extends React.PureComponent<{}, State> {
                     }
                   }}
                   loadingText='טוען נתונים...'
-                  noDataText='טוען נתונים...'
+                  noDataText='אין נתונים להצגה'
+                  loading = {this.state.loading}
                   previousText = 'קודם'
                   nextText = 'הבא'
                   pageText = 'עמוד'

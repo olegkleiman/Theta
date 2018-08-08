@@ -23,14 +23,14 @@ type Group = {
 
 type State = {
   groups: Group[],
-  dataStatus: string
+  loading: Boolean
 }
 
 class UnitGroups extends React.Component<Props, State> {
 
   state = {
     groups: [],
-    dataStatus: 'טוען נתונים...'
+    loading: true
   }
 
   constructor(props) {
@@ -105,8 +105,8 @@ class UnitGroups extends React.Component<Props, State> {
 
     this.setState({
       groups: _groups,
-      dataStatus: _groups.length == 0 ? 'No Groups are allowed to view for this account'
-                                      : this.state.dataStatus
+      loading: false
+
 
     });
 
@@ -205,7 +205,6 @@ class UnitGroups extends React.Component<Props, State> {
       <ReactTable
         className="-striped -highlight tableInCard col col-12"
         data={this.state.groups}
-        noDataText={this.state.dataStatus}
         filterable
         defaultPageSize={5}
         getTheadThProps = { () => {
@@ -289,8 +288,9 @@ class UnitGroups extends React.Component<Props, State> {
             accessor: 'isClosed',
             Cell: ::this.renderCheckable
         }, ]}
+        loading = {this.state.loading}
         loadingText = 'טוען נתונים...'
-        noDataText = 'טוען נתונים...'
+        noDataText = 'אין נתונים להצגה'
         previousText = 'קודם'
         nextText = 'הבא'
         pageText = 'עמוד'
