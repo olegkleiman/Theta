@@ -12,6 +12,7 @@ import { Container, Button,
   Row, Col, Card, CardHeader, CardBody,
   Tooltip
 } from 'reactstrap';
+import withAuth from './FirebaseAuth';
 
 type Group = {
     id: String,
@@ -35,6 +36,7 @@ type State = {
   tooltipOpen: Boolean
 }
 
+@withAuth
 class Groups extends React.Component<{}, State> {
 
   state = {
@@ -85,6 +87,7 @@ class Groups extends React.Component<{}, State> {
       }
 
       const _groups = [];
+      const userRoles = this.props.secRoles;
 
       const units = await firebase.firestore().collection('units')
              .get(getOptions)
@@ -104,23 +107,32 @@ class Groups extends React.Component<{}, State> {
 
             const groupData = group.data();
             const groupId = group.id;
+            const secRole = data.sec_role;
 
-            const openTill = groupData.openedTill ?
-                             moment.unix(groupData.openedTill.seconds).format('DD/MM/YYYY') :
-                             '';
-
-            _groups.push({
-              id: groupId,
-              unitId: unitId,
-              name: groupData.name,
-              symbol: groupData.symbol,
-              unitName: unitName,
-              authority: authority,
-              opened: moment.unix(groupData.opened.seconds).format('DD/MM/YYYY'),
-              openedTill: openTill,
-              price: groupData.price,
-              capacity: groupData.capacity
+            const isAllowed = userRoles.find( role => {
+              return role === secRole
             });
+
+
+            if( this.props.isAdmin || isAllowed ) {
+              
+              const openTill = groupData.openedTill ?
+                               moment.unix(groupData.openedTill.seconds).format('DD/MM/YYYY') :
+                               '';
+
+              _groups.push({
+                id: groupId,
+                unitId: unitId,
+                name: groupData.name,
+                symbol: groupData.symbol,
+                unitName: unitName,
+                authority: authority,
+                opened: moment.unix(groupData.opened.seconds).format('DD/MM/YYYY'),
+                openedTill: openTill,
+                price: groupData.price,
+                capacity: groupData.capacity
+              });
+            }
 
         });
 
