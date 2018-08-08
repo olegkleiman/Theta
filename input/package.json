@@ -5,6 +5,7 @@
   "license": "MIT",
   "scripts": {
     "process": "babel-node --inspect-brk units.js"
+    "process_groups": "babel-node --inspect-brk groups.js"
   },
   "dependencies": {
     "firebase-admin": "^5.13.1"
