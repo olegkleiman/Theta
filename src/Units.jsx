@@ -19,7 +19,7 @@ type State = {
   },
   selectedRowIndex: Number,
   dropdownOpen: boolean,
-  dataStatus: string
+  loading: Boolean
 }
 
 @withAuth
@@ -34,7 +34,7 @@ class Units extends React.Component<{}, State> {
     },
     selectedRowIndex: -1,
     dropdownOpen: false,
-    dataStatus: 'טוען נתונים...'
+    loading: true
   };
 
   toggle() {
@@ -83,8 +83,7 @@ class Units extends React.Component<{}, State> {
 
       this.setState({
         units: _units,
-        dataStatus: _units.length == 0 ? 'No Units are allowed to view for this account'
-                                        : this.state.dataStatus
+        loading: false
       })
     }
   }
@@ -178,11 +177,12 @@ class Units extends React.Component<{}, State> {
                                   PaginationComponent={Pagination}
                                   filterable
                                   data={this.state.units}
+                                  loading = {this.state.loading}
                                   columns={columns}
                                   showPagination={true}
                                   className="-striped -highlight"
                                   loadingText='טוען נתונים...'
-                                  noDataText='טוען נתונים...'
+                                  noDataText='אין נתונים להצגה'
                                   previousText = 'קודם'
                                   nextText = 'הבא'
                                   pageText = 'עמוד'

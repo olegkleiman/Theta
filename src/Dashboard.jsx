@@ -14,6 +14,7 @@ import Office from './Office';
 import Units from './Units';
 import Models from './Models';
 import Groups from './Groups';
+import Pupils from './Pupils';
 import Group from './Group';
 import AddGroup from './AddGroup';
 import AddUnit from './AddUnit';
@@ -138,6 +139,7 @@ class Dashboard extends React.Component<Props, State> {
                 <Route path={this.props.match.path + '/units'} component={Units} />
                 <Route path={this.props.match.path + '/models'} component={Models} />
                 <Route path={this.props.match.path + '/groups'} component={Groups} />
+                <Route path={this.props.match.path + '/pupils'} component={Pupils} />
                 <Route path={this.props.match.path + '/addunit'} component={AddUnit} />
                 <Route path={this.props.match.path + '/addgroup/:unitid'} component={AddGroup} />
                 <Route path={this.props.match.path + '/group/:unitid/:groupid'} component={Group} />
