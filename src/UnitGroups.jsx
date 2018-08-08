@@ -23,14 +23,15 @@ type Group = {
 
 type State = {
   groups: Group[],
-  loading: Boolean
+  dataStatus: string
 }
 
+@withAuth
 class UnitGroups extends React.Component<Props, State> {
 
   state = {
     groups: [],
-    loading: true
+    dataStatus: 'טוען נתונים...'
   }
 
   constructor(props) {
@@ -63,7 +64,8 @@ class UnitGroups extends React.Component<Props, State> {
 
     let _groups: Group[] = [];
 
-    const resp = await firebase.firestore().collection('units').doc(this.props.docId).collection('groups')
+    const resp = await firebase.firestore().collection('units')
+                       .doc(this.props.docId).collection('groups')
                        .get(getOptions);
 
     resp.docs.forEach( (group, index) => {
@@ -74,7 +76,7 @@ class UnitGroups extends React.Component<Props, State> {
         return role === secRole
       });
 
-      if( isAllowed ) {
+      if( this.props.isAdmin || isAllowed ) {
 
         let _isClosed = data.isClosed;
 
@@ -105,8 +107,8 @@ class UnitGroups extends React.Component<Props, State> {
 
     this.setState({
       groups: _groups,
-      loading: false
-
+      dataStatus: _groups.length == 0 ? 'No Groups are allowed to view for this account'
+                                      : this.state.dataStatus
 
     });
 
@@ -205,6 +207,7 @@ class UnitGroups extends React.Component<Props, State> {
       <ReactTable
         className="-striped -highlight tableInCard col col-12"
         data={this.state.groups}
+        noDataText={this.state.dataStatus}
         filterable
         defaultPageSize={5}
         getTheadThProps = { () => {
@@ -288,9 +291,8 @@ class UnitGroups extends React.Component<Props, State> {
             accessor: 'isClosed',
             Cell: ::this.renderCheckable
         }, ]}
-        loading = {this.state.loading}
         loadingText = 'טוען נתונים...'
-        noDataText = 'אין נתונים להצגה'
+        noDataText = 'אין נתונים'
         previousText = 'קודם'
         nextText = 'הבא'
         pageText = 'עמוד'
