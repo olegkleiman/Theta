@@ -8,6 +8,7 @@ import Datetime from 'react-datetime';
 import moment from 'moment';
 import XLSX from 'xlsx';
 import firebase from './firebase.js';
+import withAuth from './FirebaseAuth';
 
 class Pupil {
   name: String;
@@ -67,6 +68,7 @@ type State = {
   tooltipOpen: Boolean
 }
 
+@withAuth
 class Group extends React.Component<{}, State> {
 
   state = {
@@ -81,7 +83,16 @@ class Group extends React.Component<{}, State> {
     tooltipOpen: false
   }
 
-  async componentDidMount() {
+  componentDidUpdate(prevProps: Props, prevState: State) {
+
+    if( prevProps.userEMail !== this.props.userEMail) {
+      ::this.loadData();
+    }
+
+  }
+
+  async loadData() {
+
     const groupId = this.props.match.params.groupid;
     const unitId = this.props.match.params.unitid;
 
@@ -97,27 +108,42 @@ class Group extends React.Component<{}, State> {
 
       const doc = await groupDoc.get(getOptions);
       let data = doc.data();
-      const _groupData = new GroupData(data.name,
-                                       data.symbol,
-                                       data.capacity,
-                                       data.opened,
-                                       data.openedTill);
-      this.setState({
-        groupData: _groupData
-      })
 
-      this.observer = firebase.firestore().collection('units')
-                      .doc(unitId).collection('groups')
-                      .doc(groupId).collection('pupils')
-                      .onSnapshot( snapShot => {
-                        ::this.pupilsFromDocs(snapShot.docs);
-                      });
+      const secRole = data.sec_role;
+      const userRoles = this.props.secRoles;
+      const isAllowed = userRoles.find( role => {
+        return role === secRole
+      });
+
+      if( this.props.isAdmin || isAllowed ) {
+
+        const _groupData = new GroupData(data.name,
+                                         data.symbol,
+                                         data.capacity,
+                                         data.opened,
+                                         data.openedTill);
+        this.setState({
+          groupData: _groupData
+        })
+
+        this.observer = firebase.firestore().collection('units')
+                        .doc(unitId).collection('groups')
+                        .doc(groupId).collection('pupils')
+                        .onSnapshot( snapShot => {
+                          ::this.pupilsFromDocs(snapShot.docs);
+                        });
+       }
 
     } catch( err ) {
       console.error(err);
     }
-
   }
+
+  // async componentDidMount() {
+  //
+  //
+  //
+  // }
 
   componentWillUnmount() {
     if( this.observer )
@@ -386,31 +412,50 @@ class Group extends React.Component<{}, State> {
                         columns={[{
                           Header: 'שם',
                           accessor: 'name',
-                          Cell: cellInfo => ::this.renderEditable(cellInfo, cellInfo.original.name)
+                          Cell: cellInfo => ::this.renderEditable(cellInfo, cellInfo.original.name),
+                          style: {
+                            lineHeight: '3em'
+                          }
                         }, {
                           Header: 'מזהה',
-                          accessor: 'id'
+                          accessor: 'id',
+                          style: {
+                            lineHeight: '3em'
+                          }
                         }, {
                           Header: 'מספר טלפון',
-                          accessor: 'phoneNumber'
+                          accessor: 'phoneNumber',
+                          style: {
+                            lineHeight: '3em'
+                          }
                         }, {
                           Header: 'תאריך לידה',
                           accessor: 'birthDay',
                           Cell: cellInfo => ::this.renderDatePicker(cellInfo, cellInfo.original.birthDay),
                           style: {
-                            overflow: 'visible'
+                            overflow: 'visible',
+                            lineHeight: '3em'
                           }
                         },{
                           Header: 'תאריך הרשמה',
-                          accessor: 'whenRegistered'
+                          accessor: 'whenRegistered',
+                          style: {
+                            lineHeight: '3em'
+                          }
                         }, {
                           Header: 'מזהה הורה',
                           accessor: 'parentId',
-                          Cell: cellInfo => ::this.renderEditable(cellInfo, cellInfo.original.parentId)
+                          Cell: cellInfo => ::this.renderEditable(cellInfo, cellInfo.original.parentId),
+                          style: {
+                            lineHeight: '3em'
+                          }
                         }, {
                           Header: 'כתובת',
                           accessor: 'address',
-                          Cell: cellInfo => ::this.renderEditable(cellInfo, cellInfo.original.address)
+                          Cell: cellInfo => ::this.renderEditable(cellInfo, cellInfo.original.address),
+                          style: {
+                            lineHeight: '3em'
+                          }
                         }]}>
                       </ReactTable>
                     </Col>
