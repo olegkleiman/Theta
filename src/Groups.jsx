@@ -113,9 +113,8 @@ class Groups extends React.Component<{}, State> {
               return role === secRole
             });
 
-
             if( this.props.isAdmin || isAllowed ) {
-              
+
               const openTill = groupData.openedTill ?
                                moment.unix(groupData.openedTill.seconds).format('DD/MM/YYYY') :
                                '';
@@ -163,9 +162,32 @@ class Groups extends React.Component<{}, State> {
         return response.json();
     })
     .then( groups => {
+
+        let _groups;
+        if( this.props.isAdmin ) {
+
+          _groups = groups;
+
+        } else {
+
+          _groups = groups.map( group => {
+
+            const secRole = group.secRole;
+
+            const isAllowed = this.props.secRoles.find( role => {
+              return role === secRole
+            });
+            return ( isAllowed ) ? group : null;
+
+         })
+
+        };
+
+        _groups = _groups.filter( r => r); // remove not allowe groups
+
         self.setState({
           loading: false,
-          groups: groups
+          groups: _groups
         })
     })
     .catch( error =>
