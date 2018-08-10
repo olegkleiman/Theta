@@ -109,19 +109,19 @@ class Group extends React.Component<{}, State> {
       const doc = await groupDoc.get(getOptions);
       let data = doc.data();
 
-      const secRole = data.sec_role;
-      const userRoles = this.props.secRoles;
-      const isAllowed = userRoles.find( role => {
-        return role === secRole
-      });
+      // const secRole = data.sec_role;
+      // const userRoles = this.props.secRoles;
+      // const isAllowed = userRoles.find( role => {
+      //   return role === secRole
+      // });
 
-      if( this.props.isAdmin || isAllowed ) {
+      //if( this.props.isAdmin || isAllowed ) {
 
         const _groupData = new GroupData(data.name,
                                          data.symbol,
                                          data.capacity,
-                                         data.opened,
-                                         data.openedTill);
+                                         data.openFrom,
+                                         data.openTill);
         this.setState({
           groupData: _groupData
         })
@@ -132,7 +132,7 @@ class Group extends React.Component<{}, State> {
                         .onSnapshot( snapShot => {
                           ::this.pupilsFromDocs(snapShot.docs);
                         });
-       }
+       //}
 
     } catch( err ) {
       console.error(err);
@@ -378,6 +378,11 @@ class Group extends React.Component<{}, State> {
                           ייצוא לקובץ חיצוני
                       </Tooltip>
 
+                    </Col>
+                    <Col>
+                      <Button color='primary'>
+                        הוסף תלמיד
+                      </Button>
                     </Col>
                   </Row>
                   <Row>
