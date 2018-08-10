@@ -19,7 +19,7 @@ type State = {
   },
   selectedRowIndex: Number,
   dropdownOpen: boolean,
-  loading: Boolean
+  dataStatus: string
 }
 
 @withAuth
@@ -34,7 +34,7 @@ class Units extends React.Component<{}, State> {
     },
     selectedRowIndex: -1,
     dropdownOpen: false,
-    loading: true
+    dataStatus: 'טוען נתונים...'
   };
 
   toggle() {
@@ -49,13 +49,13 @@ class Units extends React.Component<{}, State> {
       const userRoles = this.props.secRoles;
 
       const getOptions = {
-        source: 'cache'
+        source: 'server'
       }
 
       const self = this;
 
       const response = await firebase.firestore().collection('units')
-                         .get(getOptions);
+                       .get(getOptions);
 
       const _units = [];
 
@@ -68,22 +68,25 @@ class Units extends React.Component<{}, State> {
           return role === secRole
         });
 
-        if( isSecGroupFound ) {
+        //if( this.props.isAdmin || isSecGroupFound ) {
           _units.push({
             name: unitData.name_he,
             education_type: unitData.education_type,
             authority: unitData.authority,
+            region: unitData.region,
+            cluster: unitData.cluster,
             type: unitData.type,
             symbol: unitData.symbol,
             id: unit.id
           });
-        }
+        //}
 
       });
 
       this.setState({
         units: _units,
-        loading: false
+        dataStatus: _units.length == 0 ? 'No Units are allowed to view for this account'
+                                        : this.state.dataStatus
       })
     }
   }
@@ -138,6 +141,12 @@ class Units extends React.Component<{}, State> {
         textAlign: 'center'
       }
     }, {
+      Header: 'רשות',
+      accessor: 'authority'
+    }, {
+      Header: 'מחוז',
+      accessor: 'region'
+    }, {
       Header: 'שם',
       accessor: 'name'
     }, {
@@ -150,8 +159,8 @@ class Units extends React.Component<{}, State> {
       Header: 'סוג מוסד',
       accessor: 'type'
     }, {
-      Header: 'סוג חינוך',
-      accessor: 'education_type'
+      Header: 'אשכול',
+      accessor: 'cluster'
     }];
 
     return <div>
@@ -177,12 +186,11 @@ class Units extends React.Component<{}, State> {
                                   PaginationComponent={Pagination}
                                   filterable
                                   data={this.state.units}
-                                  loading = {this.state.loading}
                                   columns={columns}
                                   showPagination={true}
                                   className="-striped -highlight"
                                   loadingText='טוען נתונים...'
-                                  noDataText='אין נתונים להצגה'
+                                  noDataText='טוען נתונים...'
                                   previousText = 'קודם'
                                   nextText = 'הבא'
                                   pageText = 'עמוד'
