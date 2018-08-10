@@ -28,7 +28,16 @@ type Pupil = {
     medicalLimitations:Boolean
 }
 
+type Unit = {
+  unitId: String,
+  unitName: String,
+  unitSymbol: String,
+  authority: String
+}
+
+
 type State = {
+  units: Unit[],
   pupils: Pupil[],
   authorities: String[],
   authoritiesLoaded: Boolean,
@@ -42,6 +51,7 @@ class Pupils extends React.Component<{}, State> {
 
   state = {
     pupils: [],
+    units: [],
     authorities: [],
     authoritiesLoaded: false,
     loading: true,
@@ -117,7 +127,12 @@ class Pupils extends React.Component<{}, State> {
                     const unitName = unitData.name_he;
                     const unitSymbol = unitData.symbol;
                     const authority = unitData.authority;
-                    _units.push({unitName, unitSymbol})
+                    _units.push({
+                      unitId: String,
+                      unitName: String,
+                      unitSymbol: String,
+                      authority: String
+                    })
 
                     promises2.push(firebase.firestore().collection('units')
                         .doc(unit.id).collection('groups')

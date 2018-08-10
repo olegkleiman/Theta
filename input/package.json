@@ -4,12 +4,9 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "process": "babel-node --inspect-brk units.js",
-    "process_groups": "babel-node --inspect-brk groups.js"
+    "process": "babel-node --inspect-brk units.js"
   },
   "dependencies": {
-   "csv-parse": "^2.5.0",	    
-    "firebase-admin": "^5.13.1",
-    "grpc": "^1.13.1"
+    "firebase-admin": "^5.13.1"
   }
 }

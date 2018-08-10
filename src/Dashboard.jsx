@@ -16,7 +16,8 @@ import Models from './Models';
 import Groups from './Groups';
 import Pupils from './Pupils';
 import Group from './Group';
-import AddGroup from './AddGroup';
+import AddGroup from './AddPupil';
+//import AddGroup from './AddGroup';
 import AddUnit from './AddUnit';
 
 import firebase from './firebase.js';
