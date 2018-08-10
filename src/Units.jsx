@@ -63,10 +63,10 @@ class Units extends React.Component<{}, State> {
 
         const unitData = unit.data();
 
-        const secRole = unitData.sec_role;
-        const isSecGroupFound = userRoles.find( role => {
-          return role === secRole
-        });
+        // const secRole = unitData.sec_role;
+        // const isSecGroupFound = userRoles.find( role => {
+        //   return role === secRole
+        // });
 
         //if( this.props.isAdmin || isSecGroupFound ) {
           _units.push({
