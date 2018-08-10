@@ -27,6 +27,8 @@ type State = {
 }
 
 @withAuth
+@withRouter
+export default
 class UnitGroups extends React.Component<Props, State> {
 
   state = {
@@ -304,5 +306,3 @@ class UnitGroups extends React.Component<Props, State> {
   }
 
 }
-
-export default withRouter(withAuth(UnitGroups));
