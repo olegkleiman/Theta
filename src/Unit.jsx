@@ -95,7 +95,7 @@ class Unit extends React.Component<Props, State> {
     if( docId !== this.props.id ) {
 
       const getOptions = {
-        source: 'server'
+        source: 'cache'
       }
 
       const self = this;
@@ -228,5 +228,3 @@ class Unit extends React.Component<Props, State> {
   }
 
 }
-
-//export default withRouter(connect()(Unit));
