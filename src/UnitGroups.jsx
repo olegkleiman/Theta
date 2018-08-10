@@ -71,21 +71,21 @@ class UnitGroups extends React.Component<Props, State> {
     resp.docs.forEach( (group, index) => {
 
       let data = group.data();
-      const secRole = data.sec_role;
-      const isAllowed = userRoles.find( role => {
-        return role === secRole
-      });
+      // const secRole = data.sec_role;
+      // const isAllowed = userRoles.find( role => {
+      //   return role === secRole
+      // });
 
-      if( this.props.isAdmin || isAllowed ) {
+      //if( this.props.isAdmin || isAllowed ) {
 
         let _isClosed = data.isClosed;
 
-        let _openedDate= ( data.opened ) ?
-                      moment.unix(data.opened.seconds).format('DD/MM/YYYY') :
+        let _openedDate= ( data.openFrom ) ?
+                      moment.unix(data.openFrom.seconds).format('DD/MM/YYYY') :
                       '<none>';
 
-        let _openedTillDate = ( data.openedTill ) ?
-                        moment.unix(data.openedTill.seconds).format('DD/MM/YYYY') :
+        let _openedTillDate = ( data.openTill ) ?
+                        moment.unix(data.openTill.seconds).format('DD/MM/YYYY') :
                         '<none>';
 
         let registeredPupils = ( data.registeredPupils ) ? data.registeredPupils : 0;
@@ -101,7 +101,7 @@ class UnitGroups extends React.Component<Props, State> {
           capacity: data.capacity,
           registeredPupils: registeredPupils
         });
-      }
+      //}
 
     });
 
