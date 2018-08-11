@@ -122,7 +122,7 @@ type State = {
 
 @withAuth
 export default
-class AddGroup extends React.Component<{}, State> {
+class AddPupil extends React.Component<{}, State> {
 
   state = {
     pupil : {},
@@ -270,7 +270,7 @@ class AddGroup extends React.Component<{}, State> {
        _state.pupil = pupil;
     }
 
-    //validetion
+    //validation
     if( !(this.state.pupil &&
         (this.state.selectedAuthority)  &&
         (this.state.selectedUnit) &&
