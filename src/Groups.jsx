@@ -338,6 +338,10 @@ class Groups extends React.Component<{}, State> {
     });
   }
 
+  addGroup() {
+    this.props.history.push(`/dashboard/addgroup/0/0`);
+  }
+
   render() {
 
     const columns = [{
@@ -438,7 +442,7 @@ class Groups extends React.Component<{}, State> {
                               </Tooltip>
                           </Col>
                           <Col md='2' className='text-right my-auto' >
-                            <Button color='primary'>
+                            <Button color='primary' onClick={::this.addGroup}>
                               הוסף כיתה <i className="far fa-plus-square"></i>
                             </Button>
                           </Col>
