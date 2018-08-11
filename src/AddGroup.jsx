@@ -53,6 +53,21 @@ class AddGroup extends React.Component<{}, State> {
       unitName: unitName
     })
 
+    const groupId = this.props.match.param.groupid;
+    if( groupId != 0 ) {
+
+      try {
+        const groupDoc = await firebase.firestore().collection('units').doc(unitId)
+                            .collection('groups').doc(groupId)
+                            .get();
+        const groupData = groupDoc.data();
+        const groupName = groupData.name;
+      } catch( err ) {
+        console.log(err);
+      }
+
+    }
+
   }
 
   _fromDateChanged(_date: Date) {
