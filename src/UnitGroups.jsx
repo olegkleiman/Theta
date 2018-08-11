@@ -199,7 +199,7 @@ class UnitGroups extends React.Component<Props, State> {
   }
 
   editGroup(groupId: String) {
-    console.log(`UnitId: ${this.props.docId}. GroupId: ${groupId}`);
+    //console.log(`UnitId: ${this.props.docId}. GroupId: ${groupId}`);
     this.props.history.push(`/dashboard/addgroup/${this.props.docId}/${groupId}`);
   }
 
@@ -211,7 +211,7 @@ class UnitGroups extends React.Component<Props, State> {
   }
 
   deleteGroup() {
-    console.log(`UnitId: ${this.props.docId}. GroupId: ${this.state.groupId2Delete}`);
+    //console.log(`UnitId: ${this.props.docId}. GroupId: ${this.state.groupId2Delete}`);
     this.setState({
       modal: !this.state.modal
     });
@@ -353,8 +353,8 @@ class UnitGroups extends React.Component<Props, State> {
                                 onClick={ () => ::this.editGroup(groupId) } >
                           <i className='fa fa-edit'></i>
                         </Button>
-                    </Col>
-                    <Col md='4'>
+                     </Col>
+                     <Col md='4'>
                       <Button className='btn-round btn-icon btn btn-danger btn-sm'
                                 style={{
                                   'padding': '0'
@@ -362,8 +362,8 @@ class UnitGroups extends React.Component<Props, State> {
                               onClick={ () => ::this.toggleModal(groupId) } >
                         <i className='fa fa-times'></i>
                       </Button>
-                    </Col>
-                 </Row>
+                     </Col>
+                  </Row>
           }
         } ]}
         loadingText = 'טוען נתונים...'
