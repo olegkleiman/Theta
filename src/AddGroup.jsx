@@ -303,6 +303,9 @@ class AddGroup extends React.Component<{}, State> {
 
   render() {
 
+    let saveButtonText = ( this.props.match.params.groupid != 0 ) ?
+                          'שמור' : 'הוסף';
+
     let isThisField = this.state.invalidField === 'symbol';
     const groupSymbolClassNames = classNames({
       'text-left my-auto' : true,
@@ -473,7 +476,7 @@ class AddGroup extends React.Component<{}, State> {
                           </Row>
                           <Row>
                             <Col md={{ size: 1, offset: 10}}>
-                              <Button type="submit" color='primary'>הוסף</Button>
+                              <Button type="submit" color='primary'>{saveButtonText}</Button>
                             </Col>
                           </Row>
                           <br/>
