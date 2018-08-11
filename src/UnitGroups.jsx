@@ -294,12 +294,6 @@ class UnitGroups extends React.Component<Props, State> {
               lineHeight: '3em'
             }
           }, {
-             Header: 'תאריך סגירה',
-             accessor: 'openTill',
-             style: {
-              lineHeight: '3em'
-             }
-          }, {
            Header: 'כמות מקומות',
            accessor: 'capacity',
            style: {
