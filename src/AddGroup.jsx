@@ -15,14 +15,17 @@ import _ from 'moment/locale/he';
 import classNames from 'classnames';
 import firebase from './firebase.js';
 import withAuth from './FirebaseAuth';
+import GroupData from './model/GroupData';
 
 type State = {
   unitName: String,
+  groupData: GroupData,
   fromDate: moment,
   tillDate: moment,
   invalidField: String,
   status: ''
 }
+
 
 @withAuth
 export default
@@ -30,6 +33,10 @@ class AddGroup extends React.Component<{}, State> {
 
   state = {
     unitName: '',
+    groupData: {
+      name: '',
+      symbol: ''
+    },
     invalidField: '',
     status: ''
   }
@@ -53,15 +60,24 @@ class AddGroup extends React.Component<{}, State> {
       unitName: unitName
     })
 
-    const groupId = this.props.match.param.groupid;
+    const groupId = this.props.match.params.groupid;
     if( groupId != 0 ) {
 
       try {
         const groupDoc = await firebase.firestore().collection('units').doc(unitId)
                             .collection('groups').doc(groupId)
                             .get();
-        const groupData = groupDoc.data();
-        const groupName = groupData.name;
+        const _groupData = groupDoc.data();
+        const groupData =
+            new GroupData(_groupData.name,
+                          _groupData.symbol,
+                          _groupData.capacity,
+                          _groupData.openFrom,
+                          _groupData.openTill);
+
+        this.setState({
+          groupData: groupData
+        })
       } catch( err ) {
         console.log(err);
       }
@@ -360,7 +376,7 @@ class AddGroup extends React.Component<{}, State> {
                               <div className='info-text'>שם כיתה</div>
                             </Col>
                             <Col md={{ size: 4 }}>
-                              <Input id='groupName' name='groupName'></Input>
+                              <Input id='groupName' name='groupName' value={this.state.groupData.name}></Input>
                             </Col>
                             <Col md='4' invalid={(this.state.invalidField === 'groupName').toString()}
                               className={groupNameClassNames}>
@@ -374,6 +390,7 @@ class AddGroup extends React.Component<{}, State> {
                             </Col>
                             <Col md='4'>
                                 <Input id='symbol' name='symbol'
+                                       value={this.state.groupData.symbol}
                                         type='number' placeholder="רק מספרים שלמים" />
                             </Col>
                             <Col md='4' invalid={(this.state.invalidField === 'symbol').toString()}
@@ -420,7 +437,8 @@ class AddGroup extends React.Component<{}, State> {
                             </Col>
                             <Col md='4'>
                               <Input id='groupCapacity' name='groupCapacity'
-                                     type='number' placeholder="רק מספרים שלמים" />
+                                     type='number' placeholder="רק מספרים שלמים"
+                                     value={this.state.groupData.capacity}/>
                             </Col>
                             <Col md='4' invlalid={(this.state.invalidField === 'groupCapacity').toString()}
                               className={capacityClassNames}>
