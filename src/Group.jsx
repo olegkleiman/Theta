@@ -494,7 +494,7 @@ class Group extends React.Component<{}, State> {
                             const pupilRecordId = row.original.recordId;
                             return <Row>
                                       <Col md='4'>
-                                        <Button className='btn-round btn-icon btn btn-warning btn-sm'
+                                        <Button className='btn-round btn-icon btn btn-info btn-sm'
                                                 style={{
                                                   'padding': '0'
                                                 }}
