@@ -78,7 +78,8 @@ class AddGroup extends React.Component<{}, State> {
                           _groupData.capacity,
                           _groupData.price,
                           _groupData.openFrom,
-                          _groupData.openTill);
+                          _groupData.openTill,
+                          _groupData.paymentInstallments);
 
         this.setState({
           groupData: groupData
@@ -367,6 +368,14 @@ class AddGroup extends React.Component<{}, State> {
       'invisible': !isThisField
     })
 
+    isThisField = this.state.invalidField === 'payments';
+    const paymentsClassNames = classNames({
+      'text-left my-auto' : true,
+      'text-danger': isThisField,
+      'visible': isThisField,
+      'invisible': !isThisField
+    })
+
     return (<div>
       <ToastContainer
           position="top-right"
@@ -484,6 +493,22 @@ class AddGroup extends React.Component<{}, State> {
                             </Col>
                             <Col md='4' invlalid={(this.state.invalidField === 'groupPrice').toString()}
                               className={priceClassNames}>
+                              אנא הזן ערך
+                            </Col>
+                          </Row>
+                          <br />
+                          <Row>
+                            <Col md={{ size: 2, offset: 2 }} className="text-right my-auto">
+                              מספר תשלומים
+                            </Col>
+                            <Col md='4'>
+                              <Input id='payments' name='payments'
+                                type='number' placeholder="רק מספרים שלמים"
+                                value={this.state.groupData.payments}
+                                />
+                            </Col>
+                            <Col md='4' invlalid={(this.state.invalidField === 'payments').toString()}
+                              className={paymentsClassNames}>
                               אנא הזן ערך
                             </Col>
                           </Row>
