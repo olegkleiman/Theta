@@ -252,22 +252,40 @@ class UnitGroups extends React.Component<Props, State> {
         }}
         columns={[{
            Header: 'שם',
-           accessor: 'name'
+           accessor: 'name',
+           style: {
+            lineHeight: '3em'
+            }
          }, {
            Header: 'סמל',
-           accessor: 'symbol'
+           accessor: 'symbol',
+           style: {
+              lineHeight: '3em'
+           }
          }, {
            Header: 'מחיר',
-           accessor: 'price'
+           accessor: 'price',
+           style: {
+              lineHeight: '3em'
+           }
          }, {
             Header: 'תאריך פתיחה',
-            accessor: 'openFrom'
+            accessor: 'openFrom',
+            style: {
+              lineHeight: '3em'
+            }
           }, {
              Header: 'תאריך סגירה',
-             accessor: 'openTill'
+             accessor: 'openTill',
+             style: {
+              lineHeight: '3em'
+             }
           }, {
            Header: 'כמות מקומות',
-           accessor: 'capacity'
+           accessor: 'capacity',
+           style: {
+              lineHeight: '3em'
+           }
           }, {
            Header: 'תלמידים רשומים',
            accessor: 'registeredPupils',
@@ -282,13 +300,11 @@ class UnitGroups extends React.Component<Props, State> {
              return (
                <div style={{
                  width: '100%',
-                 height: '100%',
-                 backgroundColor: '#dadada',
-                 borderRadius: '2px'
+                 height: '75%'
                }}>
                  <div style={{
                      width: percentage,
-                     backgroundColor: percentage > 66 ? '#85cc00'
+                     backgroundColor: percentage > 66 ? '#f44336'
                       : percentage > 33 ? '#ffbf00'
                       : 'green',
                      height: '100%',
@@ -298,11 +314,17 @@ class UnitGroups extends React.Component<Props, State> {
                    {percentage}%
                  </div>
                </div>)
-           }
+           },
+            style: {
+              lineHeight: '3em'
+            }
          }, {
             Header: 'כיתה סגורה',
             accessor: 'isClosed',
-            Cell: ::this.renderCheckable
+            Cell: ::this.renderCheckable,
+            style: {
+              lineHeight: '3em'
+            }
         }, {
           Header: '',
           accessor: 'editors',
@@ -310,14 +332,20 @@ class UnitGroups extends React.Component<Props, State> {
           Cell: row => {
             const groupId = row.original.id;
             return <Row>
-                      <Col md='1'>
+                      <Col md='4'>
                         <Button className='btn-round btn-icon btn btn-warning btn-sm'
+                                style={{
+                                  'padding': '0'
+                                }}
                                 onClick={ () => ::this.editGroup(groupId) } >
                           <i className='fa fa-edit'></i>
                         </Button>
                     </Col>
-                    <Col md='1'>
+                    <Col md='4'>
                       <Button className='btn-round btn-icon btn btn-danger btn-sm'
+                                style={{
+                                  'padding': '0'
+                                }}
                               onClick={ () => ::this.deleteGroup(groupId) } >
                         <i className='fa fa-times'></i>
                       </Button>
