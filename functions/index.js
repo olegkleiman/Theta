@@ -319,12 +319,18 @@ function getGroups(req, res) {
               var unitId = doc.ref.parent.parent.id;
               const groupData = doc.data();
 
+              console.log(JSON.stringify(groupData));
+
               _groups.push({
                 unitId: unitId,
                 id: doc.id,
                 symbol: groupData.symbol,
                 name: groupData.name,
-                opened: moment(groupData.opened).format('DD/MM/YYYY')
+                openFrom: moment(groupData.openFrom).format('DD/MM/YYYY'),
+                openTill: moment(groupData.openTill).format('DD/MM/YYYY'),
+                price: groupData.price,
+                capacity: groupData.capacity
+                //unitName: groupData.unit.name_he
               });
 
             });
