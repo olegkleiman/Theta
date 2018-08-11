@@ -347,6 +347,10 @@ class Group extends React.Component<{}, State> {
    });
   }
 
+  addPupil() {
+    this.props.history.push('/dashboard/addpupil/aaa');
+  }
+
   render() {
     return (
       <div>
@@ -361,10 +365,13 @@ class Group extends React.Component<{}, State> {
                   <h5 className='title'>תאריכי פעילות: מ {this.state.groupData.openFrom.format('DD/MM/YYYY')} עד {this.state.groupData.openTill.format('DD/MM/YYYY')}</h5>
                 </div>
                 <CardBody>
-                  <Row>
-                    <Col md='12' className="text-right my-auto" id='tooltipContainer'>
+                  <Row className='align-items-center'>
+                    <Col md={{ size: 2, offset: 8 }}
+                      className="text-right my-auto" id='tooltipContainer'>
                       <Button color='primary' id='btnExportExcel'
-                              onClick={::this.exportExcel}>Excel</Button>
+                              onClick={::this.exportExcel}>
+                              <span>Excel</span>&nbsp;<i className="far fa-file-excel fa-lg"></i>
+                      </Button>
                       <Tooltip placement='auto'
                         autohide={false}
                         isOpen={this.state.tooltipOpen}
@@ -377,11 +384,11 @@ class Group extends React.Component<{}, State> {
                         target='btnExportExcel'>
                           ייצוא לקובץ חיצוני
                       </Tooltip>
-
                     </Col>
-                    <Col>
-                      <Button color='primary'>
-                        הוסף תלמיד
+                    <Col md='2' className='text-right my-auto' >
+                      <Button color='primary'
+                              onClick={::this.addPupil}>
+                          <span>הוסף תלמיד</span>&nbsp;<i className="fa fa-plus-circle" aria-hidden="true"></i>
                       </Button>
                     </Col>
                   </Row>
