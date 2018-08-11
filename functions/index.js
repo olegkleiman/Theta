@@ -105,13 +105,14 @@ app.post('/pupil', (req, res) => {
 
   // format date to unix epoch milliseconds in order to comply
   // with Firebase 'timestamp' type
-  const when = moment(req.body.whenRegistered, "DD/MM/YYYY");
+  const birthDay = moment(req.body.DateOfBirth, "DD-MM-YYYY HH:mm:ss");
+  const when = moment(req.body.whenRegistered, "DD-MM-YYYY HH:mm:ss");
   const pupil = {
     name: req.body.name,
     lastName: req.body.family,
     pupilId: ( req.body.pupilId ) ? req.body.pupilId : '',
     address: ( req.body.address ) ? req.body.address : '',
-    birthDay: ( req.body.birthDay ) ? req.body.DateOfBirth : '',
+    birthDay: new Date(birthDay.valueOf()),
     parentId: (req.body.parentId) ? req.body.parentId : '',
     paymentApprovalNumber: (req.body.PaymentConfirmationNumber) ?
         req.body.PaymentConfirmationNumber : '',
