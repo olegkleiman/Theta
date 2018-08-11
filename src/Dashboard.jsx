@@ -18,6 +18,7 @@ import Pupils from './Pupils';
 import Group from './Group';
 import AddGroup from './AddGroup';
 import AddUnit from './AddUnit';
+import AddPupil from './AddPupil';
 
 import firebase from './firebase.js';
 import dashboardRoutes from './routes/dashboard.jsx';
@@ -142,6 +143,7 @@ class Dashboard extends React.Component<Props, State> {
                 <Route path={this.props.match.path + '/pupils'} component={Pupils} />
                 <Route path={this.props.match.path + '/addunit'} component={AddUnit} />
                 <Route path={this.props.match.path + '/addgroup/:unitid'} component={AddGroup} />
+                <Route path={this.props.match.path + '/addpupil/:groupid'} component={AddPupil} />
                 <Route path={this.props.match.path + '/group/:unitid/:groupid'} component={Group} />
                 <Route path={this.props.match.path + '/groups/:unitid'} component={Groups} />
             </Switch>
