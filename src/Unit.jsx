@@ -213,7 +213,9 @@ class Unit extends React.Component<Props, State> {
                               <div className='col col-12 d-flex justify-content-end'>
                               <Button color='primary'
                                       className='align-self-end'
-                                      onClick={::this.addGroup}>הוסף כיתה +</Button>
+                                      onClick={::this.addGroup}>
+                                      <span>הוסף כיתה </span><i className="fa fa-plus-circle" aria-hidden="true"></i>
+                                      </Button>
                               </div>
                           </div>
                           <UnitGroups docId={this.state.docId} />
