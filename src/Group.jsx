@@ -337,7 +337,7 @@ class Group extends React.Component<{}, State> {
   }
 
   addPupil() {
-    this.props.history.push('/dashboard/addpupil/aaa');
+    this.props.history.push(`/dashboard/addpupil/${this.props.docId}/${this.props.match.params.unitid}/${this.props.match.params.groupid}/0`);
   }
 
   deletePupil() {
