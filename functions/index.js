@@ -92,6 +92,7 @@ app.post('/pupil', (req, res) => {
   const schema = {
     "groupSymbol": "string",
     "name": "string",
+    "family": "string",
     "pupilId": "string",
     "parentId": "string",
     "phoneNumber": "number",
@@ -107,12 +108,16 @@ app.post('/pupil', (req, res) => {
   const when = moment(req.body.whenRegistered, "DD/MM/YYYY");
   const pupil = {
     name: req.body.name,
+    lastName: req.body.family,
     pupilId: ( req.body.pupilId ) ? req.body.pupilId : '',
     address: ( req.body.address ) ? req.body.address : '',
-    birthDay: ( req.body.birthDay ) ? req.body.birthDay : '',
+    birthDay: ( req.body.birthDay ) ? req.body.DateOfBirth : '',
     parentId: (req.body.parentId) ? req.body.parentId : '',
-    paymentApprovalNumber: (req.body.paymentApprovalNumber) ?
-        req.body.paymentApprovalNumber : '',
+    paymentApprovalNumber: (req.body.PaymentConfirmationNumber) ?
+        req.body.PaymentConfirmationNumber : '',
+    payerName: ( req.body.name_pay ) ? req.body.name_pay : '',
+    status: ( req.body.status ) ? req.body.status : '',
+    registrationSource: ( req.body.registration_source ) ? req.body.registration_source : '',
     phoneNumber: req.body.phoneNumber,
     medicalLimitations: req.body.medicalLimitations ? req.body.medicalLimitations : true,
     whenRegistered: new Date(when.valueOf()) // valueOf() is actually unix() * 1000
