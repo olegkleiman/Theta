@@ -114,7 +114,7 @@ class Unit extends React.Component<Props, State> {
   }
 
   addGroup() {
-      this.props.history.push('/dashboard/addgroup/' + this.state.docId);
+      this.props.history.push(`/dashboard/addgroup/${this.state.docId}/0`);
   }
 
   render() {
