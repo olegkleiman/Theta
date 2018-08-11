@@ -11,42 +11,10 @@ import XLSX from 'xlsx';
 import firebase from './firebase.js';
 import withAuth from './FirebaseAuth';
 import GroupData from './model/GroupData';
-
-class Pupil {
-  name: String;
-  id: String;
-  phoneNumber: String;
-  birthDay: String;
-  whenRegistered: Timestamp;
-
-  constructor(recordId: String,
-              name: String,
-              id: String,
-              phoneNumber: String,
-              medicalLimitations: Boolean,
-              birthDay: String,
-              whenRegistered: Timestamp,
-              parentId: String,
-              address: String) {
-    this.recordId = recordId;
-    this.name = name;
-    this.id = id;
-    this.phoneNumber = phoneNumber;
-    this.medicalLimitations = medicalLimitations;
-    this.birthDay = ( birthDay ) ?
-                          moment.unix(birthDay.seconds).format('DD/MM/YYYY') :
-                          null;
-
-    this.whenRegistered = ( whenRegistered ) ?
-                          moment.unix(whenRegistered.seconds).format('DD/MM/YYYY HH:mm') :
-                          null;
-    this.parentId = parentId;
-    this.address = address;
-  }
-}
+import PupilData from './model/PupilData';
 
 type State = {
-  pupils: Array<Pupil>,
+  pupils: Array<PupilData>,
   groupData: GroupData,
   dataStatus: String,
   tooltipOpen: Boolean,
@@ -128,12 +96,6 @@ class Group extends React.Component<{}, State> {
     }
   }
 
-  // async componentDidMount() {
-  //
-  //
-  //
-  // }
-
   componentWillUnmount() {
     if( this.observer )
       this.observer();
@@ -145,8 +107,9 @@ class Group extends React.Component<{}, State> {
     docs.forEach( (pupilDoc) => {
 
       const pupilData = pupilDoc.data();
-      const _pupil = new Pupil(pupilDoc.id,
-                               pupilData.name,
+      const _pupil = new PupilData(pupilDoc.id,
+                              `${pupilData.name} ${pupilData.lastName}`,
+                               pupilData.lastName,
                                pupilData.pupilId,
                                pupilData.phoneNumber,
                                pupilData.medicalLimitations,
@@ -337,7 +300,7 @@ class Group extends React.Component<{}, State> {
   }
 
   addPupil() {
-    this.props.history.push(`/dashboard/addpupil/${this.props.docId}/${this.props.match.params.unitid}/${this.props.match.params.groupid}/0`);
+    this.props.history.push(`/dashboard/addpupil/${this.props.match.params.unitid}/${this.props.match.params.groupid}/0`);
   }
 
   deletePupil() {
@@ -352,7 +315,7 @@ class Group extends React.Component<{}, State> {
   }
 
   editPupil(pupilId: String) {
-    this.props.history.push(`/dashboard/addpupil/${this.props.docId}/${this.props.match.params.unitid}/${this.props.match.params.groupid}/${pupilId}`);
+    this.props.history.push(`/dashboard/addpupil/${this.props.match.params.unitid}/${this.props.match.params.groupid}/${pupilId}`);
   }
 
   render() {
@@ -439,7 +402,7 @@ class Group extends React.Component<{}, State> {
                         ofText = 'מתוך'
                         rowsText = 'שורות'
                         columns={[{
-                          Header: 'שם',
+                          Header: 'שם מלא',
                           accessor: 'name',
                           Cell: cellInfo => ::this.renderEditable(cellInfo, cellInfo.original.name),
                           style: {
