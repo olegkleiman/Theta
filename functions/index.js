@@ -319,7 +319,7 @@ function getGroups(req, res) {
               var unitId = doc.ref.parent.parent.id;
               const groupData = doc.data();
 
-              console.log(JSON.stringify(groupData));
+              //console.log(JSON.stringify(groupData));
 
               _groups.push({
                 unitId: unitId,
