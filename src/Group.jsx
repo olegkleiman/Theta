@@ -78,7 +78,8 @@ class Group extends React.Component<{}, State> {
                                          data.capacity,
                                          data.price,
                                          data.openFrom,
-                                         data.openTill);
+                                         data.openTill,
+                                         data.paymentInstallments);
         this.setState({
           groupData: _groupData
         })
