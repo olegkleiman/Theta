@@ -409,7 +409,7 @@ class Group extends React.Component<{}, State> {
                             lineHeight: '3em'
                           }
                         }, {
-                          Header: 'מזהה',
+                          Header: 'ת.ז.',
                           accessor: 'id',
                           style: {
                             lineHeight: '3em'
