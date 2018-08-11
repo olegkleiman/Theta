@@ -114,7 +114,7 @@ var parser = parse({delimiter: ','}, async (err, data) => {
         "paymentInstallments": group.paymentInstallments
       };
 
-       if( index < 2) {
+       if( index < 300) {
 
         // 1. Add new groups to Rishumon
         createGroup(data2post, index * 500)
@@ -131,7 +131,6 @@ var parser = parse({delimiter: ','}, async (err, data) => {
         })
         .then( unitsSnapshot => {
 
-          //debugger;
           if( unitsSnapshot.docs.length == 0 ) { // no such unit exists => create one
             console.log('CREATE UNIT: ' + group.unit.symbol);
           //   //
@@ -174,7 +173,6 @@ var parser = parse({delimiter: ','}, async (err, data) => {
         })
         .then( unitDocId  => {
 
-          debugger;
           return firestore.collection('units')
                         .doc(unitDocId)
                         .collection('groups')
@@ -193,7 +191,19 @@ var parser = parse({delimiter: ','}, async (err, data) => {
             return firestore.collection('units')
                           .doc(unitDocId)
                           .collection('groups')
-                          .add(group);
+                          .add({
+                              symbol: group.symbol,
+                              capacity: group.capacity,
+                              education_type: group.education_type,
+                              price: group.price,
+                              model: group.model,
+                              name: group.name,
+                              openFrom: group.openFrom.toDate(),
+                              openTill: group.openTill.toDate(),
+                              paymentInstallments : group.paymentInstallments,
+                              sec_role: group.sec_role,
+                              unit: group.unit
+                          })
           } else {
             let groupDocId = 0;
             _groups.forEach( _group => {
@@ -217,9 +227,6 @@ var parser = parse({delimiter: ','}, async (err, data) => {
             });
           }
 
-        })
-        .then( _res => {
-          console.log(_res);
         })
         .catch( err => {
           console.error(err);
