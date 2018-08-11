@@ -21,8 +21,8 @@ type Group = {
     symbol: String,
     authority: String,
     capacity: Number,
-    opened: Date,
-    openedTill: Date,
+    openFrom: Date,
+    openTill: Date,
     unitName: String,
     price: Number
 }
@@ -115,7 +115,7 @@ class Groups extends React.Component<{}, State> {
 
             if( this.props.isAdmin || isAllowed ) {
 
-              const openTill = groupData.openedTill ?
+              const openTill = groupData.openTill ?
                                moment.unix(groupData.openedTill.seconds).format('DD/MM/YYYY') :
                                '';
 
@@ -126,8 +126,8 @@ class Groups extends React.Component<{}, State> {
                 symbol: groupData.symbol,
                 unitName: unitName,
                 authority: authority,
-                opened: moment.unix(groupData.opened.seconds).format('DD/MM/YYYY'),
-                openedTill: openTill,
+                openFrom: moment.unix(groupData.openFrom.seconds).format('DD/MM/YYYY'),
+                openTill: openTill,
                 price: groupData.price,
                 capacity: groupData.capacity
               });
@@ -164,24 +164,24 @@ class Groups extends React.Component<{}, State> {
     .then( groups => {
 
         let _groups;
-        if( this.props.isAdmin ) {
+        // if( this.props.isAdmin ) {
 
           _groups = groups;
 
-        } else {
+        // } else {
+        //
+        //   _groups = groups.map( group => {
+        //
+        //     const secRole = group.secRole;
+        //
+        //     const isAllowed = this.props.secRoles.find( role => {
+        //       return role === secRole
+        //     });
+        //     return ( isAllowed ) ? group : null;
+        //
+        //  })
 
-          _groups = groups.map( group => {
-
-            const secRole = group.secRole;
-
-            const isAllowed = this.props.secRoles.find( role => {
-              return role === secRole
-            });
-            return ( isAllowed ) ? group : null;
-
-         })
-
-        };
+        //};
 
         _groups = _groups.filter( r => r); // remove not allowe groups
 
@@ -221,8 +221,8 @@ class Groups extends React.Component<{}, State> {
         groupData.push(group.symbol);
         groupData.push(group.capacity);
         groupData.push(group.unitName);
-        groupData.push(group.opened);
-        groupData.push(group.openedTill);
+        groupData.push(group.openFrom);
+        groupData.push(group.openTill);
         groupData.push(group.price);
 
         _export.data.push(groupData);
@@ -371,15 +371,15 @@ class Groups extends React.Component<{}, State> {
       }
     }, {
       Header: 'ת. התחלה',
-      accessor: 'opened',
-      Cell: cellInfo => ::this.renderDatePicker(cellInfo, cellInfo.original.opened),
+      accessor: 'openFrom',
+      Cell: cellInfo => ::this.renderDatePicker(cellInfo, cellInfo.original.openFrom),
       style: {
         overflow: 'visible'
       }
     }, {
       Header: 'ת.סיום',
-      accessor: 'openedTill',
-      Cell: cellInfo => ::this.renderDatePicker(cellInfo, cellInfo.original.openedTill),
+      accessor: 'openTill',
+      Cell: cellInfo => ::this.renderDatePicker(cellInfo, cellInfo.original.openTill),
       style: {
         overflow: 'visible'
       }
