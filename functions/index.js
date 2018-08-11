@@ -106,7 +106,9 @@ app.post('/pupil', (req, res) => {
   // format date to unix epoch milliseconds in order to comply
   // with Firebase 'timestamp' type
   const birthDay = moment(req.body.DateOfBirth, "DD-MM-YYYY HH:mm:ss");
+  console.log('Birthday: ' + birthDay);
   const when = moment(req.body.whenRegistered, "DD-MM-YYYY HH:mm:ss");
+  console.log('When: ' + when);
   const pupil = {
     name: req.body.name,
     lastName: req.body.family,
@@ -120,7 +122,7 @@ app.post('/pupil', (req, res) => {
     status: ( req.body.status ) ? req.body.status : '',
     registrationSource: ( req.body.registration_source ) ? req.body.registration_source : '',
     phoneNumber: req.body.phoneNumber,
-    medicalLimitations: req.body.medicalLimitations ? req.body.medicalLimitations : true,
+    medicalLimitations: req.body.medicalLimitations,
     whenRegistered: new Date(when.valueOf()) // valueOf() is actually unix() * 1000
   }
 
@@ -252,7 +254,8 @@ exports.registerPupil = functions.firestore
         })
      })
      .then( res => {
-       console.log(`Update result: ${res}`);
+      const _json = JSON.stringify(res);
+       console.log(`Update result: ${_json}`);
      })
 
      return true;
