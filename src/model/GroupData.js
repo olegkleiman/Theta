@@ -8,13 +8,15 @@ class GroupData {
   price: Number;
   openFrom: Number;
   openTill: Number;
+  payments: Number;
 
   constructor(name: String,
               symbol: String,
               capacity: Number,
               price: Number,
               openFrom: Timestamp,
-              openTill: Timestamp) {
+              openTill: Timestamp,
+              payments: Number) {
     this.name = name;
     this.symbol = symbol;
     this.capacity = capacity;
@@ -23,5 +25,6 @@ class GroupData {
       this.openFrom = moment.unix(openFrom.seconds);
     if( openTill )
       this.openTill = moment.unix(openTill.seconds);
+    this.payments = payments;
   }
 }
