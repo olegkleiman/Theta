@@ -103,6 +103,7 @@ class Group extends React.Component<{}, State> {
         const _groupData = new GroupData(data.name,
                                          data.symbol,
                                          data.capacity,
+                                         data.price,
                                          data.openFrom,
                                          data.openTill);
         this.setState({
