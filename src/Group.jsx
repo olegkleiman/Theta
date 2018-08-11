@@ -1,7 +1,8 @@
 // flow
 import React from 'react';
 import { Button, Row, Col, Input,
-         Card, CardBody, Tooltip
+         Card, CardBody, Tooltip,
+         Modal, ModalHeader, ModalBody, ModalFooter
 } from 'reactstrap';
 import ReactTable from 'react-table';
 import Datetime from 'react-datetime';
@@ -48,7 +49,9 @@ type State = {
   pupils: Array<Pupil>,
   groupData: GroupData,
   dataStatus: String,
-  tooltipOpen: Boolean
+  tooltipOpen: Boolean,
+  modal: Boolean,
+  pupilId2Delete: String
 }
 
 @withAuth
@@ -63,7 +66,9 @@ class Group extends React.Component<{}, State> {
       openTill: moment()
     },
     dataStatus: 'טעינת נתונים..',
-    tooltipOpen: false
+    tooltipOpen: false,
+    modal: false,
+    pupilId2Delete: ''
   }
 
   componentDidUpdate(prevProps: Props, prevState: State) {
@@ -335,6 +340,22 @@ class Group extends React.Component<{}, State> {
     this.props.history.push('/dashboard/addpupil/aaa');
   }
 
+  deletePupil() {
+
+  }
+
+  toggleModal(pupilId: String) {
+    this.setState({
+      modal: !this.state.modal,
+      pupilId2Delete: pupilId
+    });
+  }
+
+  editPupil(pupilId: String) {
+    console.log(`PupilId: ${pupilId}`);
+    //this.props.history.push(`/dashboard/addgroup/${this.props.docId}/${groupId}`);
+  }
+
   render() {
     return (
       <div>
@@ -378,6 +399,19 @@ class Group extends React.Component<{}, State> {
                   </Row>
                   <Row>
                     <Col md='12'>
+                      <Modal isOpen={this.state.modal}>
+                        <ModalHeader>
+                          מחיקת הנרשם
+                        </ModalHeader>
+                        <ModalBody>
+                          אישור לפעולה זו תגרום לחיקה מוחלטת של כל נתוני הנרשם. זאת פעולה לא הפיכה.
+                        </ModalBody>
+                        <ModalFooter>
+                          <Button color="primary" onClick={::this.deletePupil}>אישור</Button>{' '}
+                          <Button color="secondary" onClick={() => ::this.toggleModal('')}>ביטול</Button>
+                        </ModalFooter>
+                      </Modal>
+
                       <ReactTable
                         className="-striped -highlight tableInCard"
                         data={this.state.pupils}
@@ -451,6 +485,33 @@ class Group extends React.Component<{}, State> {
                           Cell: cellInfo => ::this.renderEditable(cellInfo, cellInfo.original.address),
                           style: {
                             lineHeight: '3em'
+                          }
+                        }, {
+                          Header: '',
+                          accessor: 'editors',
+                          width: 80,
+                          Cell: row => {
+                            const pupilId = row.original.id;
+                            return <Row>
+                                      <Col md='4'>
+                                        <Button className='btn-round btn-icon btn btn-warning btn-sm'
+                                                style={{
+                                                  'padding': '0'
+                                                }}
+                                                onClick={ () => ::this.editPupil(pupilId) } >
+                                          <i className='fa fa-edit'></i>
+                                        </Button>
+                                    </Col>
+                                    <Col md='4'>
+                                      <Button className='btn-round btn-icon btn btn-danger btn-sm'
+                                                style={{
+                                                  'padding': '0'
+                                                }}
+                                              onClick={ () => ::this.toggleModal(pupilId) } >
+                                        <i className='fa fa-times'></i>
+                                      </Button>
+                                    </Col>
+                                 </Row>
                           }
                         }]}>
                       </ReactTable>
