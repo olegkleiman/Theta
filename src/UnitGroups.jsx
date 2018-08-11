@@ -42,17 +42,6 @@ class UnitGroups extends React.Component<Props, State> {
     groupId2Delete: ''
   }
 
-  constructor(props) {
-
-    super(props);
-
-    this.styles = {
-      isClosed: {
-        marginTop: '-16px'
-      }
-    }
-  }
-
   componentDidUpdate(prevProps: Props, prevState: State) {
 
     if( prevProps.docId !== this.props.docId) {
@@ -146,7 +135,9 @@ class UnitGroups extends React.Component<Props, State> {
 
     return (
       <div className='form-check'
-        style={this.styles.isClosed}>
+        style={{
+          marginTop: '-16px'
+        }}>
         <label className='form-check-label'>
           <input className='form-check-input'
             type='checkbox'
