@@ -2,6 +2,7 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
 import ReactTable from 'react-table';
+import { Row, Col, Button } from 'reactstrap';
 import moment from 'moment';
 import http from 'http';
 import firebase from './firebase.js';
@@ -82,11 +83,11 @@ class UnitGroups extends React.Component<Props, State> {
 
         let _isClosed = data.isClosed;
 
-        let _openedDate= ( data.openFrom ) ?
+        let _openDate= ( data.openFrom ) ?
                       moment.unix(data.openFrom.seconds).format('DD/MM/YYYY') :
                       '<none>';
 
-        let _openedTillDate = ( data.openTill ) ?
+        let _openTillDate = ( data.openTill ) ?
                         moment.unix(data.openTill.seconds).format('DD/MM/YYYY') :
                         '<none>';
 
@@ -96,8 +97,8 @@ class UnitGroups extends React.Component<Props, State> {
           id: group.id,
           name: data.name,
           symbol: data.symbol,
-          opened: _openedDate,
-          openedTill: _openedTillDate,
+          openFrom: _openDate,
+          openTill: _openTillDate,
           isClosed: _isClosed,
           price: data.price + ' ₪',
           capacity: data.capacity,
@@ -201,6 +202,14 @@ class UnitGroups extends React.Component<Props, State> {
     }
   }
 
+  editGroup(groupId: String) {
+    console.log(`UnitId: ${this.props.docId}. GroupId: ${groupId}`);
+  }
+
+  deleteGroup(groupId: String) {
+    console.log(`UnitId: ${this.props.docId}. GroupId: ${groupId}`);
+  }
+
   render() {
 
     const self = this;
@@ -215,14 +224,16 @@ class UnitGroups extends React.Component<Props, State> {
         getTheadThProps = { () => {
           return {
             style: {
-              'textAlign': 'right'
+              'textAlign': 'right',
+              'fontWeight': '700'
             }
           }
         }}
         getTdProps = { (state, rowInfo, column, instance) => {
           return {
             onClick: (e, handleOriginal) => {
-              if( column.id != 'isClosed' ) {
+              if( column.id != 'isClosed'
+                  && column.id != 'editors') {
                 self.onRowSelected(rowInfo);
               }
             },
@@ -250,10 +261,10 @@ class UnitGroups extends React.Component<Props, State> {
            accessor: 'price'
          }, {
             Header: 'תאריך פתיחה',
-            accessor: 'opened'
+            accessor: 'openFrom'
           }, {
              Header: 'תאריך סגירה',
-             accessor: 'openedTill'
+             accessor: 'openTill'
           }, {
            Header: 'כמות מקומות',
            accessor: 'capacity'
@@ -292,7 +303,28 @@ class UnitGroups extends React.Component<Props, State> {
             Header: 'כיתה סגורה',
             accessor: 'isClosed',
             Cell: ::this.renderCheckable
-        }, ]}
+        }, {
+          Header: '',
+          accessor: 'editors',
+          width: 80,
+          Cell: row => {
+            const groupId = row.original.id;
+            return <Row>
+                      <Col md='1'>
+                        <Button className='btn-round btn-icon btn btn-warning btn-sm'
+                                onClick={ () => ::this.editGroup(groupId) } >
+                          <i className='fa fa-edit'></i>
+                        </Button>
+                    </Col>
+                    <Col md='1'>
+                      <Button className='btn-round btn-icon btn btn-danger btn-sm'
+                              onClick={ () => ::this.deleteGroup(groupId) } >
+                        <i className='fa fa-times'></i>
+                      </Button>
+                    </Col>
+                 </Row>
+          }
+        } ]}
         loadingText = 'טוען נתונים...'
         noDataText = 'אין נתונים'
         previousText = 'קודם'
