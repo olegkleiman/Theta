@@ -153,9 +153,6 @@ class Units extends React.Component<{}, State> {
       Header: 'סמל',
       accessor: 'symbol',
     }, {
-      Header: 'רשות',
-      accessor: 'authority',
-    }, {
       Header: 'סוג מוסד',
       accessor: 'type',
     }, {
