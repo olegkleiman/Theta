@@ -352,7 +352,7 @@ class Group extends React.Component<{}, State> {
   }
 
   editPupil(pupilId: String) {
-    this.props.history.push(`/dashboard/addpupil/${this.props.docId}/${groupId}/${pupilId}`);
+    this.props.history.push(`/dashboard/addpupil/${this.props.docId}/${this.props.match.params.unitid}/${this.props.match.params.groupid}/${pupilId}`);
   }
 
   render() {
