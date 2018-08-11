@@ -26,7 +26,8 @@ type Group = {
 type State = {
   groups: Group[],
   dataStatus: string,
-  modal: Boolean
+  modal: Boolean,
+  groupId2Delete: String
 }
 
 @withAuth
@@ -37,7 +38,8 @@ class UnitGroups extends React.Component<Props, State> {
   state = {
     groups: [],
     dataStatus: 'טוען נתונים...',
-    modal: false
+    modal: false,
+    groupId2Delete: ''
   }
 
   constructor(props) {
@@ -207,10 +209,18 @@ class UnitGroups extends React.Component<Props, State> {
 
   editGroup(groupId: String) {
     console.log(`UnitId: ${this.props.docId}. GroupId: ${groupId}`);
+    this.props.history.push(`/dashboard/addgroup/${this.props.docId}`);
   }
 
-  deleteGroup(groupId: String) {
-    console.log(`UnitId: ${this.props.docId}. GroupId: ${groupId}`);
+  toggleModal(groupId: String) {
+    this.setState({
+      modal: !this.state.modal,
+      groupId2Delete: groupId
+    });
+  }
+
+  deleteGroup() {
+    console.log(`UnitId: ${this.props.docId}. GroupId: ${this.state.groupId2Delete}`);
     this.setState({
       modal: !this.state.modal
     });
@@ -226,15 +236,11 @@ class UnitGroups extends React.Component<Props, State> {
           מחיקת קבוצה
         </ModalHeader>
         <ModalBody>
-          אישור לפעולה זו תגרום לחיקה מוחלטת של כל נתוני הקבוצה, כולל רשירות הנרשמים. זאת פעולה לא הפיכה.
+          אישור לפעולה זו תגרום לחיקה מוחלטת של כל נתוני הקבוצה, כולל רשימות הנרשמים. זאת פעולה לא הפיכה.
         </ModalBody>
         <ModalFooter>
-          <Button color="primary">אישור</Button>{' '}
-          <Button color="secondary" onClick={() => {
-              this.setState({
-                modal: !this.state.modal
-              })
-            }}>ביטול</Button>
+          <Button color="primary" onClick={::this.deleteGroup}>אישור</Button>{' '}
+          <Button color="secondary" onClick={() => ::this.toggleModal('')}>ביטול</Button>
         </ModalFooter>
       </Modal>
       <ReactTable
@@ -368,7 +374,7 @@ class UnitGroups extends React.Component<Props, State> {
                                 style={{
                                   'padding': '0'
                                 }}
-                              onClick={ () => ::this.deleteGroup(groupId) } >
+                              onClick={ () => ::this.toggleModal(groupId) } >
                         <i className='fa fa-times'></i>
                       </Button>
                     </Col>
