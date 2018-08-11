@@ -139,50 +139,28 @@ class Units extends React.Component<{}, State> {
         padding: 0,
         userSelect: 'none',
         textAlign: 'center',
-        lineHeight: '3em'
       }
     }, {
       Header: 'רשות',
       accessor: 'authority',
-      style: {
-        lineHeight: '3em'
-      }
     }, {
       Header: 'מחוז',
       accessor: 'region',
-      style: {
-        lineHeight: '3em'
-      }
     }, {
       Header: 'שם',
       accessor: 'name',
-      style: {
-        lineHeight: '3em'
-      }
     }, {
       Header: 'סמל',
       accessor: 'symbol',
-      style: {
-        lineHeight: '3em'
-      }
     }, {
       Header: 'רשות',
       accessor: 'authority',
-      style: {
-        lineHeight: '3em'
-      }
     }, {
       Header: 'סוג מוסד',
       accessor: 'type',
-      style: {
-        lineHeight: '3em'
-      }
     }, {
       Header: 'אשכול',
       accessor: 'cluster',
-      style: {
-        lineHeight: '3em'
-      }
     }];
 
     return <div>
@@ -199,7 +177,9 @@ class Units extends React.Component<{}, State> {
                           <Col md='12' className='d-flex justify-content-end'>
                             <Button color='primary'
                                     className='align-self-end'
-                                    onClick={::this.addUnit}>הוסף מוסד +</Button>
+                                    onClick={::this.addUnit}>
+                                  <span>הוסף מוסד </span>&nbsp;<i className="fa fa-plus-circle" aria-hidden="true"></i>
+                            </Button>
                           </Col>
                           <Col md='12'>
                             <Card>
