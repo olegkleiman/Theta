@@ -209,7 +209,7 @@ class UnitGroups extends React.Component<Props, State> {
 
   editGroup(groupId: String) {
     console.log(`UnitId: ${this.props.docId}. GroupId: ${groupId}`);
-    this.props.history.push(`/dashboard/addgroup/${this.props.docId}`);
+    this.props.history.push(`/dashboard/addgroup/${this.props.docId}/${groupId}`);
   }
 
   toggleModal(groupId: String) {
