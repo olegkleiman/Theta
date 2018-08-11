@@ -9,6 +9,7 @@ import moment from 'moment';
 import XLSX from 'xlsx';
 import firebase from './firebase.js';
 import withAuth from './FirebaseAuth';
+import GroupData from './model/GroupData';
 
 class Pupil {
   name: String;
@@ -40,24 +41,6 @@ class Pupil {
                           null;
     this.parentId = parentId;
     this.address = address;
-  }
-}
-
-class GroupData {
-  name: String;
-  symbol: String;
-  capacity: Number;
-
-  constructor(name: String,
-              symbol: String,
-              capacity: Number,
-              openFrom: Timestamp,
-              openTill: Timestamp) {
-    this.name = name;
-    this.symbol = symbol;
-    this.capacity = capacity;
-    this.openFrom = moment.unix(openFrom.seconds);
-    this.openTill = moment.unix(openTill.seconds);
   }
 }
 
