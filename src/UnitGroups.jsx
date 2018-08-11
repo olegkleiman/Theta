@@ -2,7 +2,8 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
 import ReactTable from 'react-table';
-import { Row, Col, Button } from 'reactstrap';
+import { Row, Col, Button,
+  Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import moment from 'moment';
 import http from 'http';
 import firebase from './firebase.js';
@@ -24,7 +25,8 @@ type Group = {
 
 type State = {
   groups: Group[],
-  dataStatus: string
+  dataStatus: string,
+  modal: Boolean
 }
 
 @withAuth
@@ -34,7 +36,8 @@ class UnitGroups extends React.Component<Props, State> {
 
   state = {
     groups: [],
-    dataStatus: 'טוען נתונים...'
+    dataStatus: 'טוען נתונים...',
+    modal: false
   }
 
   constructor(props) {
@@ -208,13 +211,32 @@ class UnitGroups extends React.Component<Props, State> {
 
   deleteGroup(groupId: String) {
     console.log(`UnitId: ${this.props.docId}. GroupId: ${groupId}`);
+    this.setState({
+      modal: !this.state.modal
+    });
   }
 
   render() {
 
     const self = this;
 
-    return (
+    return (<React.Fragment>
+      <Modal isOpen={this.state.modal}>
+        <ModalHeader>
+          מחיקת קבוצה
+        </ModalHeader>
+        <ModalBody>
+          אישור לפעולה זו תגרום לחיקה מוחלטת של כל נתוני הקבוצה, כולל רשירות הנרשמים. זאת פעולה לא הפיכה.
+        </ModalBody>
+        <ModalFooter>
+          <Button color="primary">אישור</Button>{' '}
+          <Button color="secondary" onClick={() => {
+              this.setState({
+                modal: !this.state.modal
+              })
+            }}>ביטול</Button>
+        </ModalFooter>
+      </Modal>
       <ReactTable
         className="-striped -highlight tableInCard col col-12"
         data={this.state.groups}
@@ -362,6 +384,7 @@ class UnitGroups extends React.Component<Props, State> {
         rowsText = 'שורות'
         >
      </ReactTable>
+     </React.Fragment>
    )
   }
 
