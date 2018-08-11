@@ -231,68 +231,6 @@ class Group extends React.Component<{}, State> {
     }
   }
 
-  renderEditable(cellInfo, value) {
-    return (
-      <div
-        style={{ backgroundColor: "#fafafa" }}
-        contentEditable
-        suppressContentEditableWarning
-        onKeyDown={ e => ::this.handleUpdate(cellInfo, e) }
-        onBlur={ e => ::this.handleUpdate(cellInfo, e) }>
-        {value}
-      </div>)
-  }
-
-  openDateChaned(_date: Date,
-                 cellInfo) {
-
-    this.updateFirestore(cellInfo.index,
-                         cellInfo.column.id,
-                         _date.toDate());
-
-  }
-
-  renderDatePicker(cellInfo, value) {
-    return(
-        <Datetime closeOnSelect={true}
-                  value={value}
-                  onChange={ (_date) => ::this.openDateChaned(_date, cellInfo) }
-                  input={true}
-                  timeFormat={false}
-                  local='he' />
-    );
-  }
-
-  renderCheckable(cellInfo) {
-
-    const pupilData = this.state.pupils[cellInfo.index];
-    const _isLimitations = pupilData.medicalLimitations;
-
-    return (
-      <div className='form-check'
-           style={{
-             marginTop: '-16px'
-           }}>
-          <label className='form-check-label'>
-            <input className='form-check-input'
-                  type='checkbox'
-                  checked={_isLimitations}
-                  onChange={ () => ::this.toggleIsMedicalLimitations(cellInfo.index) }
-            />
-            <span className='form-check-sign'
-                  style={{
-                    paddingLeft: '10px;'
-                  }}>
-            </span>
-          </label>
-      </div>)
-
-  }
-
-  birthDayChanged() {
-
-  }
-
   toggle() {
    this.setState({
      tooltipOpen: !this.state.tooltipOpen
@@ -404,7 +342,6 @@ class Group extends React.Component<{}, State> {
                         columns={[{
                           Header: 'שם מלא',
                           accessor: 'name',
-                          Cell: cellInfo => ::this.renderEditable(cellInfo, cellInfo.original.name),
                           style: {
                             lineHeight: '3em'
                           }
@@ -423,7 +360,6 @@ class Group extends React.Component<{}, State> {
                         }, {
                           Header: 'תאריך לידה',
                           accessor: 'birthDay',
-                          Cell: cellInfo => ::this.renderDatePicker(cellInfo, cellInfo.original.birthDay),
                           style: {
                             overflow: 'visible',
                             lineHeight: '3em'
@@ -437,14 +373,12 @@ class Group extends React.Component<{}, State> {
                         }, {
                           Header: 'מזהה הורה',
                           accessor: 'parentId',
-                          Cell: cellInfo => ::this.renderEditable(cellInfo, cellInfo.original.parentId),
                           style: {
                             lineHeight: '3em'
                           }
                         }, {
                           Header: 'כתובת',
                           accessor: 'address',
-                          Cell: cellInfo => ::this.renderEditable(cellInfo, cellInfo.original.address),
                           style: {
                             lineHeight: '3em'
                           }
