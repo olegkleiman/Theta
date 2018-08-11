@@ -35,7 +35,11 @@ class AddGroup extends React.Component<{}, State> {
     unitName: '',
     groupData: {
       name: '',
-      symbol: ''
+      symbol: '',
+      price: 0,
+      capacity: 0,
+      openFrom: moment(),
+      openTill: moment()
     },
     invalidField: '',
     status: ''
@@ -72,6 +76,7 @@ class AddGroup extends React.Component<{}, State> {
             new GroupData(_groupData.name,
                           _groupData.symbol,
                           _groupData.capacity,
+                          _groupData.price,
                           _groupData.openFrom,
                           _groupData.openTill);
 
@@ -407,6 +412,7 @@ class AddGroup extends React.Component<{}, State> {
                               <Datetime closeOnSelect={true}
                                         onChange={::this._fromDateChanged}
                                         timeFormat={false}
+                                        value={this.state.groupData.openFrom}
                                         local='he' />
                             </Col>
                             <Col md='4' invlalid={(this.state.invalidField === 'openedFrom').toString()}
@@ -423,6 +429,7 @@ class AddGroup extends React.Component<{}, State> {
                               <Datetime closeOnSelect={true}
                                         onChange={::this._tillDateChanged}
                                         timeFormat={false}
+                                        value={this.state.groupData.openTill}
                                         local='he' />
                             </Col>
                             <Col md='4' invlalid={(this.state.invalidField === 'openedTill').toString()}
@@ -454,7 +461,8 @@ class AddGroup extends React.Component<{}, State> {
                               <InputGroup>
                                 <Input id='price' name='price'
                                        type='number'
-                                       placeholder="מספרים כמחיר, כמו 650.40, 510" />
+                                       placeholder="מספרים כמחיר, כמו 650.40, 510"
+                                       value={this.state.groupData.price} />
                                 <InputGroupAddon addonType="append">₪</InputGroupAddon>
                               </InputGroup>
                             </Col>
