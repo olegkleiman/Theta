@@ -352,8 +352,7 @@ class Group extends React.Component<{}, State> {
   }
 
   editPupil(pupilId: String) {
-    console.log(`PupilId: ${pupilId}`);
-    //this.props.history.push(`/dashboard/addgroup/${this.props.docId}/${groupId}`);
+    this.props.history.push(`/dashboard/addpupil/${this.props.docId}/${groupId}/${pupilId}`);
   }
 
   render() {
@@ -495,23 +494,24 @@ class Group extends React.Component<{}, State> {
                             return <Row>
                                       <Col md='4'>
                                         <Button className='btn-round btn-icon btn btn-info btn-sm'
+                                                id='btnEditPupil'
                                                 style={{
                                                   'padding': '0'
                                                 }}
                                                 onClick={ () => ::this.editPupil(pupilRecordId) } >
                                           <i className='fa fa-edit'></i>
                                         </Button>
-                                    </Col>
-                                    <Col md='4'>
-                                      <Button className='btn-round btn-icon btn btn-danger btn-sm'
+                                      </Col>
+                                      <Col md='4'>
+                                        <Button className='btn-round btn-icon btn btn-danger btn-sm'
                                                 style={{
                                                   'padding': '0'
                                                 }}
                                               onClick={ () => ::this.toggleModal(pupilRecordId) } >
-                                        <i className='fa fa-times'></i>
-                                      </Button>
-                                    </Col>
-                                 </Row>
+                                              <i className='fa fa-times'></i>
+                                        </Button>
+                                      </Col>
+                                  </Row>
                           }
                         }]}>
                       </ReactTable>
