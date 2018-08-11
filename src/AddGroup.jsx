@@ -255,40 +255,48 @@ class AddGroup extends React.Component<{}, State> {
         body: JSON.stringify(data2post)
       });
 
-      // Add new group to Firestore
-      const doc = await firebase.firestore().collection('units')
+      // Add new or update group to/in Firestore
+      if( this.props.match.params.groupid != 0 ) {
+        const doc = await firebase.firestore().collection('units')
                       .doc(unitId).collection('groups')
                       .add(group);
-
-      // Grant permissions to the current user
-      let response = await firebase.firestore().collection('users')
-                                      .where("email", "==", this.props.userEMail)
-                                      .get();
-      if( response.docs.length != 0 ) {
-        const userDoc = response.docs[0];
-        const secRoles = this.props.secRoles;
-        secRoles.push(group.sec_role);
-
-        await firebase.firestore().collection('users')
-              .doc(userDoc.id)
-              .update({
-                 sec_roles: secRoles
-              })
-
-              toast.update(this.toastId,
-                    {
-                      render: 'כיתה חדשה התווספה',
-                      type: toast.TYPE.SUCCESS,
-                      autoClose: 3000,
-                      className: css({
-                        transform: "rotateY(360deg)",
-                        transition: "transform 0.6sec"
-                      })
-                    });
-
-        setTimeout( () => this.props.history.push(`/dashboard/units`),
-                   1500);
+      } else {
+        const doc = await firebase.firestore().collection('units')
+                      .doc(unitId).collection('groups')
+                      .update(group);
       }
+
+      // Grant permissions to current user
+      // let response = await firebase.firestore().collection('users')
+      //                                 .where("email", "==", this.props.userEMail)
+      //                                 .get();
+      // if( response.docs.length != 0 ) {
+      //   const userDoc = response.docs[0];
+      //   const secRoles = this.props.secRoles;
+      //   secRoles.push(group.sec_role);
+      //
+      //   await firebase.firestore().collection('users')
+      //         .doc(userDoc.id)
+      //         .update({
+      //            sec_roles: secRoles
+      //         })
+      //
+      //         toast.update(this.toastId,
+      //               {
+      //                 render: 'כיתה חדשה התווספה',
+      //                 type: toast.TYPE.SUCCESS,
+      //                 autoClose: 3000,
+      //                 className: css({
+      //                   transform: "rotateY(360deg)",
+      //                   transition: "transform 0.6sec"
+      //                 })
+      //               });
+      //
+      // }
+
+      setTimeout( () => this.props.history.push(`/dashboard/units`),
+                 1500);
+
     } catch( err ) {
       console.error(err);
       toast.update(this.toastId,
@@ -303,8 +311,13 @@ class AddGroup extends React.Component<{}, State> {
 
   render() {
 
-    let saveButtonText = ( this.props.match.params.groupid != 0 ) ?
-                          'שמור' : 'הוסף';
+    let saveButtonText = 'הוסף';
+    let captionText = 'הוספת כיתה חדשה למוסד';
+
+    if( this.props.match.params.groupid != 0 )  {
+      saveButtonText = 'שמור';
+      captionText = 'עריכת נתוני כיתה למוסד'
+    }
 
     let isThisField = this.state.invalidField === 'symbol';
     const groupSymbolClassNames = classNames({
@@ -372,7 +385,7 @@ class AddGroup extends React.Component<{}, State> {
           <Col className='col-md-12'>
             <Card body className="text-center">
               <div className='card-header'>
-                <h5 className='title'>הוספת כיתה חדשה למוסד {this.state.unitName}</h5>
+                <h5 className='title'>{captionText} {this.state.unitName}</h5>
               </div>
               <CardBody>
                 <Card>
