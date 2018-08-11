@@ -421,7 +421,7 @@ class Groups extends React.Component<{}, State> {
                               className='text-right my-auto' id='tooltipContainer'>
                               <Button color='primary' id='btnExportExcel'
                                       onClick={::this.exportExcel}>
-                                      Excel&nbsp;<i className="far fa-file-excel"></i>
+                                      <span>Excel</span>&nbsp;<i className="far fa-file-excel fa-lg"></i>
                               </Button>
 
                               <Tooltip placement='auto'
