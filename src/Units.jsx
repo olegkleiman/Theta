@@ -138,29 +138,51 @@ class Units extends React.Component<{}, State> {
         fontSize: 25,
         padding: 0,
         userSelect: 'none',
-        textAlign: 'center'
+        textAlign: 'center',
+        lineHeight: '3em'
       }
     }, {
       Header: 'רשות',
-      accessor: 'authority'
+      accessor: 'authority',
+      style: {
+        lineHeight: '3em'
+      }
     }, {
       Header: 'מחוז',
-      accessor: 'region'
+      accessor: 'region',
+      style: {
+        lineHeight: '3em'
+      }
     }, {
       Header: 'שם',
-      accessor: 'name'
+      accessor: 'name',
+      style: {
+        lineHeight: '3em'
+      }
     }, {
       Header: 'סמל',
       accessor: 'symbol',
+      style: {
+        lineHeight: '3em'
+      }
     }, {
       Header: 'רשות',
-      accessor: 'authority'
+      accessor: 'authority',
+      style: {
+        lineHeight: '3em'
+      }
     }, {
       Header: 'סוג מוסד',
-      accessor: 'type'
+      accessor: 'type',
+      style: {
+        lineHeight: '3em'
+      }
     }, {
       Header: 'אשכול',
-      accessor: 'cluster'
+      accessor: 'cluster',
+      style: {
+        lineHeight: '3em'
+      }
     }];
 
     return <div>
@@ -199,7 +221,8 @@ class Units extends React.Component<{}, State> {
                                   getTheadThProps = { () => {
                                     return {
                                       style: {
-                                        'textAlign': 'right'
+                                        'textAlign': 'right',
+                                        'fontWeight': '700'
                                       }
                                     }
                                   }}
