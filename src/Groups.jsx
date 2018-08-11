@@ -10,7 +10,8 @@ import firebase from './firebase.js';
 import Pagination from './TablePagination';
 import { Container, Button,
   Row, Col, Card, CardHeader, CardBody,
-  Tooltip
+  Tooltip,
+  Modal, ModalHeader, ModalBody, ModalFooter
 } from 'reactstrap';
 import withAuth from './FirebaseAuth';
 
@@ -33,7 +34,9 @@ type State = {
   authoritiesLoaded: Boolean,
   selectedAuthorities: String[],
   loading: Boolean,
-  tooltipOpen: Boolean
+  tooltipOpen: Boolean,
+  modal: Boolean,
+  groupId2Delete: String
 }
 
 @withAuth
@@ -45,7 +48,10 @@ class Groups extends React.Component<{}, State> {
     authoritiesLoaded: false,
     selectedAuthorities: [],
     loading: true,
-    tooltipOpen: false
+    tooltipOpen: false,
+    modal: false,
+    groupId2Delete: ''
+
   }
 
   async loadAuthorities() {
@@ -273,54 +279,6 @@ class Groups extends React.Component<{}, State> {
 
   }
 
-  async handleUpdate(cellInfo, e) {
-    if( e.key === 'Enter' || e.type === 'blur') {
-
-      e.preventDefault();
-
-      const value = e.target.innerHTML;
-      this.updateFirestore(cellInfo.index,
-                           cellInfo.original.id,
-                           cellInfo.original.unitId,
-                           cellInfo.column.id,
-                           value);
-    }
-  }
-
-  renderEditable(cellInfo, value) {
-    return (
-      <div
-        style={{ backgroundColor: "#fafafa" }}
-        contentEditable
-        suppressContentEditableWarning
-        onKeyDown={ e => ::this.handleUpdate(cellInfo, e) }
-        onBlur={ e => ::this.handleUpdate(cellInfo, e) }>
-        {value}
-      </div>)
-  }
-
-  openDateChaned(_date: Date,
-                 cellInfo) {
-
-    this.updateFirestore(cellInfo.index,
-                         cellInfo.original.id,
-                         cellInfo.original.unitId,
-                         cellInfo.column.id,
-                         _date.toDate());
-
-  }
-
-  renderDatePicker(cellInfo, value) {
-    return(
-        <Datetime closeOnSelect={true}
-                  value={value}
-                  onChange={ (_date) => ::this.openDateChaned(_date, cellInfo) }
-                  input={true}
-                  timeFormat={false}
-                  local='he' />
-    );
-  }
-
   onAuthorityChanged = (authorities) => {
 
     const _authorities = authorities.map( authority => {
@@ -334,12 +292,29 @@ class Groups extends React.Component<{}, State> {
     });
 
     this.setState({
-      selectedAuthorities: _authorities
+      selectedAuthorities: _authorities,
+      groups: _groups
     });
   }
 
-  addGroup() {
-    this.props.history.push(`/dashboard/addgroup/0/0`);
+  editGroup(unitId: String,
+            groupId: String) {
+    //console.log(`UnitId: ${unitId}. GroupId: ${groupId}`);
+    this.props.history.push(`/dashboard/addgroup/${unitId}/${groupId}`);
+  }
+
+  toggleModal(groupId: String) {
+    this.setState({
+      modal: !this.state.modal,
+      groupId2Delete: groupId
+    });
+  }
+
+  deleteGroup() {
+    //console.log(`UnitId: ${this.props.docId}. GroupId: ${this.state.groupId2Delete}`);
+    this.setState({
+      modal: !this.state.modal
+    });
   }
 
   render() {
@@ -347,21 +322,18 @@ class Groups extends React.Component<{}, State> {
     const columns = [{
       Header: 'שם כיתה',
       accessor: 'name',
-      Cell: cellInfo => ::this.renderEditable(cellInfo, cellInfo.original.name),
       style: {
         lineHeight: '3em'
       }
     }, {
       Header: 'מזהה',
       accessor: 'symbol',
-      Cell: cellInfo => ::this.renderEditable(cellInfo, cellInfo.original.symbol),
       style: {
         lineHeight: '3em'
       }
     }, {
       Header: 'כמות ילדים',
       accessor: 'capacity',
-      Cell: cellInfo => ::this.renderEditable(cellInfo, cellInfo.original.capacity),
       width: 80,
       style: {
         lineHeight: '3em'
@@ -376,24 +348,51 @@ class Groups extends React.Component<{}, State> {
     }, {
       Header: 'ת. התחלה',
       accessor: 'openFrom',
-      Cell: cellInfo => ::this.renderDatePicker(cellInfo, cellInfo.original.openFrom),
       style: {
-        overflow: 'visible'
+        overflow: 'visible',
+        lineHeight: '3em'
       }
     }, {
       Header: 'ת.סיום',
       accessor: 'openTill',
-      Cell: cellInfo => ::this.renderDatePicker(cellInfo, cellInfo.original.openTill),
       style: {
-        overflow: 'visible'
+        overflow: 'visible',
+        lineHeight: '3em'
       }
     }, {
       Header: 'מחיר',
       accessor: 'price',
-      Cell: cellInfo => ::this.renderEditable(cellInfo, cellInfo.original.price),
       width: 80,
       style: {
         lineHeight: '3em'
+      }
+    }, {
+      Header: '',
+      accessor: 'editors',
+      width: 80,
+      Cell: row => {
+        const groupId = row.original.id;
+        const unitId = row.original.unitId;
+        return <Row>
+          <Col md='4'>
+            <Button className='btn-round btn-icon btn btn-info btn-sm'
+                    style={{
+                      'padding': '0'
+                    }}
+                    onClick={ () => ::this.editGroup(unitId, groupId) } >
+              <i className='fa fa-edit'></i>
+            </Button>
+          </Col>
+          <Col md='4'>
+            <Button className='btn-round btn-icon btn btn-danger btn-sm'
+                    style={{
+                      'padding': '0'
+                    }}
+                    onClick={ () => ::this.toggleModal(groupId) } >>
+              <i className='fa fa-times'></i>
+            </Button>
+          </Col>
+        </Row>
       }
     }];
 
@@ -402,6 +401,18 @@ class Groups extends React.Component<{}, State> {
     return <div>
               <div className='panel-header panel-header-sm'></div>
               <Container className='content h-100'>
+                <Modal isOpen={this.state.modal}>
+                  <ModalHeader>
+                    מחיקת קבוצה
+                  </ModalHeader>
+                  <ModalBody>
+                    אישור לפעולה זו תגרום לחיקה מוחלטת של כל נתוני הקבוצה, כולל רשימות הנרשמים. זאת פעולה לא הפיכה.
+                  </ModalBody>
+                  <ModalFooter>
+                    <Button color="primary" onClick={::this.deleteGroup}>אישור</Button>{' '}
+                    <Button color="secondary" onClick={() => ::this.toggleModal('')}>ביטול</Button>
+                  </ModalFooter>
+                </Modal>
                 <Row>
                   <Col md='12'>
                     <Card>
@@ -421,7 +432,7 @@ class Groups extends React.Component<{}, State> {
                               onChange={ value => ::this.onAuthorityChanged(value) }
                             />
                           </Col>
-                          <Col md={{ size: 2, offset: 5 }}
+                          <Col md={{ size: 2, offset: 10 }}
                               className='text-right my-auto' id='tooltipContainer'>
                               <Button color='primary' id='btnExportExcel'
                                       onClick={::this.exportExcel}>
@@ -440,11 +451,6 @@ class Groups extends React.Component<{}, State> {
                                 target='btnExportExcel'>
                                   ייצוא לקובץ חיצוני
                               </Tooltip>
-                          </Col>
-                          <Col md='2' className='text-right my-auto' >
-                            <Button color='primary' onClick={::this.addGroup}>
-                              הוסף כיתה <i className="far fa-plus-square"></i>
-                            </Button>
                           </Col>
                         </Row>
                         <Row>
