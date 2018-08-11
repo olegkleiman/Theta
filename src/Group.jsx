@@ -341,13 +341,13 @@ class Group extends React.Component<{}, State> {
   }
 
   deletePupil() {
-
+    console.log(`PupilId: ${this.state.pupilId2Delete}`);
   }
 
-  toggleModal(pupilId: String) {
+  toggleModal(pupilRecordId: String) {
     this.setState({
       modal: !this.state.modal,
-      pupilId2Delete: pupilId
+      pupilId2Delete: pupilRecordId
     });
   }
 
@@ -491,14 +491,14 @@ class Group extends React.Component<{}, State> {
                           accessor: 'editors',
                           width: 80,
                           Cell: row => {
-                            const pupilId = row.original.id;
+                            const pupilRecordId = row.original.recordId;
                             return <Row>
                                       <Col md='4'>
                                         <Button className='btn-round btn-icon btn btn-warning btn-sm'
                                                 style={{
                                                   'padding': '0'
                                                 }}
-                                                onClick={ () => ::this.editPupil(pupilId) } >
+                                                onClick={ () => ::this.editPupil(pupilRecordId) } >
                                           <i className='fa fa-edit'></i>
                                         </Button>
                                     </Col>
@@ -507,7 +507,7 @@ class Group extends React.Component<{}, State> {
                                                 style={{
                                                   'padding': '0'
                                                 }}
-                                              onClick={ () => ::this.toggleModal(pupilId) } >
+                                              onClick={ () => ::this.toggleModal(pupilRecordId) } >
                                         <i className='fa fa-times'></i>
                                       </Button>
                                     </Col>
