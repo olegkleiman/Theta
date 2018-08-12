@@ -23,6 +23,7 @@ class Pupil {
               whenRegistered: Timestamp,
               parentId: String,
               address: String) {
+
     this.recordId = ( recordId ) ? recordId : '';
     this.name = ( name ) ? name : '';
     this.lastName = ( lastName ) ? lastName : '';
@@ -34,7 +35,9 @@ class Pupil {
                           null;
 
     this.whenRegistered = ( whenRegistered ) ?
-                          moment.unix(whenRegistered.seconds).format('DD/MM/YYYY HH:mm') :
+                          moment.unix(whenRegistered.seconds)
+                          .utcOffset(0)
+                          .format('DD/MM/YYYY HH:mm') :
                           null;
     this.parentId = ( parentId ) ? parentId : '';
     this.address = ( address ) ? address : '';
