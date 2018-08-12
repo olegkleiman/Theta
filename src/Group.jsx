@@ -369,7 +369,8 @@ class Group extends React.Component<{}, State> {
                           Header: 'תאריך הרשמה',
                           accessor: 'whenRegistered',
                           style: {
-                            lineHeight: '3em'
+                            lineHeight: '3em',
+                            direction: 'ltr'
                           }
                         }, {
                           Header: 'מזהה הורה',
