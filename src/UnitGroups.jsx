@@ -240,6 +240,13 @@ class UnitGroups extends React.Component<Props, State> {
         noDataText={this.state.dataStatus}
         filterable
         defaultPageSize={5}
+        getTableProps = { () => {
+            return {
+              style: {
+                overflow: 'unset' 
+              }
+            }
+        }}
         getTheadThProps = { () => {
           return {
             style: {
