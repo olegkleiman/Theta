@@ -59,9 +59,9 @@ class AddGroup extends React.Component<{}, State> {
         name_he: docData.name_he,
         type: docData.type,
         authority: docData.authority,
-        cluster: docData.cluster,
+        cluster: ( docData.cluster || 3 ),
         education_type: docData.education_type,
-        region: docData.region,
+        region: ( docData.region || 'מרכז'),
         symbol: docData.symbol,
         sec_role: docData.sec_role
       }
