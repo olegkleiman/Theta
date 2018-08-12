@@ -396,7 +396,7 @@ class AddPupil extends React.Component<{}, State> {
             hideProgressBar: false,
             closeOnClick: true,
             pauseOnHover: false,
-            draggable: false
+            //draggable: false
         });
 
             const unitId = this.state.selectedUnit.unitId;
