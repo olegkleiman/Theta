@@ -18,8 +18,7 @@ import withAuth from './FirebaseAuth';
 import GroupData from './model/GroupData';
 
 type State = {
-  unitName: String,
-  unitType: String,
+  unit: Object,
   groupData: GroupData,
   fromDate: moment,
   tillDate: moment,
@@ -33,8 +32,7 @@ export default
 class AddGroup extends React.Component<{}, State> {
 
   state = {
-    unitName: '',
-    unitType: '',
+    unit: {},
     groupData: {
       name: '',
       symbol: '',
@@ -56,16 +54,25 @@ class AddGroup extends React.Component<{}, State> {
       const resp = await firebase.firestore().collection('units').doc(unitId)
                          .get();
       const docData = resp.data();
-      unitName = docData.name_he;
-      unitType = docData.type;
+
+      const _unit = {
+        name_he: docData.name_he,
+        type: docData.type,
+        authority: docData.authority,
+        cluster: docData.cluster,
+        education_type: docData.education_type,
+        region: docData.region,
+        symbol: docData.symbol,
+        sec_role: docData.sec_role
+      }
+
+      this.setState({
+        unit: _unit
+      })
     }
     catch( err ) {
         console.error(err);
     }
-
-    this.setState({
-      unitName: unitName
-    })
 
     const groupId = this.props.match.params.groupid;
     if( groupId != 0 ) {
@@ -147,35 +154,45 @@ class AddGroup extends React.Component<{}, State> {
       return group;
     }
 
-    return new Promise( (resolve, reject) => {
+    if( this.props.match.params.groupid !== '0' ) { // // editing existing group
+      group.validated = true;
+      return Promise.resolve(group);
+      // return new Promise( (resolve, reject) => {
+      //     group.validated = true;
+      //     resolve(group);
+      // })
+    } else {
 
-      try {
-        firebase.firestore().collection('units')
-                    .doc(unitId).collection('groups')
-                    .where('symbol', '==', group.symbol)
-                    .get()
-                    .then( query => {
+      return new Promise( (resolve, reject) => {
 
-                      if( query.docs.length > 0 ) {
-                        group.validated = false;
-                        group.invalidField = 'symbol';
-                        resolve(group)
-                      } else {
-                        group.validated = true;
-                        resolve(group)
-                      }
+        try {
+          firebase.firestore().collection('units')
+                      .doc(unitId).collection('groups')
+                      .where('symbol', '==', group.symbol)
+                      .get()
+                      .then( query => {
 
-                    })
-                    .catch( err => {
-                      console.error( err );
-                      reject(err);
-                    })
+                        if( query.docs.length > 0 ) {
+                          group.validated = false;
+                          group.invalidField = 'symbol';
+                          resolve(group)
+                        } else {
+                          group.validated = true;
+                          resolve(group)
+                        }
 
-      } catch( err ) {
-        reject(err);
-      }
+                      })
+                      .catch( err => {
+                        console.error( err );
+                        reject(err);
+                      })
 
-    })
+        } catch( err ) {
+          reject(err);
+        }
+
+      })
+    }
 
   }
 
@@ -183,8 +200,12 @@ class AddGroup extends React.Component<{}, State> {
 
     event.preventDefault(); // stop from further submit
 
+    const toastMessage = ( this.props.match.params.groupid === '0') ?
+      'נתוני כיתה מתווספים למערכת. נא להמתין...' :
+      'נתוני כיתה מתעדכנים במערכת. נא להמתין...';
+
     this.setState({
-      status: 'נתוני כיתה מתווספים למערכת. נא להמתין...'
+      status: toastMessage
     })
 
     if( !this.state.fromDate ) {
@@ -206,11 +227,13 @@ class AddGroup extends React.Component<{}, State> {
       name: event.target.groupName.value,
       symbol: event.target.symbol.value,
       capacity: event.target.groupCapacity.value,
-      opened: this.state.fromDate.toDate(),
-      openedTill: this.state.tillDate.toDate(),
+      openFrom: this.state.fromDate.toDate(),
+      openTill: this.state.tillDate.toDate(),
       price: event.target.price.value,
       sec_role: `group_${event.target.symbol.value}`,
-      registeredPupils: 0
+      registeredPupils: 0,
+      paymentInstallments: event.target.payments.value,
+      unit: this.state.unit
     }
 
     const _group = await ::this.validateGroup(group)
@@ -224,7 +247,7 @@ class AddGroup extends React.Component<{}, State> {
       return;
     }
 
-    const toastId = toast.success("כיתה חדשה מתווספת למערכת", {
+    const toastId = toast.success(toastMessage, {
         position: "top-right",
         autoClose: 5000,
         hideProgressBar: false,
@@ -243,8 +266,8 @@ class AddGroup extends React.Component<{}, State> {
       // 3 - Group is full
       // 4 - Close
 
-      const description = ( this.state.unitType.trim() != "גן" ) ?
-                           this.state.unitName + group.name :
+      const description = ( this.state.unit.type.trim() != "גן" ) ?
+                           this.state.unit.name_he + group.name :
                            group.name;
 
       const data2post = {
@@ -264,15 +287,12 @@ class AddGroup extends React.Component<{}, State> {
       });
 
       // Add new or update group to/in Firestore
-      console.log(this.props.match.params.groupid);
-      if( this.props.match.params.groupid != 0 ) {
-        console.log(`Creating new group`);
+      if( this.props.match.params.groupid === '0' ) {
         const doc = await firebase.firestore()
                       .collection('units').doc(unitId)
                       .collection('groups')
                       .add(group);
       } else {
-        console.log(`Updating group ${this.props.match.params.groupid}`);
         const doc = await firebase.firestore()
                       .collection('units').doc(unitId)
                       .collection('groups').doc(this.props.match.params.groupid)
