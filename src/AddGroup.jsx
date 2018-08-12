@@ -105,6 +105,10 @@ class AddGroup extends React.Component<{}, State> {
   _fromDateChanged(_date: Date) {
 
     if( moment(_date).isValid() ) {
+
+      let _groupData = this.state.groupData;
+      _groupData.openFrom = moment(_date);
+
       this.setState({
         fromDate: moment(_date)
       });
@@ -114,8 +118,12 @@ class AddGroup extends React.Component<{}, State> {
   _tillDateChanged(_date: Date) {
 
     if( moment(_date).isValid() ) {
+
+      let _groupData = this.state.groupData;
+      _groupData.openTill = moment(_date);
+
       this.setState({
-        tillDate: moment(_date)
+        groupData: _groupData
       });
     }
   }
@@ -124,7 +132,7 @@ class AddGroup extends React.Component<{}, State> {
 
     const unitId = this.props.match.params.unitid;
 
-    if( moment(group.opened).isAfter(moment(group.openedTill)) ) {
+    if( moment(group.openFrom).isAfter(moment(group.openTill)) ) {
       group.validated = false;
       group.invalidField = 'openedTill';
       return group;
@@ -155,12 +163,10 @@ class AddGroup extends React.Component<{}, State> {
     }
 
     if( this.props.match.params.groupid !== '0' ) { // // editing existing group
+
       group.validated = true;
       return Promise.resolve(group);
-      // return new Promise( (resolve, reject) => {
-      //     group.validated = true;
-      //     resolve(group);
-      // })
+
     } else {
 
       return new Promise( (resolve, reject) => {
@@ -208,14 +214,14 @@ class AddGroup extends React.Component<{}, State> {
       status: toastMessage
     })
 
-    if( !this.state.fromDate ) {
+    if( !this.state.groupData.openFrom ) {
         this.setState({
           invalidField: 'openedFrom',
           status: ''
         });
         return;
     }
-    if( !this.state.tillDate ) {
+    if( !this.state.groupData.openTill ) {
         this.setState({
           invalidField: 'openedTill',
           status: ''
@@ -227,8 +233,8 @@ class AddGroup extends React.Component<{}, State> {
       name: event.target.groupName.value,
       symbol: event.target.symbol.value,
       capacity: event.target.groupCapacity.value,
-      openFrom: this.state.fromDate.toDate(),
-      openTill: this.state.tillDate.toDate(),
+      openFrom: this.state.groupData.openFrom.toDate(),
+      openTill: this.state.groupData.openTill.toDate(),
       price: event.target.price.value,
       sec_role: `group_${event.target.symbol.value}`,
       registeredPupils: 0,
