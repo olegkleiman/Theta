@@ -111,7 +111,9 @@ class AddUnit extends React.Component<{}, State> {
       sec_role: 'unit_' + symbol,
       model: this.state.selectedModel,
       type: this.state.unitType,
-      education_type: this.state.eduType
+      education_type: this.state.eduType,
+      cluster: 3,
+      region: 'מרכז'
     }
 
     const _unit = await ::this.validateUnit(unit);
