@@ -17,14 +17,14 @@ class GroupData {
               openFrom: Timestamp,
               openTill: Timestamp,
               payments: Number) {
-    this.name = name;
-    this.symbol = symbol;
-    this.capacity = capacity;
-    this.price = price;
+    this.name = ( name || '');
+    this.symbol = ( symbol || '');
+    this.capacity = ( capacity || 0);
+    this.price = ( price || '');
     if( openFrom )
       this.openFrom = moment.unix(openFrom.seconds);
     if( openTill )
       this.openTill = moment.unix(openTill.seconds);
-    this.payments = payments;
+    this.payments =  ( payments || 0);
   }
 }
