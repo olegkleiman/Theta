@@ -131,28 +131,28 @@ class AddUnit extends React.Component<{}, State> {
     try {
 
       // Add new unit to Firestore
-      // const doc = await firebase.firestore().collection('units')
-      //                 .add(unit);
+      const doc = await firebase.firestore().collection('units')
+                      .add(unit);
 
       // Grant permissions to the current user
-      let response = await firebase.firestore().collection('users')
-                                      .where("email", "==", this.props.userEMail)
-                                      .get();
-      if( response.docs.length != 0 ) {
+      // let response = await firebase.firestore().collection('users')
+      //                                 .where("email", "==", this.props.userEMail)
+      //                                 .get();
+      // if( response.docs.length != 0 ) {
+      //
+      //   const userDoc = response.docs[0];
+      //   const secRoles = this.props.secRoles;
+      //   secRoles.push(unit.sec_role);
+      //
+      //   // await firebase.firestore().collection('users')
+      //   //       .doc(userDoc.id)
+      //   //       .update({
+      //   //          sec_roles: secRoles
+      //   //       });
+      //
+      // }
 
-        const userDoc = response.docs[0];
-        const secRoles = this.props.secRoles;
-        secRoles.push(unit.sec_role);
-
-        // await firebase.firestore().collection('users')
-        //       .doc(userDoc.id)
-        //       .update({
-        //          sec_roles: secRoles
-        //       });
-
-        this.props.history.push(`/dashboard/units`);
-
-      }
+      this.props.history.push(`/dashboard/units`);
 
     } catch( err ) {
       console.error(err);
@@ -161,6 +161,42 @@ class AddUnit extends React.Component<{}, State> {
   }
 
   validateUnit(unit) {
+
+    if( unit.authority === '' ) {
+      unit.validated = false;
+      unit.invalidField = 'authority';
+      return unit;
+    }
+
+    if( unit.name_he === '' ) {
+      unit.validated = false;
+      unit.invalidField = 'name';
+      return unit;
+    }
+
+    if( unit.symbol === '' ) {
+      unit.validated = false;
+      unit.invalidField = 'symbol';
+      return unit;
+    }
+
+    if( unit.model === '' ) {
+      unit.validated = false;
+      unit.invalidField = 'model';
+      return unit;
+    }
+
+    if( unit.type === '' ) {
+      unit.validated = false;
+      unit.invalidField = 'type';
+      return unit;
+    }
+
+    if( unit.education_type === '' ) {
+      unit.validated = false;
+      unit.invalidField = 'education_type';
+      return unit;
+    }
 
     return new Promise( (resolve, reject) => {
 
@@ -200,6 +236,46 @@ class AddUnit extends React.Component<{}, State> {
       'invisible': !isThisField
     });
 
+    isThisField = this.state.invalidField === 'name';
+    const unitNameClassNames = classNames({
+      'text-left my-auto' : true,
+      'text-danger': isThisField,
+      'visible': isThisField,
+      'invisible': !isThisField
+    })
+
+    isThisField = this.state.invalidField === 'authority';
+    const authorityClassNames = classNames({
+      'text-left my-auto' : true,
+      'text-danger': isThisField,
+      'visible': isThisField,
+      'invisible': !isThisField
+    })
+
+    isThisField = this.state.invalidField === 'model';
+    const modelClassNames = classNames({
+      'text-left my-auto' : true,
+      'text-danger': isThisField,
+      'visible': isThisField,
+      'invisible': !isThisField
+    })
+
+    isThisField = this.state.invalidField === 'type';
+    const typeClassNames = classNames({
+      'text-left my-auto' : true,
+      'text-danger': isThisField,
+      'visible': isThisField,
+      'invisible': !isThisField
+    })
+
+    isThisField = this.state.invalidField === 'education_type';
+    const eduTypeClassNames = classNames({
+      'text-left my-auto' : true,
+      'text-danger': isThisField,
+      'visible': isThisField,
+      'invisible': !isThisField
+    })
+
     return (<div>
       <div className='panel-header panel-header-sm'></div>
         <div className='content container h-100'>
@@ -225,6 +301,10 @@ class AddUnit extends React.Component<{}, State> {
                                 data={this.state.authorities}
                                 onChange={ value => ::this.onAuthorityChanged(value) }/>
                             </Col>
+                            <Col md='4' invalid={(this.state.invalidField === 'authotity').toString()}
+                              className={authorityClassNames}>
+                              אנא הזן ערך
+                            </Col>
                           </Row>
                           <br />
                           <Row>
@@ -233,6 +313,10 @@ class AddUnit extends React.Component<{}, State> {
                             </Col>
                             <Col md={{ size: 4 }}>
                               <Input id='unitName' name='unitName'></Input>
+                            </Col>
+                            <Col md='4' invalid={(this.state.invalidField === 'groupName').toString()}
+                              className={unitNameClassNames}>
+                              אנא הזן ערך
                             </Col>
                           </Row>
                           <br />
@@ -246,7 +330,7 @@ class AddUnit extends React.Component<{}, State> {
                             </Col>
                             <Col md='4' invalid={(this.state.invalidField === 'symbol').toString()}
                               className={symbolClassNames}>
-                              Unit with this symbol is already exists
+                              מוסד עם סמל כזה כבר קיים במערכת
                             </Col>
                           </Row>
                           <br />
@@ -261,6 +345,10 @@ class AddUnit extends React.Component<{}, State> {
                                 onChange={ model => ::this.onModelChanged(model) }
                                 />
                             </Col>
+                            <Col md='4' invalid={(this.state.invalidField === 'model').toString()}
+                              className={modelClassNames}>
+                              אנא הזן ערך
+                            </Col>
                           </Row>
                           <br />
                           <Row>
@@ -274,6 +362,10 @@ class AddUnit extends React.Component<{}, State> {
                                                                     unitType: value
                                                                   }) }/>
                             </Col>
+                            <Col md='4' invalid={(this.state.invalidField === 'type').toString()}
+                              className={typeClassNames}>
+                              אנא הזן ערך
+                            </Col>
                           </Row>
                           <br />
                           <Row>
@@ -286,6 +378,10 @@ class AddUnit extends React.Component<{}, State> {
                                 onChange={ value => this.setState({
                                                                     eduType: value
                                                                   }) }/>
+                            </Col>
+                            <Col md='4' invalid={(this.state.invalidField === 'education_type').toString()}
+                              className={eduTypeClassNames}>
+                              אנא הזן ערך
                             </Col>
                           </Row>
                           <Row>
