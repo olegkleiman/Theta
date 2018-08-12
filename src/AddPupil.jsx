@@ -383,7 +383,7 @@ class AddPupil extends React.Component<{}, State> {
           return;
         }
 
-        pupil.birthDay = pupil.birthDay.toDate()
+        pupil.birthDay = moment(pupil.birthDay).toDate();
 
       try {
         _state.formInalid = false;
