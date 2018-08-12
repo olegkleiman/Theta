@@ -43,6 +43,7 @@ class Pupils extends React.Component<{}, State> {
   state = {
     pupils: [],
     authorities: [],
+    unitsLoaded: false,
     authoritiesLoaded: false,
     loading: true,
     selectedAuthorities: [],
@@ -117,12 +118,12 @@ class Pupils extends React.Component<{}, State> {
                     const unitName = unitData.name_he;
                     const unitSymbol = unitData.symbol;
                     const authority = unitData.authority;
-                    _units.push({unitName, unitSymbol})
+                    _units.push({unitName, unitSymbol, unitId, authority})
 
                     promises2.push(firebase.firestore().collection('units')
                         .doc(unit.id).collection('groups')
                         .get(getOptions)
-                        .then( groups =>{
+                        .then( groups => {
                             groups.docs.forEach( group => {
                                 const groupData = group.data();
                                 const groupId = group.id;
@@ -163,11 +164,16 @@ class Pupils extends React.Component<{}, State> {
         }));
         Promise.all(promises)
         .then(() => {
+          self.setState({
+              units: _units,
+              unitsLoaded: true
+          })
             Promise.all(promises2)
             .then(() => {
                 Promise.all(promises3)
                 .then(() => {
                     self.setState({
+                        units: _units,
                         pupils: _pupils,
                         displayedPupils: _pupils ,
                         loading: false
@@ -310,14 +316,46 @@ class Pupils extends React.Component<{}, State> {
 
   }
 
+
+  onUnitChanged = (units) => {
+
+    if ( units.length !== 0 ) {
+        const _units = units.map( unit => {
+            return units.unitsId
+          });
+
+          const _pupils = this.state.displayedPupils.filter( pupils => {
+            return _units.find( unit => {
+              return unit === pupils.unitsId}
+            )
+          });
+
+          this.setState({
+            selectedUnits: _units,
+            displayedPupils : _pupils
+
+          });
+    }
+    else {
+        this.setState({
+            selectedUnits: units,
+            displayedPupils : this.state.pupils
+
+          });
+    }
+
+
+  }
+
+
   onAuthorityChanged = (authorities) => {
 
-    if ( authorities != [] ) {
+    if ( authorities !== 0 ) {
         const _authorities = authorities.map( authority => {
             return authority.name
           });
 
-          const _pupils = this.state.pupils.filter( pupils => {
+          const _pupils = this.state.displayedPupils.filter( pupils => {
             return _authorities.find( authorityName => {
               return authorityName === pupils.authority}
             )
@@ -369,13 +407,13 @@ class Pupils extends React.Component<{}, State> {
                           </Col>
                           <Col md='3'>
                             <Multiselect
-                              busy={!this.state.authoritiesLoaded}
-                              groupBy='region'
-                              textField='name'
+                              busy={!this.state.unitsLoaded}
+                              groupBy='authority'
+                              textField='unitName'
                               isRtl={true}
                               placeholder='סנן לפי מוסדות'
-                              data={this.state.authorities}
-
+                              data={this.state.units}
+                              onChange={ value => ::this.onUnitChanged(value) }
                             />
                           </Col>
                           <Col md={{ size: 2, offset: 10 }}
