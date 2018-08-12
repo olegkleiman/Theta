@@ -243,7 +243,7 @@ class UnitGroups extends React.Component<Props, State> {
         getTableProps = { () => {
             return {
               style: {
-                overflow: 'unset' 
+                overflow: 'unset'
               }
             }
         }}
@@ -327,9 +327,10 @@ class UnitGroups extends React.Component<Props, State> {
                      backgroundColor: percentage > 66 ? '#f44336'
                       : percentage > 33 ? '#ffbf00'
                       : 'green',
-                     height: '100%',
+                     height: '90%',
                      borderRadius: '2px',
-                     transition: 'all .2s ease-out'
+                     transition: 'all .2s ease-out',
+                     marginTop: '4px'
                    }}>
                    {percentage}%
                  </div>
