@@ -3,9 +3,12 @@ service cloud.firestore {
 
   	match /users/{user} {
     	//allow read : if get(/databases/{database}/documents/users/$(request.auth.uid)).data.role == "admin";
-    	allow read : if request.auth.uid != null;
-      allow write: if request.auth.uid != null;
-      allow create: if request.auth.uid != null;
+    	// allow read : if request.auth.uid != null;
+    	// allow write: if request.auth.uid != null;
+    	// allow create: if request.auth.uid != null;
+     	allow read : if true;
+      allow write: if true;
+      allow create: if true;
     }
 
     match /authorities/{authority} {
@@ -43,6 +46,7 @@ service cloud.firestore {
 
    match /units/{unit} {
     	allow read : if request.auth.uid != null;
+      allow write : if request.auth.uid != null;
 
       match /updates/{update} {
     		allow read : if request.auth.uid != null;
@@ -52,7 +56,7 @@ service cloud.firestore {
       match /groups/{group} {
     		allow read : if request.auth.uid != null;
         allow write : if request.auth.uid != null;
-        
+
         match /pupils/{pupil} {
         	allow read : if request.auth.uid != null;
           allow write : if request.auth.uid != null;
