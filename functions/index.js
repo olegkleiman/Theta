@@ -92,6 +92,7 @@ app.post('/pupil', (req, res) => {
   const schema = {
     "groupSymbol": "string",
     "name": "string",
+    "family": "string",
     "pupilId": "string",
     "parentId": "string",
     "phoneNumber": "number",
@@ -104,17 +105,24 @@ app.post('/pupil', (req, res) => {
 
   // format date to unix epoch milliseconds in order to comply
   // with Firebase 'timestamp' type
-  const when = moment(req.body.whenRegistered, "DD/MM/YYYY");
+  const birthDay = moment(req.body.DateOfBirth, "YYYY-MM-DD HH:mm:ss");
+  console.log('Birthday: ' + birthDay);
+  const when = moment(req.body.whenRegistered, "YYYY-MM-DD HH:mm:ss");
+  console.log('When: ' + when);
   const pupil = {
     name: req.body.name,
+    lastName: req.body.family,
     pupilId: ( req.body.pupilId ) ? req.body.pupilId : '',
     address: ( req.body.address ) ? req.body.address : '',
-    birthDay: ( req.body.birthDay ) ? req.body.birthDay : '',
+    birthDay: new Date(birthDay.valueOf()),
     parentId: (req.body.parentId) ? req.body.parentId : '',
-    paymentApprovalNumber: (req.body.paymentApprovalNumber) ?
-        req.body.paymentApprovalNumber : '',
+    paymentApprovalNumber: (req.body.PaymentConfirmationNumber) ?
+        req.body.PaymentConfirmationNumber : '',
+    payerName: ( req.body.name_pay ) ? req.body.name_pay : '',
+    status: ( req.body.status ) ? req.body.status : '',
+    registrationSource: ( req.body.registration_source ) ? req.body.registration_source : '',
     phoneNumber: req.body.phoneNumber,
-    medicalLimitations: req.body.medicalLimitations ? req.body.medicalLimitations : true,
+    medicalLimitations: req.body.medicalLimitations,
     whenRegistered: new Date(when.valueOf()) // valueOf() is actually unix() * 1000
   }
 
@@ -246,7 +254,8 @@ exports.registerPupil = functions.firestore
         })
      })
      .then( res => {
-       console.log(`Update result: ${res}`);
+      const _json = JSON.stringify(res);
+       console.log(`Update result: ${_json}`);
      })
 
      return true;
@@ -319,12 +328,22 @@ function getGroups(req, res) {
               var unitId = doc.ref.parent.parent.id;
               const groupData = doc.data();
 
+              //console.log(JSON.stringify(groupData));
+
+              const unitName = ( groupData.unit ) ? groupData.unit.name_he : '';
+              const authority = ( groupData.unit ) ? groupData.unit.authority : '';
+
               _groups.push({
                 unitId: unitId,
                 id: doc.id,
                 symbol: groupData.symbol,
                 name: groupData.name,
-                opened: moment(groupData.opened).format('DD/MM/YYYY')
+                openFrom: moment(groupData.openFrom).format('DD/MM/YYYY'),
+                openTill: moment(groupData.openTill).format('DD/MM/YYYY'),
+                price: groupData.price,
+                capacity: groupData.capacity,
+                unitName: unitName.trim(),
+                authority: authority.trim()
               });
 
             });

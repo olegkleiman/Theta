@@ -19,7 +19,7 @@ type State = {
   },
   selectedRowIndex: Number,
   dropdownOpen: boolean,
-  loading: Boolean
+  dataStatus: string
 }
 
 @withAuth
@@ -34,7 +34,7 @@ class Units extends React.Component<{}, State> {
     },
     selectedRowIndex: -1,
     dropdownOpen: false,
-    loading: true
+    dataStatus: 'טוען נתונים...'
   };
 
   toggle() {
@@ -49,13 +49,13 @@ class Units extends React.Component<{}, State> {
       const userRoles = this.props.secRoles;
 
       const getOptions = {
-        source: 'cache'
+        source: 'server'
       }
 
       const self = this;
 
       const response = await firebase.firestore().collection('units')
-                         .get(getOptions);
+                       .get(getOptions);
 
       const _units = [];
 
@@ -63,27 +63,30 @@ class Units extends React.Component<{}, State> {
 
         const unitData = unit.data();
 
-        const secRole = unitData.sec_role;
-        const isSecGroupFound = userRoles.find( role => {
-          return role === secRole
-        });
+        // const secRole = unitData.sec_role;
+        // const isSecGroupFound = userRoles.find( role => {
+        //   return role === secRole
+        // });
 
-        if( isSecGroupFound ) {
+        //if( this.props.isAdmin || isSecGroupFound ) {
           _units.push({
             name: unitData.name_he,
             education_type: unitData.education_type,
             authority: unitData.authority,
+            region: unitData.region,
+            cluster: unitData.cluster,
             type: unitData.type,
             symbol: unitData.symbol,
             id: unit.id
           });
-        }
+        //}
 
       });
 
       this.setState({
         units: _units,
-        loading: false
+        dataStatus: _units.length == 0 ? 'No Units are allowed to view for this account'
+                                        : this.state.dataStatus
       })
     }
   }
@@ -135,23 +138,26 @@ class Units extends React.Component<{}, State> {
         fontSize: 25,
         padding: 0,
         userSelect: 'none',
-        textAlign: 'center'
+        textAlign: 'center',
       }
     }, {
+      Header: 'רשות',
+      accessor: 'authority',
+    }, {
+      Header: 'מחוז',
+      accessor: 'region',
+    }, {
       Header: 'שם',
-      accessor: 'name'
+      accessor: 'name',
     }, {
       Header: 'סמל',
       accessor: 'symbol',
     }, {
-      Header: 'רשות',
-      accessor: 'authority'
-    }, {
       Header: 'סוג מוסד',
-      accessor: 'type'
+      accessor: 'type',
     }, {
-      Header: 'סוג חינוך',
-      accessor: 'education_type'
+      Header: 'אשכול',
+      accessor: 'cluster',
     }];
 
     return <div>
@@ -168,7 +174,9 @@ class Units extends React.Component<{}, State> {
                           <Col md='12' className='d-flex justify-content-end'>
                             <Button color='primary'
                                     className='align-self-end'
-                                    onClick={::this.addUnit}>הוסף מוסד +</Button>
+                                    onClick={::this.addUnit}>
+                                  <span>הוסף מוסד </span>&nbsp;<i className="fa fa-plus-circle" aria-hidden="true"></i>
+                            </Button>
                           </Col>
                           <Col md='12'>
                             <Card>
@@ -177,12 +185,11 @@ class Units extends React.Component<{}, State> {
                                   PaginationComponent={Pagination}
                                   filterable
                                   data={this.state.units}
-                                  loading = {this.state.loading}
                                   columns={columns}
                                   showPagination={true}
                                   className="-striped -highlight"
                                   loadingText='טוען נתונים...'
-                                  noDataText='אין נתונים להצגה'
+                                  noDataText='טוען נתונים...'
                                   previousText = 'קודם'
                                   nextText = 'הבא'
                                   pageText = 'עמוד'
@@ -191,7 +198,8 @@ class Units extends React.Component<{}, State> {
                                   getTheadThProps = { () => {
                                     return {
                                       style: {
-                                        'textAlign': 'right'
+                                        'textAlign': 'right',
+                                        'fontWeight': '700'
                                       }
                                     }
                                   }}

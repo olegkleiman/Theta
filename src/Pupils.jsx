@@ -28,16 +28,7 @@ type Pupil = {
     medicalLimitations:Boolean
 }
 
-type Unit = {
-  unitId: String,
-  unitName: String,
-  unitSymbol: String,
-  authority: String
-}
-
-
 type State = {
-  units: Unit[],
   pupils: Pupil[],
   authorities: String[],
   authoritiesLoaded: Boolean,
@@ -51,7 +42,6 @@ class Pupils extends React.Component<{}, State> {
 
   state = {
     pupils: [],
-    units: [],
     authorities: [],
     authoritiesLoaded: false,
     loading: true,
@@ -127,12 +117,7 @@ class Pupils extends React.Component<{}, State> {
                     const unitName = unitData.name_he;
                     const unitSymbol = unitData.symbol;
                     const authority = unitData.authority;
-                    _units.push({
-                      unitId: String,
-                      unitName: String,
-                      unitSymbol: String,
-                      authority: String
-                    })
+                    _units.push({unitName, unitSymbol})
 
                     promises2.push(firebase.firestore().collection('units')
                         .doc(unit.id).collection('groups')
@@ -222,8 +207,6 @@ class Pupils extends React.Component<{}, State> {
     {
        Header:'שם פרטי',
        accessor:'name',
-       Cell:      cellInfo =>::this.renderEditable(cellInfo,
-       cellInfo.original.name),
        style:{
           lineHeight:'3em'
        }
@@ -231,7 +214,6 @@ class Pupils extends React.Component<{}, State> {
     {
        Header:'שם משפחה',
        accessor:'lastName',
-       Cell:      cellInfo =>::this.renderEditable(cellInfo, cellInfo.original.lastName),
        style:{
           lineHeight:'3em'
        }
@@ -239,9 +221,9 @@ class Pupils extends React.Component<{}, State> {
     {
        Header:'תאריך לידה',
        accessor:'birthDay',
-       Cell:      cellInfo =>::this.renderDatePicker(cellInfo,
-       cellInfo.original.opened),
-
+       style:{
+          lineHeight:'3em'
+       }
     },
     {
        Header:'טלפון',
@@ -260,7 +242,6 @@ class Pupils extends React.Component<{}, State> {
     {
        Header:'מגבלות רפואיות',
        accessor:'medicalLimitations',
-       Cell: ::this.renderCheckable,
        style:{
           overflow:'visible'
        }
@@ -327,75 +308,6 @@ class Pupils extends React.Component<{}, State> {
        console.error(err);
      }
 
-  }
-
-  async handleUpdate(cellInfo, e) {
-    if( e.key === 'Enter' || e.type === 'blur') {
-
-      e.preventDefault();
-
-      const value = e.target.innerHTML;
-      this.updateFirestore(cellInfo.index,
-                           cellInfo.original.id,
-                           cellInfo.original.groupId,
-                           cellInfo.original.unitId,
-                           cellInfo.column.id,
-                           value);
-    }
-  }
-
-  renderEditable(cellInfo, value) {
-    return (
-      <div
-        style={{ backgroundColor: "#fafafa" }}
-        contentEditable
-        suppressContentEditableWarning
-        onKeyDown={ e => ::this.handleUpdate(cellInfo, e) }
-        onBlur={ e => ::this.handleUpdate(cellInfo, e) }>
-        {value}
-      </div>)
-  }
-
-  renderCheckable(cellInfo) {
-
-    const pupilData = this.state.pupils[cellInfo.index];
-    const _medicalLimitations = pupilData.medicalLimitations;
-
-    return (
-      <div className='form-check'
-        style={this.styles.isClosed}>
-        <label className='form-check-label'>
-          <input className='form-check-input'
-            type='checkbox'
-            className='checkbox'
-            checked={_medicalLimitations}
-          />
-          <span className='form-check-sign'></span>
-       </label>
-     </div>)
-  }
-
-  openDateChaned(_date: Date,
-                 cellInfo) {
-
-    this.updateFirestore(cellInfo.index,
-                            cellInfo.original.id,
-                            cellInfo.original.groupId,
-                            cellInfo.original.unitId,
-                            cellInfo.column.id,
-                            _date.toDate());
-
-  }
-
-  renderDatePicker(cellInfo, value) {
-    return(
-        <Datetime closeOnSelect={true}
-                  value={value}
-                  onChange={ (_date) => ::this.openDateChaned(_date, cellInfo) }
-                  input={true}
-                  timeFormat={false}
-                  local='he' />
-    );
   }
 
   onAuthorityChanged = (authorities) => {
@@ -466,7 +378,7 @@ class Pupils extends React.Component<{}, State> {
 
                             />
                           </Col>
-                          <Col md={{ size: 2, offset: 8 }}
+                          <Col md={{ size: 2, offset: 10 }}
                               className='text-right my-auto' id='tooltipContainer'>
                               <Button color='primary' id='btnExportExcel'
                                       onClick={::this.exportExcel}>
@@ -485,11 +397,6 @@ class Pupils extends React.Component<{}, State> {
                                 target='btnExportExcel'>
                                   ייצוא לקובץ חיצוני
                               </Tooltip>
-                          </Col>
-                          <Col md='2' className='text-right my-auto' >
-                            <Button color='primary'>
-                              הוסף תלמיד <i className="far fa-plus-square"></i>
-                            </Button>
                           </Col>
                         </Row>
                         <Row>

@@ -2,6 +2,8 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
 import ReactTable from 'react-table';
+import { Row, Col, Button,
+  Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import moment from 'moment';
 import http from 'http';
 import firebase from './firebase.js';
@@ -23,25 +25,21 @@ type Group = {
 
 type State = {
   groups: Group[],
-  loading: Boolean
+  dataStatus: string,
+  modal: Boolean,
+  groupId2Delete: String
 }
 
+@withAuth
+@withRouter
+export default
 class UnitGroups extends React.Component<Props, State> {
 
   state = {
     groups: [],
-    loading: true
-  }
-
-  constructor(props) {
-
-    super(props);
-
-    this.styles = {
-      isClosed: {
-        marginTop: '-16px'
-      }
-    }
+    dataStatus: 'טוען נתונים...',
+    modal: false,
+    groupId2Delete: ''
   }
 
   componentDidUpdate(prevProps: Props, prevState: State) {
@@ -63,27 +61,28 @@ class UnitGroups extends React.Component<Props, State> {
 
     let _groups: Group[] = [];
 
-    const resp = await firebase.firestore().collection('units').doc(this.props.docId).collection('groups')
+    const resp = await firebase.firestore().collection('units')
+                       .doc(this.props.docId).collection('groups')
                        .get(getOptions);
 
     resp.docs.forEach( (group, index) => {
 
       let data = group.data();
-      const secRole = data.sec_role;
-      const isAllowed = userRoles.find( role => {
-        return role === secRole
-      });
+      // const secRole = data.sec_role;
+      // const isAllowed = userRoles.find( role => {
+      //   return role === secRole
+      // });
 
-      if( isAllowed ) {
+      //if( this.props.isAdmin || isAllowed ) {
 
         let _isClosed = data.isClosed;
 
-        let _openedDate= ( data.opened ) ?
-                      moment.unix(data.opened.seconds).format('DD/MM/YYYY') :
+        let _openDate= ( data.openFrom ) ?
+                      moment.unix(data.openFrom.seconds).format('DD/MM/YYYY') :
                       '<none>';
 
-        let _openedTillDate = ( data.openedTill ) ?
-                        moment.unix(data.openedTill.seconds).format('DD/MM/YYYY') :
+        let _openTillDate = ( data.openTill ) ?
+                        moment.unix(data.openTill.seconds).format('DD/MM/YYYY') :
                         '<none>';
 
         let registeredPupils = ( data.registeredPupils ) ? data.registeredPupils : 0;
@@ -92,21 +91,21 @@ class UnitGroups extends React.Component<Props, State> {
           id: group.id,
           name: data.name,
           symbol: data.symbol,
-          opened: _openedDate,
-          openedTill: _openedTillDate,
+          openFrom: _openDate,
+          openTill: _openTillDate,
           isClosed: _isClosed,
           price: data.price + ' ₪',
           capacity: data.capacity,
           registeredPupils: registeredPupils
         });
-      }
+      //}
 
     });
 
     this.setState({
       groups: _groups,
-      loading: false
-
+      dataStatus: _groups.length == 0 ? 'No Groups are allowed to view for this account'
+                                      : this.state.dataStatus
 
     });
 
@@ -136,7 +135,9 @@ class UnitGroups extends React.Component<Props, State> {
 
     return (
       <div className='form-check'
-        style={this.styles.isClosed}>
+        style={{
+          marginTop: '-16px'
+        }}>
         <label className='form-check-label'>
           <input className='form-check-input'
             type='checkbox'
@@ -197,27 +198,61 @@ class UnitGroups extends React.Component<Props, State> {
     }
   }
 
+  editGroup(groupId: String) {
+    //console.log(`UnitId: ${this.props.docId}. GroupId: ${groupId}`);
+    this.props.history.push(`/dashboard/addgroup/${this.props.docId}/${groupId}`);
+  }
+
+  toggleModal(groupId: String) {
+    this.setState({
+      modal: !this.state.modal,
+      groupId2Delete: groupId
+    });
+  }
+
+  deleteGroup() {
+    //console.log(`UnitId: ${this.props.docId}. GroupId: ${this.state.groupId2Delete}`);
+    this.setState({
+      modal: !this.state.modal
+    });
+  }
+
   render() {
 
     const self = this;
 
-    return (
+    return (<React.Fragment>
+      <Modal isOpen={this.state.modal}>
+        <ModalHeader>
+          מחיקת קבוצה
+        </ModalHeader>
+        <ModalBody>
+          אישור לפעולה זו תגרום לחיקה מוחלטת של כל נתוני הקבוצה, כולל רשימות הנרשמים. זאת פעולה לא הפיכה.
+        </ModalBody>
+        <ModalFooter>
+          <Button color="primary" onClick={::this.deleteGroup}>אישור</Button>{' '}
+          <Button color="secondary" onClick={() => ::this.toggleModal('')}>ביטול</Button>
+        </ModalFooter>
+      </Modal>
       <ReactTable
         className="-striped -highlight tableInCard col col-12"
         data={this.state.groups}
+        noDataText={this.state.dataStatus}
         filterable
         defaultPageSize={5}
         getTheadThProps = { () => {
           return {
             style: {
-              'textAlign': 'right'
+              'textAlign': 'right',
+              'fontWeight': '700'
             }
           }
         }}
         getTdProps = { (state, rowInfo, column, instance) => {
           return {
             onClick: (e, handleOriginal) => {
-              if( column.id != 'isClosed' ) {
+              if( column.id != 'isClosed'
+                  && column.id != 'editors') {
                 self.onRowSelected(rowInfo);
               }
             },
@@ -236,22 +271,34 @@ class UnitGroups extends React.Component<Props, State> {
         }}
         columns={[{
            Header: 'שם',
-           accessor: 'name'
+           accessor: 'name',
+           style: {
+            lineHeight: '3em'
+            }
          }, {
            Header: 'סמל',
-           accessor: 'symbol'
+           accessor: 'symbol',
+           style: {
+              lineHeight: '3em'
+           }
          }, {
            Header: 'מחיר',
-           accessor: 'price'
+           accessor: 'price',
+           style: {
+              lineHeight: '3em'
+           }
          }, {
             Header: 'תאריך פתיחה',
-            accessor: 'opened'
-          }, {
-             Header: 'תאריך סגירה',
-             accessor: 'openedTill'
+            accessor: 'openFrom',
+            style: {
+              lineHeight: '3em'
+            }
           }, {
            Header: 'כמות מקומות',
-           accessor: 'capacity'
+           accessor: 'capacity',
+           style: {
+              lineHeight: '3em'
+           }
           }, {
            Header: 'תלמידים רשומים',
            accessor: 'registeredPupils',
@@ -266,13 +313,11 @@ class UnitGroups extends React.Component<Props, State> {
              return (
                <div style={{
                  width: '100%',
-                 height: '100%',
-                 backgroundColor: '#dadada',
-                 borderRadius: '2px'
+                 height: '75%'
                }}>
                  <div style={{
                      width: percentage,
-                     backgroundColor: percentage > 66 ? '#85cc00'
+                     backgroundColor: percentage > 66 ? '#f44336'
                       : percentage > 33 ? '#ffbf00'
                       : 'green',
                      height: '100%',
@@ -282,15 +327,47 @@ class UnitGroups extends React.Component<Props, State> {
                    {percentage}%
                  </div>
                </div>)
-           }
+           },
+            style: {
+              lineHeight: '3em'
+            }
          }, {
             Header: 'כיתה סגורה',
             accessor: 'isClosed',
-            Cell: ::this.renderCheckable
-        }, ]}
-        loading = {this.state.loading}
+            Cell: ::this.renderCheckable,
+            style: {
+              lineHeight: '3em'
+            }
+        }, {
+          Header: '',
+          accessor: 'editors',
+          width: 80,
+          Cell: row => {
+            const groupId = row.original.id;
+            return <Row>
+                      <Col md='4'>
+                        <Button className='btn-round btn-icon btn btn-info btn-sm'
+                                style={{
+                                  'padding': '0'
+                                }}
+                                onClick={ () => ::this.editGroup(groupId) } >
+                          <i className='fa fa-edit'></i>
+                        </Button>
+                     </Col>
+                     <Col md='4'>
+                      <Button className='btn-round btn-icon btn btn-danger btn-sm'
+                                style={{
+                                  'padding': '0'
+                                }}
+                              onClick={ () => ::this.toggleModal(groupId) } >
+                        <i className='fa fa-times'></i>
+                      </Button>
+                     </Col>
+                  </Row>
+          }
+        } ]}
         loadingText = 'טוען נתונים...'
-        noDataText = 'אין נתונים להצגה'
+        noDataText = 'אין נתונים'
         previousText = 'קודם'
         nextText = 'הבא'
         pageText = 'עמוד'
@@ -298,9 +375,8 @@ class UnitGroups extends React.Component<Props, State> {
         rowsText = 'שורות'
         >
      </ReactTable>
+     </React.Fragment>
    )
   }
 
 }
-
-export default withRouter(withAuth(UnitGroups));

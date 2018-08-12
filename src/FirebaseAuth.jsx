@@ -4,7 +4,8 @@ import firebase from './firebase.js';
 
 type State = {
   secRoles: string[],
-  email: string
+  email: string,
+  role: string
 }
 
 
@@ -12,7 +13,8 @@ let withAuth = (WrappedComponent) => class extends React.Component<{}, State> {
 
   state = {
     secRoles: [],
-    email: ''
+    email: '',
+    role: ''
   }
 
   fetchUser() {
@@ -37,7 +39,9 @@ let withAuth = (WrappedComponent) => class extends React.Component<{}, State> {
                                     .get();
     if( response.docs.length != 0 ) {
       const docSnapshot = response.docs[0];
-      let userRoles = docSnapshot.data().sec_roles;
+      const docData = docSnapshot.data()
+      let userRoles = docData.sec_roles;
+      const role = docData.role;
 
       if( !userRoles ) {
         userRoles = ['']; // assign empty roles
@@ -45,7 +49,8 @@ let withAuth = (WrappedComponent) => class extends React.Component<{}, State> {
 
       this.setState({
         secRoles: userRoles,
-        email: email
+        email: email,
+        isAdmin: role === 'admin' ? true : false
       });
 
     }
@@ -62,6 +67,7 @@ let withAuth = (WrappedComponent) => class extends React.Component<{}, State> {
                 <WrappedComponent
                   secRoles={this.state.secRoles}
                   userEMail={this.state.email}
+                  isAdmin={ this.state.role.toLowerCase() === 'admin'}
                   {...this.props} />
               </React.Fragment>
             )

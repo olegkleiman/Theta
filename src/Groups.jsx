@@ -10,8 +10,10 @@ import firebase from './firebase.js';
 import Pagination from './TablePagination';
 import { Container, Button,
   Row, Col, Card, CardHeader, CardBody,
-  Tooltip
+  Tooltip,
+  Modal, ModalHeader, ModalBody, ModalFooter
 } from 'reactstrap';
+import withAuth from './FirebaseAuth';
 
 type Group = {
     id: String,
@@ -20,8 +22,8 @@ type Group = {
     symbol: String,
     authority: String,
     capacity: Number,
-    opened: Date,
-    openedTill: Date,
+    openFrom: Date,
+    openTill: Date,
     unitName: String,
     price: Number
 }
@@ -32,9 +34,12 @@ type State = {
   authoritiesLoaded: Boolean,
   selectedAuthorities: String[],
   loading: Boolean,
-  tooltipOpen: Boolean
+  tooltipOpen: Boolean,
+  modal: Boolean,
+  groupId2Delete: String
 }
 
+@withAuth
 class Groups extends React.Component<{}, State> {
 
   state = {
@@ -43,7 +48,10 @@ class Groups extends React.Component<{}, State> {
     authoritiesLoaded: false,
     selectedAuthorities: [],
     loading: true,
-    tooltipOpen: false
+    tooltipOpen: false,
+    modal: false,
+    groupId2Delete: ''
+
   }
 
   async loadAuthorities() {
@@ -85,6 +93,7 @@ class Groups extends React.Component<{}, State> {
       }
 
       const _groups = [];
+      const userRoles = this.props.secRoles;
 
       const units = await firebase.firestore().collection('units')
              .get(getOptions)
@@ -104,23 +113,31 @@ class Groups extends React.Component<{}, State> {
 
             const groupData = group.data();
             const groupId = group.id;
+            const secRole = data.sec_role;
 
-            const openTill = groupData.openedTill ?
-                             moment.unix(groupData.openedTill.seconds).format('DD/MM/YYYY') :
-                             '';
-
-            _groups.push({
-              id: groupId,
-              unitId: unitId,
-              name: groupData.name,
-              symbol: groupData.symbol,
-              unitName: unitName,
-              authority: authority,
-              opened: moment.unix(groupData.opened.seconds).format('DD/MM/YYYY'),
-              openedTill: openTill,
-              price: groupData.price,
-              capacity: groupData.capacity
+            const isAllowed = userRoles.find( role => {
+              return role === secRole
             });
+
+            if( this.props.isAdmin || isAllowed ) {
+
+              const openTill = groupData.openTill ?
+                               moment.unix(groupData.openedTill.seconds).format('DD/MM/YYYY') :
+                               '';
+
+              _groups.push({
+                id: groupId,
+                unitId: unitId,
+                name: groupData.name,
+                symbol: groupData.symbol,
+                unitName: unitName,
+                authority: authority,
+                openFrom: moment.unix(groupData.openFrom.seconds).format('DD/MM/YYYY'),
+                openTill: openTill,
+                price: groupData.price,
+                capacity: groupData.capacity
+              });
+            }
 
         });
 
@@ -151,9 +168,32 @@ class Groups extends React.Component<{}, State> {
         return response.json();
     })
     .then( groups => {
+
+        let _groups;
+        // if( this.props.isAdmin ) {
+
+          _groups = groups;
+
+        // } else {
+        //
+        //   _groups = groups.map( group => {
+        //
+        //     const secRole = group.secRole;
+        //
+        //     const isAllowed = this.props.secRoles.find( role => {
+        //       return role === secRole
+        //     });
+        //     return ( isAllowed ) ? group : null;
+        //
+        //  })
+
+        //};
+
+        _groups = _groups.filter( r => r); // remove not allowe groups
+
         self.setState({
           loading: false,
-          groups: groups
+          groups: _groups
         })
     })
     .catch( error =>
@@ -187,8 +227,8 @@ class Groups extends React.Component<{}, State> {
         groupData.push(group.symbol);
         groupData.push(group.capacity);
         groupData.push(group.unitName);
-        groupData.push(group.opened);
-        groupData.push(group.openedTill);
+        groupData.push(group.openFrom);
+        groupData.push(group.openTill);
         groupData.push(group.price);
 
         _export.data.push(groupData);
@@ -239,54 +279,6 @@ class Groups extends React.Component<{}, State> {
 
   }
 
-  async handleUpdate(cellInfo, e) {
-    if( e.key === 'Enter' || e.type === 'blur') {
-
-      e.preventDefault();
-
-      const value = e.target.innerHTML;
-      this.updateFirestore(cellInfo.index,
-                           cellInfo.original.id,
-                           cellInfo.original.unitId,
-                           cellInfo.column.id,
-                           value);
-    }
-  }
-
-  renderEditable(cellInfo, value) {
-    return (
-      <div
-        style={{ backgroundColor: "#fafafa" }}
-        contentEditable
-        suppressContentEditableWarning
-        onKeyDown={ e => ::this.handleUpdate(cellInfo, e) }
-        onBlur={ e => ::this.handleUpdate(cellInfo, e) }>
-        {value}
-      </div>)
-  }
-
-  openDateChaned(_date: Date,
-                 cellInfo) {
-
-    this.updateFirestore(cellInfo.index,
-                         cellInfo.original.id,
-                         cellInfo.original.unitId,
-                         cellInfo.column.id,
-                         _date.toDate());
-
-  }
-
-  renderDatePicker(cellInfo, value) {
-    return(
-        <Datetime closeOnSelect={true}
-                  value={value}
-                  onChange={ (_date) => ::this.openDateChaned(_date, cellInfo) }
-                  input={true}
-                  timeFormat={false}
-                  local='he' />
-    );
-  }
-
   onAuthorityChanged = (authorities) => {
 
     const _authorities = authorities.map( authority => {
@@ -300,7 +292,28 @@ class Groups extends React.Component<{}, State> {
     });
 
     this.setState({
-      selectedAuthorities: _authorities
+      selectedAuthorities: _authorities,
+      groups: _groups
+    });
+  }
+
+  editGroup(unitId: String,
+            groupId: String) {
+    //console.log(`UnitId: ${unitId}. GroupId: ${groupId}`);
+    this.props.history.push(`/dashboard/addgroup/${unitId}/${groupId}`);
+  }
+
+  toggleModal(groupId: String) {
+    this.setState({
+      modal: !this.state.modal,
+      groupId2Delete: groupId
+    });
+  }
+
+  deleteGroup() {
+    //console.log(`UnitId: ${this.props.docId}. GroupId: ${this.state.groupId2Delete}`);
+    this.setState({
+      modal: !this.state.modal
     });
   }
 
@@ -309,21 +322,18 @@ class Groups extends React.Component<{}, State> {
     const columns = [{
       Header: 'שם כיתה',
       accessor: 'name',
-      Cell: cellInfo => ::this.renderEditable(cellInfo, cellInfo.original.name),
       style: {
         lineHeight: '3em'
       }
     }, {
       Header: 'מזהה',
       accessor: 'symbol',
-      Cell: cellInfo => ::this.renderEditable(cellInfo, cellInfo.original.symbol),
       style: {
         lineHeight: '3em'
       }
     }, {
       Header: 'כמות ילדים',
       accessor: 'capacity',
-      Cell: cellInfo => ::this.renderEditable(cellInfo, cellInfo.original.capacity),
       width: 80,
       style: {
         lineHeight: '3em'
@@ -337,25 +347,52 @@ class Groups extends React.Component<{}, State> {
       }
     }, {
       Header: 'ת. התחלה',
-      accessor: 'opened',
-      Cell: cellInfo => ::this.renderDatePicker(cellInfo, cellInfo.original.opened),
+      accessor: 'openFrom',
       style: {
-        overflow: 'visible'
+        overflow: 'visible',
+        lineHeight: '3em'
       }
     }, {
       Header: 'ת.סיום',
-      accessor: 'openedTill',
-      Cell: cellInfo => ::this.renderDatePicker(cellInfo, cellInfo.original.openedTill),
+      accessor: 'openTill',
       style: {
-        overflow: 'visible'
+        overflow: 'visible',
+        lineHeight: '3em'
       }
     }, {
       Header: 'מחיר',
       accessor: 'price',
-      Cell: cellInfo => ::this.renderEditable(cellInfo, cellInfo.original.price),
       width: 80,
       style: {
         lineHeight: '3em'
+      }
+    }, {
+      Header: '',
+      accessor: 'editors',
+      width: 80,
+      Cell: row => {
+        const groupId = row.original.id;
+        const unitId = row.original.unitId;
+        return <Row>
+          <Col md='4'>
+            <Button className='btn-round btn-icon btn btn-info btn-sm'
+                    style={{
+                      'padding': '0'
+                    }}
+                    onClick={ () => ::this.editGroup(unitId, groupId) } >
+              <i className='fa fa-edit'></i>
+            </Button>
+          </Col>
+          <Col md='4'>
+            <Button className='btn-round btn-icon btn btn-danger btn-sm'
+                    style={{
+                      'padding': '0'
+                    }}
+                    onClick={ () => ::this.toggleModal(groupId) } >>
+              <i className='fa fa-times'></i>
+            </Button>
+          </Col>
+        </Row>
       }
     }];
 
@@ -364,6 +401,18 @@ class Groups extends React.Component<{}, State> {
     return <div>
               <div className='panel-header panel-header-sm'></div>
               <Container className='content h-100'>
+                <Modal isOpen={this.state.modal}>
+                  <ModalHeader>
+                    מחיקת קבוצה
+                  </ModalHeader>
+                  <ModalBody>
+                    אישור לפעולה זו תגרום לחיקה מוחלטת של כל נתוני הקבוצה, כולל רשימות הנרשמים. זאת פעולה לא הפיכה.
+                  </ModalBody>
+                  <ModalFooter>
+                    <Button color="primary" onClick={::this.deleteGroup}>אישור</Button>{' '}
+                    <Button color="secondary" onClick={() => ::this.toggleModal('')}>ביטול</Button>
+                  </ModalFooter>
+                </Modal>
                 <Row>
                   <Col md='12'>
                     <Card>
@@ -383,11 +432,11 @@ class Groups extends React.Component<{}, State> {
                               onChange={ value => ::this.onAuthorityChanged(value) }
                             />
                           </Col>
-                          <Col md={{ size: 2, offset: 5 }}
+                          <Col md={{ size: 2, offset: 10 }}
                               className='text-right my-auto' id='tooltipContainer'>
                               <Button color='primary' id='btnExportExcel'
                                       onClick={::this.exportExcel}>
-                                      Excel&nbsp;<i className="far fa-file-excel"></i>
+                                      <span>Excel</span>&nbsp;<i className="far fa-file-excel fa-lg"></i>
                               </Button>
 
                               <Tooltip placement='auto'
@@ -402,11 +451,6 @@ class Groups extends React.Component<{}, State> {
                                 target='btnExportExcel'>
                                   ייצוא לקובץ חיצוני
                               </Tooltip>
-                          </Col>
-                          <Col md='2' className='text-right my-auto' >
-                            <Button color='primary'>
-                              הוסף כיתה <i className="far fa-plus-square"></i>
-                            </Button>
                           </Col>
                         </Row>
                         <Row>

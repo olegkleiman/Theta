@@ -95,7 +95,7 @@ class Unit extends React.Component<Props, State> {
     if( docId !== this.props.id ) {
 
       const getOptions = {
-        source: 'server'
+        source: 'cache'
       }
 
       const self = this;
@@ -114,7 +114,7 @@ class Unit extends React.Component<Props, State> {
   }
 
   addGroup() {
-      this.props.history.push('/dashboard/addgroup/' + this.state.docId);
+      this.props.history.push(`/dashboard/addgroup/${this.state.docId}/0`);
   }
 
   render() {
@@ -213,7 +213,9 @@ class Unit extends React.Component<Props, State> {
                               <div className='col col-12 d-flex justify-content-end'>
                               <Button color='primary'
                                       className='align-self-end'
-                                      onClick={::this.addGroup}>הוסף כיתה +</Button>
+                                      onClick={::this.addGroup}>
+                                      <span>הוסף כיתה </span><i className="fa fa-plus-circle" aria-hidden="true"></i>
+                                      </Button>
                               </div>
                           </div>
                           <UnitGroups docId={this.state.docId} />
@@ -228,5 +230,3 @@ class Unit extends React.Component<Props, State> {
   }
 
 }
-
-//export default withRouter(connect()(Unit));

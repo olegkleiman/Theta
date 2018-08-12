@@ -14,7 +14,8 @@ import moment from 'moment';
 import _ from 'moment/locale/he';
 import classNames from 'classnames';
 import firebase from './firebase.js';
-import withAuth from './FirebaseAuth';
+import withAuth from './FirebaseAuth'
+import PupilData from './model/PupilData';
 import DropdownList from 'react-widgets/lib/DropdownList';
 
 type Pupil = {
@@ -41,14 +42,14 @@ type Pupil = {
     waitingList: Boolean
 }
 
-const TextField = ({id, lable, onChange,invalid, invalidMessage, className, disabled})  => {
+const TextField = ({id, value, label, onChange, invalid, invalidMessage, className, disabled})  => {
   return(
     <Row>
       <Col md={{ size: 2, offset: 2 }} className="text-right my-auto">
-        <div className='info-text'>{lable}</div>
+        <div className='info-text'>{label}</div>
       </Col>
       <Col md={{ size: 4 }}>
-        <Input id={id} name={lable} disabled={disabled}></Input>
+        <Input id={id} name={label} disabled={disabled} defaultValue={value} onChange={onChange}></Input>
       </Col>
       <Col md='4'
         className={className}>
@@ -57,14 +58,15 @@ const TextField = ({id, lable, onChange,invalid, invalidMessage, className, disa
     </Row>)
 }
 
-const  DatePicker = ({lable, onChange, invalid, invalidMessage, className}) => {
+const DatePicker = ({label, value, onChange, invalid, invalidMessage, className}) => {
     return(
       <Row>
         <Col md={{ size: 2, offset: 2}} className="text-right my-auto">
-            {lable}
+            {label}
         </Col>
         <Col md='4'>
           <Datetime id="datetime_test"
+                    value={value}
                     closeOnSelect={true}
                     onChange={onChange}
                     timeFormat={false}
@@ -78,7 +80,7 @@ const  DatePicker = ({lable, onChange, invalid, invalidMessage, className}) => {
     )
 }
 
-const AutoComplete = ({lable, data, defaultValue, onChange ,busy, groupBy, textField, disabled}) => {
+const AutoComplete = ({lable, data, value, onChange ,busy, groupBy, textField, disabled}) => {
   let filterGroupName = (item, value) => {
     const groupSymbol = item[textField].substr(0, item[textField].length);
     return groupSymbol.indexOf(value) === 0;
@@ -102,7 +104,7 @@ const AutoComplete = ({lable, data, defaultValue, onChange ,busy, groupBy, textF
             groupBy={groupBy}
             filter={filterGroupName}
             data={data}
-            defaultValue={defaultValue}
+            value={value}
             onChange={onChange}
             messages={ {
                   emptyFilter: 'לא נמצאו תוצאות סינון'
@@ -122,15 +124,10 @@ type State = {
 
 @withAuth
 export default
-class AddGroup extends React.Component<{}, State> {
+class AddPupil extends React.Component<{}, State> {
 
   state = {
-    pupil : {},
-    unitName: '',
     invalidField: '',
-    defaultAuthority: 'אנא בחר רשות' ,
-    defaultUnit: 'אנא בחר מוסד' ,
-    defaultGroup: 'אנא בחר כיתה' ,
     status: '',
     formInalid: false,
     paymentTypeCredit: true
@@ -222,12 +219,97 @@ class AddGroup extends React.Component<{}, State> {
 
   }
 
-
-
   async componentDidMount() {
-      this.loadAuthorities();
 
+
+
+      const unitId = this.props.match.params.unitid;
+      const groupId = this.props.match.params.groupid;
+      const pupilId = this.props.match.params.pupilid;
+
+      if( pupilId != 0 ) {
+
+            try {
+              let promises = [];
+              let unit;
+              let group;
+              let pupil;
+
+              promises.push(firebase.firestore().collection('units')
+                .doc(unitId).get().then((_unit) => {
+                  const unitData = _unit.data();
+                  unit = {
+                    unitId: unitId,
+                    unitName: unitData.name_he,
+                    authority: unitData.authority
+                  };
+                }));
+
+              promises.push(firebase.firestore().collection('units')
+                .doc(unitId).collection('groups').doc(groupId)
+                .get().then((_group) => {
+                  const groupData = _group.data();
+
+                  group = {
+                    unitId: unitId,
+                    unitName: unit.unitName,
+                    groupId: groupId,
+                    groupName: groupData.name,
+                    price: groupData.price
+                  };
+                }));
+            
+              promises.push(firebase.firestore().collection('units')
+                .doc(unitId).collection('groups')
+                .doc(groupId).collection('pupils')
+                .doc(pupilId)
+                .get().then(( _pupil) => {
+                  if( _pupil.exists ) {
+                    let pupilData = _pupil.data();
+                    Object.keys(pupilData).forEach(key => {
+                      if(pupilData[key] === null || pupilData[key] === undefined){
+                        delete pupilData[key];
+                      }               
+                     })
+                     this.setState({
+                      pupil: pupilData
+                     })
+                  }
+                })
+              );
+
+              Promise.all(promises).then( () => {
+                this.setState({
+                  componentState: 'edit',
+                  defaultAuthority: unit.authority,
+                  defaultUnit:  unit.unitName,
+                  defaultGroup:  group.groupName,
+                  selectedAuthority: unit.authority,
+                  selectedUnit: unit,
+                  selectedGroup: group
+
+                })
+              })
+
+
+          } catch( err ) {
+            console.error(err);
+          }
+      }
+      else{
+        this.setState({
+          componentState: 'new',
+          pupil : {},
+          defaultAuthority: 'אנא בחר רשות' ,
+          defaultUnit: 'אנא בחר מוסד' ,
+          defaultGroup: 'אנא בחר כיתה' ,
+          formInalid: false,
+          paymentTypeCredit: true
+        })
+      }
+      this.loadAuthorities();
       this.loadGroups();
+
   }
 
   birthDayChanged(_date: Date) {
@@ -241,7 +323,7 @@ class AddGroup extends React.Component<{}, State> {
   }
 
   validateGroup(group) {
-
+    console.log(group);
   }
 
   onFormSubmit = async(event) => {
@@ -265,22 +347,30 @@ class AddGroup extends React.Component<{}, State> {
       waitingList: (event.target.waitingList.value  === "on")? true : false,
     }
 
+    Object.keys(pupil).forEach(key => {
+      if(pupil[key] === null || pupil[key] === undefined){
+        delete pupil[key];
+      }               
+     })
+
     let _state = {};
     if (pupil) {
        _state.pupil = pupil;
     }
 
-    //validetion
-    if( !(this.state.pupil &&
+
+
+    //validation
+    if( !(_state.pupil &&
         (this.state.selectedAuthority)  &&
         (this.state.selectedUnit) &&
         (this.state.selectedGroup)&&
-        (this.state.pupil.pupilId)&&
-        (this.state.pupil.firstName)&&
-        (this.state.pupil.lastName)&&
-        (this.state.pupil.birthDay)&&
-        (this.state.pupil.parentId)&&
-        (this.state.pupil.phoneNumber))) {
+        (_state.pupil.pupilId)&&
+        (_state.pupil.firstName)&&
+        (_state.pupil.lastName)&&
+        (_state.pupil.birthDay)&&
+        (_state.pupil.parentId)&&
+        (_state.pupil.phoneNumber))) {
           _state.formInalid = true;
           this.setState(_state)
           return;
@@ -288,10 +378,10 @@ class AddGroup extends React.Component<{}, State> {
 
       try {
         _state.formInalid = false;
-        _state.status = 'נתוני כיתה מתווספים למערכת. נא להמתין...';
+        _state.status = 'נתוני ,תלמיד מתווספים למערכת. נא להמתין...';
         this.setState(_state)
 
-        const toastId = toast.success("כיתה חדשה מתווספת למערכת", {
+        const toastId = toast.success("פרטי התלמיד מתעדכנים במערכת" {
             position: "top-right",
             autoClose: 5000,
             hideProgressBar: false,
@@ -303,17 +393,27 @@ class AddGroup extends React.Component<{}, State> {
             const unitId = this.state.selectedUnit.unitId;
             const groupId = this.state.selectedGroup.groupId;
 
-            // Add new pupil to Firestore
-            const doc = await firebase.firestore().collection('units')
-                            .doc(unitId).collection('groups')
-                            .doc(groupId).collection('pupils')
-                            .add(pupil);
+            if(this.props.match.params.pupilid != 0){
+              // update pupil in Firestore
+              const doc = await firebase.firestore().collection('units')
+              .doc(unitId).collection('groups')
+              .doc(groupId).collection('pupils')
+              .doc(this.props.match.params.pupilid)
+              .update(pupil);
+            }else{
+              // Add new pupil to Firestore
+              const doc = await firebase.firestore().collection('units')
+              .doc(unitId).collection('groups')
+              .doc(groupId).collection('pupils')
+              .add(pupil);
+            }
 
+            
 
 
             toast.update(this.toastId,
                   {
-                    render: 'כיתה חדשה התווספה',
+                    render: "פרטי התלמיד עודכנו במערכת",
                     type: toast.TYPE.SUCCESS,
                     autoClose: 3000,
                     className: css({
@@ -322,8 +422,8 @@ class AddGroup extends React.Component<{}, State> {
                     })
                   });
 
-                setTimeout( () => this.props.history.push(`/dashboard/units`),
-                           1500);
+                // setTimeout( () => this.props.history.push(`/dashboard/units`),
+                //            1500);
             } catch( err ) {
               console.error(err);
               toast.update(this.toastId,
@@ -399,7 +499,19 @@ class AddGroup extends React.Component<{}, State> {
       'invisible': !inalid
     })
 
+
     return (<div>
+      <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop
+          closeOnClick
+          rtl
+          pauseOnVisibilityChange={false}
+          draggable={false}
+          pauseOnHover={false}
+          />
       <div className='panel-header panel-header-sm'></div>
       <div className='content container h-100'>
         <Row>
@@ -410,46 +522,51 @@ class AddGroup extends React.Component<{}, State> {
               </div>
               <CardBody>
                 <Card>
-                    <CardBody>
+{this.state.pupil && <CardBody>
                       <Form onSubmit={::this.onFormSubmit}>
                         <Container>
                             <AutoComplete onChange={::this.authorityChanged}
                               lable="רשות" data={this.state.authorities} groupBy="region"
-                              defaultValue={this.state.defaultAuthority}
+                              value={this.state.defaultAuthority}
                               busy={!this.state.authoritiesLoaded}
                               invalid={(!this.state.selectedAuthority).toString()}
                               textField="name"/>
                           	<br />
                           	<AutoComplete onChange={::this.unitChanged}
                               lable="מוסד" data={this.state.filterdUnits} groupBy="authority"
-                              defaultValue={this.state.defaultUnit}
+                              value={this.state.defaultUnit}
                               busy={!this.state.unitsLoaded}
                              invalid={(!this.state.selectedUnit).toString()}
                               textField="unitName" disabled/>
                           	<br />
                           	<AutoComplete onChange={::this.groupChanged}
                               lable="כיתה" data={this.state.filterdGroups} groupBy="unitName"
-                              defaultValue={this.state.defaultGroup}
+                              value={this.state.defaultGroup}
                               busy={!this.state.groupsLoaded}
-                             invalid={(!this.state.selectedGroup).toString()}
+                              invalid={(!this.state.selectedGroup).toString()}
                               textField="groupName" disabled/>
                           	<br />
-                          	<TextField id="pupilId"  lable="ת.ז."
+                          	<TextField id="pupilId" label="ת.ז."
+                              value={this.state.pupil.pupilId}
                               onChange={::this.validateGroup}
                               invalidMessage="שדה חובה"
-                              className={priceClassNames}/>
+                              className={priceClassNames}>
+                            </TextField>
                           	<br />
-                          	<TextField id="firstName"  lable="שם פרטי"
+                          	<TextField id="firstName" label="שם פרטי"
+                                value={this.state.pupil.name}
                                 onChange={::this.validateGroup}
                                 invalidMessage="שדה חובה"
                                 className={priceClassNames}/>
                           	<br />
-                          	<TextField id="lastName"  lable="שם משפחה"
+                          	<TextField id="lastName" label="שם משפחה"
+                               value={this.state.pupil.lastName}
                                onChange={::this.validateGroup}
                                invalidMessage="שדה חובה"
                                className={priceClassNames}/>
                           	<br />
-                          	<DatePicker lable="תאריך לידה"
+                          	<DatePicker label="תאריך לידה"
+                               value={this.state.pupil.birthDay}
                                onChange={::this.birthDayChanged}
                                invalidMessage="שדה חובה"
                                className={priceClassNames}/>
@@ -458,52 +575,70 @@ class AddGroup extends React.Component<{}, State> {
                               <Col md={{ size: 2, offset: 2 }} className="text-right my-auto">
                                 <div className='info-text'>מגבלות רפואיות</div>
                               </Col>
-                              <Col md={{ size: 4 }}>
-                                <Input type="checkbox" name="medicalLimitations"/>
-                              </Col>
-                              <Col md='4'
-                                className={priceClassNames}>
+                              <Col md='1' className="text-right my-auto">
+
+                                  <div className='form-check'
+                                    style={{
+                                      marginTop: '-16px'
+                                    }}>
+                                    <label className='form-check-label'>
+                                      <input className='form-check-input'
+                                        id="medicalLimitations"
+                                        type='checkbox'
+                                        className='checkbox'
+                                        checked={this.state.pupil.medicalLimitations}
+                                      />
+                                      <span className='form-check-sign'></span>
+                                   </label>
+                                 </div>
 
                               </Col>
                             </Row>
-
                             <br/>
-                          	<TextField id="address"  lable="כתובת"
+                          	<TextField id="address"
+                               value={this.state.pupil.address}
+                               label="כתובת"
                                onChange={::this.validateGroup}
                                className={priceClassNames}/>
                           	<br />
-                          	<TextField id="parentId"  lable="ת.ז. הורה"
+                          	<TextField id="parentId" label="ת.ז. הורה"
+                               value={this.state.pupil.parentId}
                                onChange={::this.validateGroup}
                                invalidMessage="שדה חובה"
                                className={priceClassNames}/>
                           	<br />
-                          	<TextField id="parentName"  lable="שם הורה"
+                          	<TextField id="parentName" label="שם הורה"
                               onChange={::this.validateGroup}
                                className={priceClassNames}/>
                           	<br />
-                          	<TextField id="phoneNumber"  lable="טלפון הורה"
+                            <TextField id="phoneNumber" label="טלפון הורה"
+                               value={this.state.pupil.phoneNumber}
                                onChange={::this.validateGroup}
                                invalidMessage="שדה חובה"
                                className={priceClassNames}/>
                           	<br />
-                          	<TextField id="parentId2"  lable="ת.ז. הורה נוסף"
+                          	<TextField id="parentId2" label="ת.ז. הורה נוסף"
                                onChange={::this.validateGroup}
                                className={priceClassNames}/>
                           	<br />
-                          	<TextField id="parentName2"  lable="שם הורה נוסף"
+                          	<TextField id="parentName2" label="שם הורה נוסף"
                                onChange={::this.validateGroup}
                                className={priceClassNames}/>
                           	<br />
-                          	<TextField id="phoneNumber2"  lable="טלפון נוסף"
+                          	<TextField id="phoneNumber2" label="טלפון נוסף"
                                onChange={::this.validateGroup}
                                className={priceClassNames}/>
                           	<br />
                           	<Row>
                               <Col md='1'>
-                               <Input id="paymentTypeCredit"  type="radio" name="radio1" onChange={::this.paymentTypeChanged}/>
-                                                             </Col>
+                                 <Input id="paymentTypeCredit"
+                                        type="radio" name="radio1"
+                                        onChange={::this.paymentTypeChanged}/>
+                               </Col>
                              <Col md='5'>
-                          			<TextField id="paymentApprovalNumber"  lable="אישור תשלום" onChange={::this.validateGroup}
+                          			<TextField id="paymentApprovalNumber"
+                                  label="אישור תשלום"
+                                  onChange={::this.validateGroup}
                                   className={priceClassNames}
                                   disabled={!this.state.paymentTypeCredit}/>
                               </Col>
@@ -517,31 +652,30 @@ class AddGroup extends React.Component<{}, State> {
                               </Col>
                           	</Row>
                           	<br />
-                              <Row>
-                                <Col md={{ size: 2, offset: 2 }} className="text-right my-auto">
-                                  <div className='info-text'>רשימת המתנה</div>
-                                </Col>
-                                <Col md={{ size: 4 }}>
-                                   <Input id="waitingList" type="checkbox" name="waitingList"/>
-                                </Col>
-                                <Col md='4'
-                                  className={priceClassNames}>
+                            <Row>
+                              <Col md={{ size: 2, offset: 2 }} className="text-right my-auto">
+                                <div className='info-text'>רשימת המתנה</div>
+                              </Col>
+                              <Col md={{ size: 4 }}>
+                                 <Input id="waitingList" type="checkbox" name="waitingList"/>
+                              </Col>
+                              <Col md='4'
+                                className={priceClassNames}>
 
-                                </Col>
-                              </Row>
-
+                              </Col>
+                            </Row>
                             <br/>
-                          <Row>
-                            <Col md={{ size: 1, offset: 10}}>
-                              <Button type="submit" color='primary'>הוסף</Button>
-                            </Col>
-                          </Row>
-                          <br/>
-                          <br/>
-                          <br/>
+                            <Row>
+                              <Col md={{ size: 1, offset: 10}}>
+                                <Button type="submit" color='primary'>הוסף</Button>
+                              </Col>
+                            </Row>
+                            <br/>
+                            <br/>
+                            <br/>
                         </Container>
                       </Form>
-                    </CardBody>
+                    </CardBody>}
                 </Card>
               </CardBody>
             </Card>

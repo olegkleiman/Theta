@@ -15,14 +15,17 @@ import _ from 'moment/locale/he';
 import classNames from 'classnames';
 import firebase from './firebase.js';
 import withAuth from './FirebaseAuth';
+import GroupData from './model/GroupData';
 
 type State = {
   unitName: String,
+  groupData: GroupData,
   fromDate: moment,
   tillDate: moment,
   invalidField: String,
   status: ''
 }
+
 
 @withAuth
 export default
@@ -30,6 +33,14 @@ class AddGroup extends React.Component<{}, State> {
 
   state = {
     unitName: '',
+    groupData: {
+      name: '',
+      symbol: '',
+      price: 0,
+      capacity: 0,
+      openFrom: moment(),
+      openTill: moment()
+    },
     invalidField: '',
     status: ''
   }
@@ -52,6 +63,32 @@ class AddGroup extends React.Component<{}, State> {
     this.setState({
       unitName: unitName
     })
+
+    const groupId = this.props.match.params.groupid;
+    if( groupId != 0 ) {
+
+      try {
+        const groupDoc = await firebase.firestore().collection('units').doc(unitId)
+                            .collection('groups').doc(groupId)
+                            .get();
+        const _groupData = groupDoc.data();
+        const groupData =
+            new GroupData(_groupData.name,
+                          _groupData.symbol,
+                          _groupData.capacity,
+                          _groupData.price,
+                          _groupData.openFrom,
+                          _groupData.openTill,
+                          _groupData.paymentInstallments);
+
+        this.setState({
+          groupData: groupData
+        })
+      } catch( err ) {
+        console.log(err);
+      }
+
+    }
 
   }
 
@@ -219,40 +256,48 @@ class AddGroup extends React.Component<{}, State> {
         body: JSON.stringify(data2post)
       });
 
-      // Add new group to Firestore
-      const doc = await firebase.firestore().collection('units')
+      // Add new or update group to/in Firestore
+      if( this.props.match.params.groupid != 0 ) {
+        const doc = await firebase.firestore().collection('units')
                       .doc(unitId).collection('groups')
                       .add(group);
-
-      // Grant permissions to the current user
-      let response = await firebase.firestore().collection('users')
-                                      .where("email", "==", this.props.userEMail)
-                                      .get();
-      if( response.docs.length != 0 ) {
-        const userDoc = response.docs[0];
-        const secRoles = this.props.secRoles;
-        secRoles.push(group.sec_role);
-
-        await firebase.firestore().collection('users')
-              .doc(userDoc.id)
-              .update({
-                 sec_roles: secRoles
-              })
-
-              toast.update(this.toastId,
-                    {
-                      render: 'כיתה חדשה התווספה',
-                      type: toast.TYPE.SUCCESS,
-                      autoClose: 3000,
-                      className: css({
-                        transform: "rotateY(360deg)",
-                        transition: "transform 0.6sec"
-                      })
-                    });
-
-        setTimeout( () => this.props.history.push(`/dashboard/units`),
-                   1500);
+      } else {
+        const doc = await firebase.firestore().collection('units')
+                      .doc(unitId).collection('groups')
+                      .update(group);
       }
+
+      // Grant permissions to current user
+      // let response = await firebase.firestore().collection('users')
+      //                                 .where("email", "==", this.props.userEMail)
+      //                                 .get();
+      // if( response.docs.length != 0 ) {
+      //   const userDoc = response.docs[0];
+      //   const secRoles = this.props.secRoles;
+      //   secRoles.push(group.sec_role);
+      //
+      //   await firebase.firestore().collection('users')
+      //         .doc(userDoc.id)
+      //         .update({
+      //            sec_roles: secRoles
+      //         })
+      //
+      //         toast.update(this.toastId,
+      //               {
+      //                 render: 'כיתה חדשה התווספה',
+      //                 type: toast.TYPE.SUCCESS,
+      //                 autoClose: 3000,
+      //                 className: css({
+      //                   transform: "rotateY(360deg)",
+      //                   transition: "transform 0.6sec"
+      //                 })
+      //               });
+      //
+      // }
+
+      setTimeout( () => this.props.history.push(`/dashboard/units`),
+                 1500);
+
     } catch( err ) {
       console.error(err);
       toast.update(this.toastId,
@@ -265,7 +310,55 @@ class AddGroup extends React.Component<{}, State> {
     }
   }
 
+  handleNameChange(event) {
+    let groupData = this.state.groupData;
+    groupData.name = event.target.value;
+    this.setState({
+      groupData: groupData
+    });
+  }
+
+  handleSymbolChange(event) {
+    let groupData = this.state.groupData;
+    groupData.symbol = event.target.value;
+    this.setState({
+      groupData: groupData
+    });
+  }
+
+  handleCapacityChange(event) {
+    let groupData = this.state.groupData;
+    groupData.capacity = event.target.value;
+    this.setState({
+      groupData: groupData
+    });
+  }
+
+  handlePriceChange(event) {
+    let groupData = this.state.groupData;
+    groupData.price= event.target.value;
+    this.setState({
+      groupData: groupData
+    });
+  }
+
+  handlePaymentsChange(event) {
+    let groupData = this.state.groupData;
+    groupData.payments= event.target.value;
+    this.setState({
+      groupData: groupData
+    });
+  }
+
   render() {
+
+    let saveButtonText = 'הוסף';
+    let captionText = 'הוספת כיתה חדשה למוסד';
+
+    if( this.props.match.params.groupid != 0 )  {
+      saveButtonText = 'שמור';
+      captionText = 'עריכת נתוני כיתה למוסד'
+    }
 
     let isThisField = this.state.invalidField === 'symbol';
     const groupSymbolClassNames = classNames({
@@ -315,6 +408,14 @@ class AddGroup extends React.Component<{}, State> {
       'invisible': !isThisField
     })
 
+    isThisField = this.state.invalidField === 'payments';
+    const paymentsClassNames = classNames({
+      'text-left my-auto' : true,
+      'text-danger': isThisField,
+      'visible': isThisField,
+      'invisible': !isThisField
+    })
+
     return (<div>
       <ToastContainer
           position="top-right"
@@ -333,7 +434,7 @@ class AddGroup extends React.Component<{}, State> {
           <Col className='col-md-12'>
             <Card body className="text-center">
               <div className='card-header'>
-                <h5 className='title'>הוספת כיתה חדשה למוסד {this.state.unitName}</h5>
+                <h5 className='title'>{captionText} {this.state.unitName}</h5>
               </div>
               <CardBody>
                 <Card>
@@ -345,7 +446,9 @@ class AddGroup extends React.Component<{}, State> {
                               <div className='info-text'>שם כיתה</div>
                             </Col>
                             <Col md={{ size: 4 }}>
-                              <Input id='groupName' name='groupName'></Input>
+                              <Input id='groupName' name='groupName'
+                                      value={this.state.groupData.name}
+                                      onChange={::this.handleNameChange}></Input>
                             </Col>
                             <Col md='4' invalid={(this.state.invalidField === 'groupName').toString()}
                               className={groupNameClassNames}>
@@ -359,7 +462,9 @@ class AddGroup extends React.Component<{}, State> {
                             </Col>
                             <Col md='4'>
                                 <Input id='symbol' name='symbol'
-                                        type='number' placeholder="רק מספרים שלמים" />
+                                       value={this.state.groupData.symbol}
+                                       type='number' placeholder="רק מספרים שלמים"
+                                       onChange={::this.handleSymbolChange}/>
                             </Col>
                             <Col md='4' invalid={(this.state.invalidField === 'symbol').toString()}
                               className={groupSymbolClassNames}>
@@ -375,6 +480,7 @@ class AddGroup extends React.Component<{}, State> {
                               <Datetime closeOnSelect={true}
                                         onChange={::this._fromDateChanged}
                                         timeFormat={false}
+                                        value={this.state.groupData.openFrom}
                                         local='he' />
                             </Col>
                             <Col md='4' invlalid={(this.state.invalidField === 'openedFrom').toString()}
@@ -391,6 +497,7 @@ class AddGroup extends React.Component<{}, State> {
                               <Datetime closeOnSelect={true}
                                         onChange={::this._tillDateChanged}
                                         timeFormat={false}
+                                        value={this.state.groupData.openTill}
                                         local='he' />
                             </Col>
                             <Col md='4' invlalid={(this.state.invalidField === 'openedTill').toString()}
@@ -405,7 +512,9 @@ class AddGroup extends React.Component<{}, State> {
                             </Col>
                             <Col md='4'>
                               <Input id='groupCapacity' name='groupCapacity'
-                                     type='number' placeholder="רק מספרים שלמים" />
+                                     type='number' placeholder="רק מספרים שלמים"
+                                     value={this.state.groupData.capacity}
+                                     onChange={::this.handleCapacityChange}/>
                             </Col>
                             <Col md='4' invlalid={(this.state.invalidField === 'groupCapacity').toString()}
                               className={capacityClassNames}>
@@ -421,7 +530,9 @@ class AddGroup extends React.Component<{}, State> {
                               <InputGroup>
                                 <Input id='price' name='price'
                                        type='number'
-                                       placeholder="מספרים כמחיר, כמו 650.40, 510" />
+                                       placeholder="מספרים כמחיר, כמו 650.40, 510"
+                                       value={this.state.groupData.price}
+                                       onChange={::this.handlePriceChange}/>
                                 <InputGroupAddon addonType="append">₪</InputGroupAddon>
                               </InputGroup>
                             </Col>
@@ -430,9 +541,25 @@ class AddGroup extends React.Component<{}, State> {
                               אנא הזן ערך
                             </Col>
                           </Row>
+                          <br />
+                          <Row>
+                            <Col md={{ size: 2, offset: 2 }} className="text-right my-auto">
+                              מספר תשלומים
+                            </Col>
+                            <Col md='4'>
+                              <Input id='payments' name='payments'
+                                type='number' placeholder="רק מספרים שלמים"
+                                value={this.state.groupData.payments}
+                                onChange={::this.handlePaymentsChange}/>
+                            </Col>
+                            <Col md='4' invlalid={(this.state.invalidField === 'payments').toString()}
+                              className={paymentsClassNames}>
+                              אנא הזן ערך
+                            </Col>
+                          </Row>
                           <Row>
                             <Col md={{ size: 1, offset: 10}}>
-                              <Button type="submit" color='primary'>הוסף</Button>
+                              <Button type="submit" color='primary'>{saveButtonText}</Button>
                             </Col>
                           </Row>
                           <br/>
