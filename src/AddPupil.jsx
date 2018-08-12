@@ -537,154 +537,191 @@ class AddPupil extends React.Component<{}, State> {
 {this.state.pupil && <CardBody>
                       <Form onSubmit={::this.onFormSubmit}>
                         <Container>
-                            <AutoComplete onChange={::this.authorityChanged}
-                              lable="רשות" data={this.state.authorities} groupBy="region"
-                              value={this.state.selectedAuthority}
-                              busy={!this.state.authoritiesLoaded}
-                              invalid={(!this.state.selectedAuthority).toString()}
-                              textField="name"/>
-                          	<br />
-                          	<AutoComplete onChange={::this.unitChanged}
-                              lable="מוסד" data={this.state.filterdUnits} groupBy="authority"
-                              value={this.state.selectedUnit}
-                              busy={!this.state.unitsLoaded}
-                             invalid={(!this.state.selectedUnit).toString()}
-                              textField="unitName" disabled/>
-                          	<br />
-                          	<AutoComplete onChange={::this.groupChanged}
-                              lable="כיתה" data={this.state.filterdGroups} groupBy="unitName"
-                              value={this.state.selectedGroup}
-                              busy={!this.state.groupsLoaded}
-                              invalid={(!this.state.selectedGroup).toString()}
-                              textField="groupName" disabled/>
-                          	<br />
-                          	<TextField id="pupilId" label="ת.ז."
-                              defaultValue={this.state.pupil.pupilId}
+                          <AutoComplete onChange={::this.authorityChanged}
+                            lable="רשות" data={this.state.authorities} groupBy="region"
+                            value={this.state.selectedAuthority}
+                            busy={!this.state.authoritiesLoaded}
+                            invalid={(!this.state.selectedAuthority).toString()}
+                            textField="name"/>
+                          <br />
+                          <AutoComplete onChange={::this.unitChanged}
+                            lable="מוסד" data={this.state.filterdUnits} groupBy="authority"
+                            value={this.state.selectedUnit}
+                            busy={!this.state.unitsLoaded}
+                            invalid={(!this.state.selectedUnit).toString()}
+                            textField="unitName" disabled/>
+                          <br />
+                          <AutoComplete onChange={::this.groupChanged}
+                            lable="כיתה" data={this.state.filterdGroups} groupBy="unitName"
+                            value={this.state.selectedGroup}
+                            busy={!this.state.groupsLoaded}
+                            invalid={(!this.state.selectedGroup).toString()}
+                            textField="groupName" disabled/>
+                          <br />
+                          <TextField id="pupilId" label="ת.ז."
+                            defaultValue={this.state.pupil.pupilId}
+                            onChange={::this.validateGroup}
+                            invalidMessage="שדה חובה"
+                            className={priceClassNames}>
+                          </TextField>
+                          <br />
+                          <TextField id="firstName" label="שם פרטי"
+                              defaultValue={this.state.pupil.name}
                               onChange={::this.validateGroup}
                               invalidMessage="שדה חובה"
-                              className={priceClassNames}>
-                            </TextField>
-                          	<br />
-                          	<TextField id="firstName" label="שם פרטי"
-                                defaultValue={this.state.pupil.name}
-                                onChange={::this.validateGroup}
-                                invalidMessage="שדה חובה"
-                                className={priceClassNames}/>
-                          	<br />
-                          	<TextField id="lastName" label="שם משפחה"
-                               defaultValue={this.state.pupil.lastName}
-                               onChange={::this.validateGroup}
-                               invalidMessage="שדה חובה"
-                               className={priceClassNames}/>
-                          	<br />
-                          	<DatePicker label="תאריך לידה"
-                               value={this.state.pupil.birthDay}
-                               onChange={::this.birthDayChanged}
-                               invalidMessage="שדה חובה"
-                               className={priceClassNames}/>
-                          	<br/>
-                            <Row>
-                              <Col md={{ size: 2, offset: 2 }} className="text-right my-auto">
-                                <div className='info-text'>מגבלות רפואיות</div>
-                              </Col>
-                              <Col md='1' className="text-right my-auto">
-
-                                  <div className='form-check'
-                                    style={{
-                                      marginTop: '-16px'
-                                    }}>
-                                    <label className='form-check-label'>
-                                      <Input className='form-check-input'
-                                        id="medicalLimitations"
-                                        type='checkbox'
-                                        className='checkbox'
-                                        checked={this.state.pupil.medicalLimitations}
-                                      />
-                                      <span className='form-check-sign'></span>
-                                   </label>
-                                 </div>
-
-                              </Col>
-                            </Row>
-                            <br/>
-                          	<TextField id="address"
-                               defaultValue={this.state.pupil.address}
-                               label="כתובת"
-                               onChange={::this.validateGroup}
-                               className={priceClassNames}/>
-                          	<br />
-                          	<TextField id="parentId" label="ת.ז. הורה"
-                               defaultValue={this.state.pupil.parentId}
-                               onChange={::this.validateGroup}
-                               invalidMessage="שדה חובה"
-                               className={priceClassNames}/>
-                          	<br />
-                          	<TextField id="parentName" label="שם הורה"
+                              className={priceClassNames}/>
+                          <br />
+                          <TextField id="lastName" label="שם משפחה"
+                              defaultValue={this.state.pupil.lastName}
                               onChange={::this.validateGroup}
-                               className={priceClassNames}/>
-                          	<br />
-                            <TextField id="phoneNumber" label="טלפון הורה"
-                               defaultValue={this.state.pupil.phoneNumber}
-                               onChange={::this.validateGroup}
-                               invalidMessage="שדה חובה"
-                               className={priceClassNames}/>
-                          	<br />
-                          	<TextField id="parentId2" label="ת.ז. הורה נוסף"
-                               onChange={::this.validateGroup}
-                               className={priceClassNames}/>
-                          	<br />
-                          	<TextField id="parentName2" label="שם הורה נוסף"
-                               onChange={::this.validateGroup}
-                               className={priceClassNames}/>
-                          	<br />
-                          	<TextField id="phoneNumber2" label="טלפון נוסף"
-                               onChange={::this.validateGroup}
-                               className={priceClassNames}/>
-                          	<br />
-                          	<Row>
-                              <Col md='1'>
-                                 <Input id="paymentTypeCredit"
-                                        type="radio" name="radio1"
-                                        onChange={::this.paymentTypeChanged}/>
-                               </Col>
-                             <Col md='5'>
-                          			<TextField id="paymentApprovalNumber"
-                                  label="אישור תשלום"
-                                  onChange={::this.validateGroup}
-                                  className={priceClassNames}
-                                  disabled={!this.state.paymentTypeCredit}/>
-                              </Col>
-                              <Col md='1'>
-                                <Input id="paymentTypeCash" type="radio" name="radio2" onChange={::this.paymentTypeChanged}/>
-                              </Col>
-                              <Col md='5'>
-                          			<TextField id="paymentTypeCash"  id="paymentApprovalNumber"  lable="מס' קבלה" onChange={::this.validateGroup}
-                                  className={priceClassNames}
-                                  disabled={this.state.paymentTypeCredit}/>
-                              </Col>
-                          	</Row>
-                          	<br />
-                            <Row>
-                              <Col md={{ size: 2, offset: 2 }} className="text-right my-auto">
-                                <div className='info-text'>רשימת המתנה</div>
-                              </Col>
-                              <Col md={{ size: 4 }}>
-                                 <Input id="waitingList" type="checkbox" name="waitingList"/>
-                              </Col>
-                              <Col md='4'
-                                className={priceClassNames}>
+                              invalidMessage="שדה חובה"
+                              className={priceClassNames}/>
+                          <br />
+                          <DatePicker label="תאריך לידה"
+                              value={this.state.pupil.birthDay}
+                              onChange={::this.birthDayChanged}
+                              invalidMessage="שדה חובה"
+                              className={priceClassNames}/>
+                          <br/>
+                          <Row>
+                            <Col md={{ size: 2, offset: 2 }} className="text-right my-auto">
+                              <div className='info-text'>מגבלות רפואיות</div>
+                            </Col>
+                            <Col md='1' className="text-right my-auto">
 
-                              </Col>
+                                <div className='form-check'
+                                  style={{
+                                    marginTop: '-16px'
+                                  }}>
+                                  <label className='form-check-label'>
+                                    <Input className='form-check-input'
+                                      id="medicalLimitations"
+                                      type='checkbox'
+                                      className='checkbox'
+                                      checked={this.state.pupil.medicalLimitations}
+                                    />
+                                    <span className='form-check-sign'></span>
+                                  </label>
+                                </div>
+
+                            </Col>
+                          </Row>
+                          <br/>
+                          <TextField id="address"
+                              defaultValue={this.state.pupil.address}
+                              label="כתובת"
+                              onChange={::this.validateGroup}
+                              className={priceClassNames}/>
+                          <br />
+                          <TextField id="parentId" label="ת.ז. הורה"
+                              defaultValue={this.state.pupil.parentId}
+                              onChange={::this.validateGroup}
+                              invalidMessage="שדה חובה"
+                              className={priceClassNames}/>
+                          <br />
+                          <TextField id="parentName" label="שם הורה"
+                            onChange={::this.validateGroup}
+                              className={priceClassNames}/>
+                          <br />
+                          <TextField id="phoneNumber" label="טלפון הורה"
+                              defaultValue={this.state.pupil.phoneNumber}
+                              onChange={::this.validateGroup}
+                              invalidMessage="שדה חובה"
+                              className={priceClassNames}/>
+                          <br />
+                          <TextField id="parentId2" label="ת.ז. הורה נוסף"
+                              onChange={::this.validateGroup}
+                              className={priceClassNames}/>
+                          <br />
+                          <TextField id="parentName2" label="שם הורה נוסף"
+                              onChange={::this.validateGroup}
+                              className={priceClassNames}/>
+                          <br />
+                          <TextField id="phoneNumber2" label="טלפון נוסף"
+                              onChange={::this.validateGroup}
+                              className={priceClassNames}/>
+                          <br />
+                          <Row>
+                            <Col md={{ size: 2, offset: 2 }} className="text-right my-auto">
+                              <div className='info-text'>תשלום טלפוני</div>
+                            </Col>
+                        
+                            <Col md='1' className="text-right my-auto">
+                              <div className='form-check'>
+                                <label className='form-check-label'>
+                                  <Input  className='form-check-input checkbox'
+                                      id="paymentTypeCredit" 
+                                      type="checkbox" 
+                                      className='checkbox'
+                                      onChange={::this.paymentTypeChanged}
+                                      checked={!this.state.paymentTypeCredit}
+                                      disabled={!this.state.paymentTypeCredit}/>
+                                  <span className='form-check-sign'></span>
+                                </label>
+                              </div>
+                            </Col>
+                            <Col >
+                              <TextField id="paymentApprovalNumber"
+                                label="אישור תשלום"
+                                onChange={::this.validateGroup}
+                                className={priceClassNames}
+                                disabled={this.state.paymentTypeCredit}/>
+                            </Col>
                             </Row>
-                            <br/>
                             <Row>
-                              <Col md={{ size: 1, offset: 10}}>
-                                <Button type="submit" color='primary'>הוסף</Button>
-                              </Col>
+                            <Col md={{ size: 2, offset: 2 }} className="text-right my-auto">
+                              <div className='info-text'>תשלום במשרד</div>
+                            </Col>
+                            <Col md={{ size: 1 }} >
+                              <Input  className='form-check-input'
+                                  id="paymentTypeCash" 
+                                  type="checkbox" 
+                                  className='checkbox'
+                                  onChange={::this.paymentTypeChanged}
+                                  checked={this.state.paymentTypeCredit}
+                                  disabled={this.state.paymentTypeCredit}/>
+                            </Col>
+                            <Col md='5'>
+                              <TextField id="paymentApprovalNumber"
+                                label="מס' קבלה"
+                                onChange={::this.validateGroup}
+                                className={priceClassNames}
+                                disabled={!this.state.paymentTypeCredit}/>
+                            </Col>
                             </Row>
-                            <br/>
-                            <br/>
-                            <br/>
+                           
+                          <br />
+                          <Row>
+                            <Col md={{ size: 2, offset: 2 }} className="text-right my-auto">
+                              <div className='info-text'>רשימת המתנה</div>
+                            </Col>
+                            <Col md='1' className="text-right my-auto">
+
+                                <div className='form-check'
+                                  style={{
+                                    marginTop: '-16px'
+                                  }}>
+                                  <label className='form-check-label'>
+                                  <Input  className='form-check-input'
+                                    id="waitingList" 
+                                    type="checkbox" 
+                                    className='checkbox'/>
+                                    
+                                    <span className='form-check-sign'></span>
+                                  </label>
+                                </div>
+
+                            </Col>
+                          </Row>
+                          <br/>
+                          <Row>
+                            <Col md={{ size: 1, offset: 10}}>
+                              <Button type="submit" color='primary'>הוסף</Button>
+                            </Col>
+                          </Row>
+                          <br/>
+                          <br/>
+                          <br/>
                         </Container>
                       </Form>
                     </CardBody>}
