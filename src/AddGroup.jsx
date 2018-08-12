@@ -392,6 +392,8 @@ class AddGroup extends React.Component<{}, State> {
       captionText = 'עריכת נתוני כיתה למוסד'
     }
 
+    captionText += (' ' + this.state.unit.name_he);
+
     let isThisField = this.state.invalidField === 'symbol';
     const groupSymbolClassNames = classNames({
       'text-left my-auto' : true,
