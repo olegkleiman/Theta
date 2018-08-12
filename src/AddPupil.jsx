@@ -258,7 +258,7 @@ class AddPupil extends React.Component<{}, State> {
                     price: groupData.price
                   };
                 }));
-            
+
               promises.push(firebase.firestore().collection('units')
                 .doc(unitId).collection('groups')
                 .doc(groupId).collection('pupils')
@@ -269,7 +269,7 @@ class AddPupil extends React.Component<{}, State> {
                     Object.keys(pupilData).forEach(key => {
                       if(pupilData[key] === null || pupilData[key] === undefined){
                         delete pupilData[key];
-                      }               
+                      }
                      })
                      this.setState({
                       pupil: pupilData
@@ -350,7 +350,7 @@ class AddPupil extends React.Component<{}, State> {
     Object.keys(pupil).forEach(key => {
       if(pupil[key] === null || pupil[key] === undefined){
         delete pupil[key];
-      }               
+      }
      })
 
     let _state = {};
@@ -381,7 +381,7 @@ class AddPupil extends React.Component<{}, State> {
         _state.status = 'נתוני ,תלמיד מתווספים למערכת. נא להמתין...';
         this.setState(_state)
 
-        const toastId = toast.success("פרטי התלמיד מתעדכנים במערכת" {
+        const toastId = toast.success("פרטי התלמיד מתעדכנים במערכת", {
             position: "top-right",
             autoClose: 5000,
             hideProgressBar: false,
@@ -408,7 +408,7 @@ class AddPupil extends React.Component<{}, State> {
               .add(pupil);
             }
 
-            
+
 
 
             toast.update(this.toastId,
