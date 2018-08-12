@@ -310,6 +310,46 @@ class AddGroup extends React.Component<{}, State> {
     }
   }
 
+  handleNameChange(event) {
+    let groupData = this.state.groupData;
+    groupData.name = event.target.value;
+    this.setState({
+      groupData: groupData
+    });
+  }
+
+  handleSymbolChange(event) {
+    let groupData = this.state.groupData;
+    groupData.symbol = event.target.value;
+    this.setState({
+      groupData: groupData
+    });
+  }
+
+  handleCapacityChange(event) {
+    let groupData = this.state.groupData;
+    groupData.capacity = event.target.value;
+    this.setState({
+      groupData: groupData
+    });
+  }
+
+  handlePriceChange(event) {
+    let groupData = this.state.groupData;
+    groupData.price= event.target.value;
+    this.setState({
+      groupData: groupData
+    });
+  }
+
+  handlePaymentsChange(event) {
+    let groupData = this.state.groupData;
+    groupData.payments= event.target.value;
+    this.setState({
+      groupData: groupData
+    });
+  }
+
   render() {
 
     let saveButtonText = 'הוסף';
@@ -406,7 +446,9 @@ class AddGroup extends React.Component<{}, State> {
                               <div className='info-text'>שם כיתה</div>
                             </Col>
                             <Col md={{ size: 4 }}>
-                              <Input id='groupName' name='groupName' value={this.state.groupData.name}></Input>
+                              <Input id='groupName' name='groupName'
+                                      value={this.state.groupData.name}
+                                      onChange={::this.handleNameChange}></Input>
                             </Col>
                             <Col md='4' invalid={(this.state.invalidField === 'groupName').toString()}
                               className={groupNameClassNames}>
@@ -421,7 +463,8 @@ class AddGroup extends React.Component<{}, State> {
                             <Col md='4'>
                                 <Input id='symbol' name='symbol'
                                        value={this.state.groupData.symbol}
-                                        type='number' placeholder="רק מספרים שלמים" />
+                                       type='number' placeholder="רק מספרים שלמים"
+                                       onChange={::this.handleSymbolChange}/>
                             </Col>
                             <Col md='4' invalid={(this.state.invalidField === 'symbol').toString()}
                               className={groupSymbolClassNames}>
@@ -470,7 +513,8 @@ class AddGroup extends React.Component<{}, State> {
                             <Col md='4'>
                               <Input id='groupCapacity' name='groupCapacity'
                                      type='number' placeholder="רק מספרים שלמים"
-                                     value={this.state.groupData.capacity}/>
+                                     value={this.state.groupData.capacity}
+                                     onChange={::this.handleCapacityChange}/>
                             </Col>
                             <Col md='4' invlalid={(this.state.invalidField === 'groupCapacity').toString()}
                               className={capacityClassNames}>
@@ -487,7 +531,8 @@ class AddGroup extends React.Component<{}, State> {
                                 <Input id='price' name='price'
                                        type='number'
                                        placeholder="מספרים כמחיר, כמו 650.40, 510"
-                                       value={this.state.groupData.price} />
+                                       value={this.state.groupData.price}
+                                       onChange={::this.handlePriceChange}/>
                                 <InputGroupAddon addonType="append">₪</InputGroupAddon>
                               </InputGroup>
                             </Col>
@@ -505,7 +550,7 @@ class AddGroup extends React.Component<{}, State> {
                               <Input id='payments' name='payments'
                                 type='number' placeholder="רק מספרים שלמים"
                                 value={this.state.groupData.payments}
-                                />
+                                onChange={::this.handlePaymentsChange}/>
                             </Col>
                             <Col md='4' invlalid={(this.state.invalidField === 'payments').toString()}
                               className={paymentsClassNames}>
