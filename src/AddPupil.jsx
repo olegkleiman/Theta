@@ -42,14 +42,14 @@ type Pupil = {
     waitingList: Boolean
 }
 
-const TextField = ({id, value, label, onChange, invalid, invalidMessage, className, disabled})  => {
+const TextField = ({id, defaultValue, label, onChange, invalid, invalidMessage, className, disabled})  => {
   return(
     <Row>
       <Col md={{ size: 2, offset: 2 }} className="text-right my-auto">
         <div className='info-text'>{label}</div>
       </Col>
       <Col md={{ size: 4 }}>
-        <Input id={id} name={label} disabled={disabled} defaultValue={value} onChange={onChange}></Input>
+        <Input id={id} name={label} disabled={disabled} defaultValue={defaultValue} onChange={onChange}></Input>
       </Col>
       <Col md='4'
         className={className}>
@@ -173,7 +173,7 @@ class AddPupil extends React.Component<{}, State> {
 
       const _units = [];
       const _groups = [];
-
+      const unitPromises =[]
       const units = await firebase.firestore().collection('units')
                             .get(getOptions)
 
@@ -186,33 +186,34 @@ class AddPupil extends React.Component<{}, State> {
         });
       })
       self.setState({units: _units, unitsLoaded: true}, () => {
-        self.state.units.forEach( (unit) => {
-          firebase.firestore().collection('units')
+        self.state.units.forEach( (unit) => { 
+          unitPromises.push(firebase.firestore().collection('units')
             .doc(unit.unitId).collection('groups')
             .get(getOptions)
-            .then((groups) => {
-              groups.docs.forEach( group => {
+            .then((groups) => { 
+              groups.docs.forEach( group => { 
 
-                  const groupData = group.data();
-                  const groupId = group.id;
+                const groupData = group.data();
+                const groupId = group.id;
 
-                  _groups.push({
-                    unitId: unit.unitId,
-                    unitName: unit.unitName,
-                    groupId: groupId,
-                    groupName: groupData.name,
-                    price: groupData.price
-                  });
-
+                _groups.push({
+                  unitId: unit.unitId,
+                  unitName: unit.unitName,
+                  groupId: groupId,
+                  groupName: groupData.name,
+                  price: groupData.price
+                });
               });
-              self.setState({
-                groups: _groups,
-                groupsLoaded: true
-              })
-            });
+            })
+          );
+        });
+        Promise.all(unitPromises).then(() => {
+          self.setState({
+            groups: _groups,
+            groupsLoaded: true
+          })
         });
       });
-
     } catch( err ) {
       return new Error(err);
     }
@@ -258,7 +259,7 @@ class AddPupil extends React.Component<{}, State> {
                     price: groupData.price
                   };
                 }));
-
+            
               promises.push(firebase.firestore().collection('units')
                 .doc(unitId).collection('groups')
                 .doc(groupId).collection('pupils')
@@ -266,11 +267,12 @@ class AddPupil extends React.Component<{}, State> {
                 .get().then(( _pupil) => {
                   if( _pupil.exists ) {
                     let pupilData = _pupil.data();
-                    Object.keys(pupilData).forEach(key => {
-                      if(pupilData[key] === null || pupilData[key] === undefined){
-                        delete pupilData[key];
-                      }
-                     })
+                    // Object.keys(pupilData).forEach(key => {
+                    //   if(pupilData[key] === null || pupilData[key] === undefined){
+                    //     delete pupilData[key];
+                    //   }               
+                    //  })
+                     pupilData.birthDay = moment(pupilData.birthDay);
                      this.setState({
                       pupil: pupilData
                      })
@@ -315,7 +317,7 @@ class AddPupil extends React.Component<{}, State> {
   birthDayChanged(_date: Date) {
 
     if( moment(_date).isValid() ) {
-      this.state.pupil.birthDay = moment(_date).toDate();
+      this.state.pupil.birthDay = moment(_date);
       this.setState({
         pupil: this.state.pupil
       });
@@ -350,7 +352,7 @@ class AddPupil extends React.Component<{}, State> {
     Object.keys(pupil).forEach(key => {
       if(pupil[key] === null || pupil[key] === undefined){
         delete pupil[key];
-      }
+      }               
      })
 
     let _state = {};
@@ -376,12 +378,14 @@ class AddPupil extends React.Component<{}, State> {
           return;
         }
 
+        pupil.birthDay = pupil.birthDay.toDate()
+
       try {
         _state.formInalid = false;
         _state.status = 'נתוני ,תלמיד מתווספים למערכת. נא להמתין...';
         this.setState(_state)
 
-        const toastId = toast.success("פרטי התלמיד מתעדכנים במערכת", {
+        const toastId = toast.success('פרטי התלמיד מתעדכנים במערכת', {
             position: "top-right",
             autoClose: 5000,
             hideProgressBar: false,
@@ -408,12 +412,12 @@ class AddPupil extends React.Component<{}, State> {
               .add(pupil);
             }
 
-
+            
 
 
             toast.update(this.toastId,
                   {
-                    render: "פרטי התלמיד עודכנו במערכת",
+                    render: 'פרטי התלמיד עודכנו במערכת',
                     type: toast.TYPE.SUCCESS,
                     autoClose: 3000,
                     className: css({
@@ -422,8 +426,8 @@ class AddPupil extends React.Component<{}, State> {
                     })
                   });
 
-                // setTimeout( () => this.props.history.push(`/dashboard/units`),
-                //            1500);
+                setTimeout( () => this.props.history.push(`/dashboard/units`),
+                           1500);
             } catch( err ) {
               console.error(err);
               toast.update(this.toastId,
@@ -547,20 +551,20 @@ class AddPupil extends React.Component<{}, State> {
                               textField="groupName" disabled/>
                           	<br />
                           	<TextField id="pupilId" label="ת.ז."
-                              value={this.state.pupil.pupilId}
+                              defaultValue={this.state.pupil.pupilId}
                               onChange={::this.validateGroup}
                               invalidMessage="שדה חובה"
                               className={priceClassNames}>
                             </TextField>
                           	<br />
                           	<TextField id="firstName" label="שם פרטי"
-                                value={this.state.pupil.name}
+                                defaultValue={this.state.pupil.name}
                                 onChange={::this.validateGroup}
                                 invalidMessage="שדה חובה"
                                 className={priceClassNames}/>
                           	<br />
                           	<TextField id="lastName" label="שם משפחה"
-                               value={this.state.pupil.lastName}
+                               defaultValue={this.state.pupil.lastName}
                                onChange={::this.validateGroup}
                                invalidMessage="שדה חובה"
                                className={priceClassNames}/>
@@ -582,7 +586,7 @@ class AddPupil extends React.Component<{}, State> {
                                       marginTop: '-16px'
                                     }}>
                                     <label className='form-check-label'>
-                                      <input className='form-check-input'
+                                      <Input className='form-check-input'
                                         id="medicalLimitations"
                                         type='checkbox'
                                         className='checkbox'
@@ -596,13 +600,13 @@ class AddPupil extends React.Component<{}, State> {
                             </Row>
                             <br/>
                           	<TextField id="address"
-                               value={this.state.pupil.address}
+                               defaultValue={this.state.pupil.address}
                                label="כתובת"
                                onChange={::this.validateGroup}
                                className={priceClassNames}/>
                           	<br />
                           	<TextField id="parentId" label="ת.ז. הורה"
-                               value={this.state.pupil.parentId}
+                               defaultValue={this.state.pupil.parentId}
                                onChange={::this.validateGroup}
                                invalidMessage="שדה חובה"
                                className={priceClassNames}/>
@@ -612,7 +616,7 @@ class AddPupil extends React.Component<{}, State> {
                                className={priceClassNames}/>
                           	<br />
                             <TextField id="phoneNumber" label="טלפון הורה"
-                               value={this.state.pupil.phoneNumber}
+                               defaultValue={this.state.pupil.phoneNumber}
                                onChange={::this.validateGroup}
                                invalidMessage="שדה חובה"
                                className={priceClassNames}/>
