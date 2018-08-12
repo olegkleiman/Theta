@@ -105,9 +105,9 @@ app.post('/pupil', (req, res) => {
 
   // format date to unix epoch milliseconds in order to comply
   // with Firebase 'timestamp' type
-  const birthDay = moment(req.body.DateOfBirth, "DD-MM-YYYY HH:mm:ss");
+  const birthDay = moment(req.body.DateOfBirth, "YYYY-MM-DD HH:mm:ss");
   console.log('Birthday: ' + birthDay);
-  const when = moment(req.body.whenRegistered, "DD-MM-YYYY HH:mm:ss");
+  const when = moment(req.body.whenRegistered, "YYYY-MM-DD HH:mm:ss");
   console.log('When: ' + when);
   const pupil = {
     name: req.body.name,
@@ -330,6 +330,9 @@ function getGroups(req, res) {
 
               //console.log(JSON.stringify(groupData));
 
+              const unitName = ( groupData.unit ) ? groupData.unit.name_he : '';
+              const authority = ( groupData.unit ) ? groupData.unit.authority : '';
+
               _groups.push({
                 unitId: unitId,
                 id: doc.id,
@@ -338,8 +341,9 @@ function getGroups(req, res) {
                 openFrom: moment(groupData.openFrom).format('DD/MM/YYYY'),
                 openTill: moment(groupData.openTill).format('DD/MM/YYYY'),
                 price: groupData.price,
-                capacity: groupData.capacity
-                //unitName: groupData.unit.name_he
+                capacity: groupData.capacity,
+                unitName: unitName.trim(),
+                authority: authority.trim()
               });
 
             });
