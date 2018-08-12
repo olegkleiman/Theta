@@ -19,6 +19,7 @@ import GroupData from './model/GroupData';
 
 type State = {
   unitName: String,
+  unitType: String,
   groupData: GroupData,
   fromDate: moment,
   tillDate: moment,
@@ -33,6 +34,7 @@ class AddGroup extends React.Component<{}, State> {
 
   state = {
     unitName: '',
+    unitType: '',
     groupData: {
       name: '',
       symbol: '',
@@ -55,6 +57,7 @@ class AddGroup extends React.Component<{}, State> {
                          .get();
       const docData = resp.data();
       unitName = docData.name_he;
+      unitType = docData.type;
     }
     catch( err ) {
         console.error(err);
@@ -227,7 +230,7 @@ class AddGroup extends React.Component<{}, State> {
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: false,
-        draggable: false
+        //draggable: false
     });
 
     const unitId = this.props.match.params.unitid;
@@ -240,9 +243,13 @@ class AddGroup extends React.Component<{}, State> {
       // 3 - Group is full
       // 4 - Close
 
+      const description = ( this.state.unitType.trim() != "גן" ) ?
+                           this.state.unitName + group.name :
+                           group.name;
+
       const data2post = {
         "groupSymbol": group.symbol,
-        "description": group.name,
+        "description": description,
         "status": "1",
         "price": group.price
       };
@@ -257,13 +264,18 @@ class AddGroup extends React.Component<{}, State> {
       });
 
       // Add new or update group to/in Firestore
+      console.log(this.props.match.params.groupid);
       if( this.props.match.params.groupid != 0 ) {
-        const doc = await firebase.firestore().collection('units')
-                      .doc(unitId).collection('groups')
+        console.log(`Creating new group`);
+        const doc = await firebase.firestore()
+                      .collection('units').doc(unitId)
+                      .collection('groups')
                       .add(group);
       } else {
-        const doc = await firebase.firestore().collection('units')
-                      .doc(unitId).collection('groups')
+        console.log(`Updating group ${this.props.match.params.groupid}`);
+        const doc = await firebase.firestore()
+                      .collection('units').doc(unitId)
+                      .collection('groups').doc(this.props.match.params.groupid)
                       .update(group);
       }
 
