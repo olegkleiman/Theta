@@ -222,44 +222,47 @@ class AddPupil extends React.Component<{}, State> {
 
   async componentDidMount() {
 
+      let promises = [];  
+      let unit;
+      let group;
+      let pupil;
 
 
       const unitId = this.props.match.params.unitid;
       const groupId = this.props.match.params.groupid;
       const pupilId = this.props.match.params.pupilid;
 
-      if( pupilId != 0 ) {
+      if( unitId != 0 && groupId  != 0 ){
+        
+        promises.push(firebase.firestore().collection('units')
+        .doc(unitId).get().then((_unit) => {
+          const unitData = _unit.data();
+          unit = {
+            unitId: unitId,
+            unitName: unitData.name_he,
+            authority: unitData.authority
+          };
+        }));
+        
+        promises.push(firebase.firestore().collection('units')
+        .doc(unitId).collection('groups').doc(groupId)
+        .get().then((_group) => {
+          const groupData = _group.data();
+
+          group = {
+            unitId: unitId,
+            unitName: unit.unitName,
+            groupId: groupId,
+            groupName: groupData.name,
+            price: groupData.price
+          };
+        }));
+      }
+
+      if(unitId != 0 && groupId  != 0 && pupilId != 0 ) {
 
             try {
-              let promises = [];
-              let unit;
-              let group;
-              let pupil;
-
-              promises.push(firebase.firestore().collection('units')
-                .doc(unitId).get().then((_unit) => {
-                  const unitData = _unit.data();
-                  unit = {
-                    unitId: unitId,
-                    unitName: unitData.name_he,
-                    authority: unitData.authority
-                  };
-                }));
-
-              promises.push(firebase.firestore().collection('units')
-                .doc(unitId).collection('groups').doc(groupId)
-                .get().then((_group) => {
-                  const groupData = _group.data();
-
-                  group = {
-                    unitId: unitId,
-                    unitName: unit.unitName,
-                    groupId: groupId,
-                    groupName: groupData.name,
-                    price: groupData.price
-                  };
-                }));
-            
+   
               promises.push(firebase.firestore().collection('units')
                 .doc(unitId).collection('groups')
                 .doc(groupId).collection('pupils')
@@ -281,11 +284,13 @@ class AddPupil extends React.Component<{}, State> {
               );
 
               Promise.all(promises).then( () => {
+                let authority ={};
+                authority.name = unit.authority;
                 this.setState({
                   componentState: 'edit',
-                  defaultAuthority: unit.authority,
-                  defaultUnit:  unit.unitName,
-                  defaultGroup:  group.groupName,
+                  defaultAuthority: authority,
+                  defaultUnit:  unit,
+                  defaultGroup:  group,
                   selectedAuthority: unit.authority,
                   selectedUnit: unit,
                   selectedGroup: group
@@ -294,19 +299,22 @@ class AddPupil extends React.Component<{}, State> {
               })
 
 
+
           } catch( err ) {
             console.error(err);
           }
       }
       else{
-        this.setState({
-          componentState: 'new',
-          pupil : {},
-          defaultAuthority: 'אנא בחר רשות' ,
-          defaultUnit: 'אנא בחר מוסד' ,
-          defaultGroup: 'אנא בחר כיתה' ,
-          formInalid: false,
-          paymentTypeCredit: true
+        Promise.all(promises).then( () => {
+          this.setState({
+            componentState: 'new',
+            pupil : {},
+            selectedAuthority: (unit) ? unit.authority : 'אנא בחר רשות' ,
+            selectedUnit: (unit) ? unit : 'אנא בחר מוסד' ,
+            selectedGroup: (group) ? group :'אנא בחר כיתה' ,
+            formInalid: false,
+            paymentTypeCredit: true
+          })
         })
       }
       this.loadAuthorities();
@@ -531,21 +539,21 @@ class AddPupil extends React.Component<{}, State> {
                         <Container>
                             <AutoComplete onChange={::this.authorityChanged}
                               lable="רשות" data={this.state.authorities} groupBy="region"
-                              value={this.state.defaultAuthority}
+                              value={this.state.selectedAuthority}
                               busy={!this.state.authoritiesLoaded}
                               invalid={(!this.state.selectedAuthority).toString()}
                               textField="name"/>
                           	<br />
                           	<AutoComplete onChange={::this.unitChanged}
                               lable="מוסד" data={this.state.filterdUnits} groupBy="authority"
-                              value={this.state.defaultUnit}
+                              value={this.state.selectedUnit}
                               busy={!this.state.unitsLoaded}
                              invalid={(!this.state.selectedUnit).toString()}
                               textField="unitName" disabled/>
                           	<br />
                           	<AutoComplete onChange={::this.groupChanged}
                               lable="כיתה" data={this.state.filterdGroups} groupBy="unitName"
-                              value={this.state.defaultGroup}
+                              value={this.state.selectedGroup}
                               busy={!this.state.groupsLoaded}
                               invalid={(!this.state.selectedGroup).toString()}
                               textField="groupName" disabled/>
