@@ -2888,13 +2888,14 @@ Created using IcoMoon - icomoon.io
     .sidebar .nav i,
     .off-canvas-sidebar .nav i {
       font-size: 20px;
-      float: left;
+      float: right;
       margin-right: 12px;
       line-height: 30px;
       width: 34px;
       text-align: center;
       color: rgba(255, 255, 255, 0.5);
-      position: relative; }
+      position: relative;
+      }
   .sidebar .sidebar-background,
   .off-canvas-sidebar .sidebar-background {
     position: absolute;
