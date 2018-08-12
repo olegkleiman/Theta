@@ -275,7 +275,7 @@ class AddPupil extends React.Component<{}, State> {
                     //     delete pupilData[key];
                     //   }
                     //  })
-                     pupilData.birthDay = moment(pupilData.birthDay);
+                     pupilData.birthDay = moment.unix(pupilData.birthDay.seconds).format('DD/MM/YYYY');
                      this.setState({
                       pupil: pupilData
                      })
