@@ -210,11 +210,18 @@ class UnitGroups extends React.Component<Props, State> {
     });
   }
 
-  deleteGroup() {
+  async deleteGroup() {
     //console.log(`UnitId: ${this.props.docId}. GroupId: ${this.state.groupId2Delete}`);
     this.setState({
       modal: !this.state.modal
     });
+
+    const deleteDoc = await firebase.firestore()
+                    .collection('units').doc(this.props.docId)
+                    .collection('groups').doc(this.state.groupId2Delete)
+                    .delete();
+    console.log(deleteDoc);
+
   }
 
   render() {
