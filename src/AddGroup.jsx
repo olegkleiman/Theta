@@ -280,7 +280,8 @@ class AddGroup extends React.Component<{}, State> {
         "groupSymbol": group.symbol,
         "description": description,
         "status": "1",
-        "price": group.price
+        "price": group.price,
+        "paymentInstallments": group.paymentInstallments
       };
 
       await fetch('https://rishumon.com/api/elamayn/edit_class.php?secret=Day1%21', {
