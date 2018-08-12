@@ -58,7 +58,7 @@ const TextField = ({id, defaultValue, label, onChange, invalid, invalidMessage, 
     </Row>)
 }
 
-const DatePicker = ({label, value, onChange, invalid, invalidMessage, className}) => {
+const DatePicker = ({label, defaultValue, onChange, invalid, invalidMessage, className}) => {
     return(
       <Row>
         <Col md={{ size: 2, offset: 2}} className="text-right my-auto">
@@ -66,7 +66,7 @@ const DatePicker = ({label, value, onChange, invalid, invalidMessage, className}
         </Col>
         <Col md='4'>
           <Datetime id="datetime_test"
-                    value={value}
+                    defaultValue={defaultValue}
                     closeOnSelect={true}
                     onChange={onChange}
                     timeFormat={false}
@@ -186,12 +186,12 @@ class AddPupil extends React.Component<{}, State> {
         });
       })
       self.setState({units: _units, unitsLoaded: true}, () => {
-        self.state.units.forEach( (unit) => { 
+        self.state.units.forEach( (unit) => {
           unitPromises.push(firebase.firestore().collection('units')
             .doc(unit.unitId).collection('groups')
             .get(getOptions)
-            .then((groups) => { 
-              groups.docs.forEach( group => { 
+            .then((groups) => {
+              groups.docs.forEach( group => {
 
                 const groupData = group.data();
                 const groupId = group.id;
@@ -222,7 +222,7 @@ class AddPupil extends React.Component<{}, State> {
 
   async componentDidMount() {
 
-      let promises = [];  
+      let promises = [];
       let unit;
       let group;
       let pupil;
@@ -233,7 +233,7 @@ class AddPupil extends React.Component<{}, State> {
       const pupilId = this.props.match.params.pupilid;
 
       if( unitId != 0 && groupId  != 0 ){
-        
+
         promises.push(firebase.firestore().collection('units')
         .doc(unitId).get().then((_unit) => {
           const unitData = _unit.data();
@@ -243,7 +243,7 @@ class AddPupil extends React.Component<{}, State> {
             authority: unitData.authority
           };
         }));
-        
+
         promises.push(firebase.firestore().collection('units')
         .doc(unitId).collection('groups').doc(groupId)
         .get().then((_group) => {
@@ -262,7 +262,7 @@ class AddPupil extends React.Component<{}, State> {
       if(unitId != 0 && groupId  != 0 && pupilId != 0 ) {
 
             try {
-   
+
               promises.push(firebase.firestore().collection('units')
                 .doc(unitId).collection('groups')
                 .doc(groupId).collection('pupils')
@@ -273,7 +273,7 @@ class AddPupil extends React.Component<{}, State> {
                     // Object.keys(pupilData).forEach(key => {
                     //   if(pupilData[key] === null || pupilData[key] === undefined){
                     //     delete pupilData[key];
-                    //   }               
+                    //   }
                     //  })
                      pupilData.birthDay = moment(pupilData.birthDay);
                      this.setState({
@@ -332,9 +332,6 @@ class AddPupil extends React.Component<{}, State> {
     }
   }
 
-  validateGroup(group) {
-    console.log(group);
-  }
 
   onFormSubmit = async(event) => {
     event.preventDefault(); // stop from further submit
@@ -344,7 +341,7 @@ class AddPupil extends React.Component<{}, State> {
       firstName:(event.target.firstName.value) ? event.target.firstName.value: undefined,
       lastName: (event.target.lastName.value) ? event.target.lastName.value: undefined ,
       birthDay: (this.state.pupil.birthDay) ? this.state.pupil.birthDay: undefined ,
-      medicalLimitations: (event.target.medicalLimitations.value === "on")? true : false,
+      medicalLimitations: (event.target.medicalLimitations.checked) ? true : false,
       address:  (event.target.address.value) ? event.target.address.value: undefined ,
       parentId:  (event.target.parentId.value) ? event.target.parentId.value: undefined ,
       parentName: (event.target.parentName.value) ? event.target.parentName.value: undefined  ,
@@ -352,15 +349,15 @@ class AddPupil extends React.Component<{}, State> {
       parentId2:  (event.target.parentId.value) ? event.target.parentId.value: undefined ,
       parentName2:  (event.target.parentName.value) ? event.target.parentName.value: undefined ,
       phoneNumber2:  (event.target.phoneNumber.value) ? event.target.phoneNumber.value: undefined ,
-      paymentApprovalNumber: (event.target.paymentApprovalNumber.value) ? event.target.paymentApprovalNumber.value: undefined ,
+      paymentApprovalNumber: (event.target.paymentApprovalNumber.value) ? event.target.paymentApprovalNumber.value: event.target.receiveNumber.value ,
       paymentType:  (event.target.paymentTypeCash.checked) ? "cash": "credit" ,
-      waitingList: (event.target.waitingList.value  === "on")? true : false,
+      waitingList: (event.target.waitingList.value.checked)? true : false,
     }
 
     Object.keys(pupil).forEach(key => {
       if(pupil[key] === null || pupil[key] === undefined){
         delete pupil[key];
-      }               
+      }
      })
 
     let _state = {};
@@ -420,7 +417,7 @@ class AddPupil extends React.Component<{}, State> {
               .add(pupil);
             }
 
-            
+
 
 
             toast.update(this.toastId,
@@ -560,25 +557,22 @@ class AddPupil extends React.Component<{}, State> {
                           <br />
                           <TextField id="pupilId" label="ת.ז."
                             defaultValue={this.state.pupil.pupilId}
-                            onChange={::this.validateGroup}
                             invalidMessage="שדה חובה"
                             className={priceClassNames}>
                           </TextField>
                           <br />
                           <TextField id="firstName" label="שם פרטי"
                               defaultValue={this.state.pupil.name}
-                              onChange={::this.validateGroup}
                               invalidMessage="שדה חובה"
                               className={priceClassNames}/>
                           <br />
                           <TextField id="lastName" label="שם משפחה"
                               defaultValue={this.state.pupil.lastName}
-                              onChange={::this.validateGroup}
                               invalidMessage="שדה חובה"
                               className={priceClassNames}/>
                           <br />
                           <DatePicker label="תאריך לידה"
-                              value={this.state.pupil.birthDay}
+                              defaultValue={this.state.pupil.birthDay}
                               onChange={::this.birthDayChanged}
                               invalidMessage="שדה חובה"
                               className={priceClassNames}/>
@@ -588,7 +582,6 @@ class AddPupil extends React.Component<{}, State> {
                               <div className='info-text'>מגבלות רפואיות</div>
                             </Col>
                             <Col md='1' className="text-right my-auto">
-
                                 <div className='form-check'
                                   style={{
                                     marginTop: '-16px'
@@ -598,60 +591,62 @@ class AddPupil extends React.Component<{}, State> {
                                       id="medicalLimitations"
                                       type='checkbox'
                                       className='checkbox'
-                                      checked={this.state.pupil.medicalLimitations}
+                                      defaultChecked={this.state.pupil.medicalLimitations}
                                     />
                                     <span className='form-check-sign'></span>
                                   </label>
                                 </div>
-
                             </Col>
                           </Row>
                           <br/>
                           <TextField id="address"
                               defaultValue={this.state.pupil.address}
                               label="כתובת"
-                              onChange={::this.validateGroup}
                               className={priceClassNames}/>
                           <br />
                           <TextField id="parentId" label="ת.ז. הורה"
                               defaultValue={this.state.pupil.parentId}
-                              onChange={::this.validateGroup}
                               invalidMessage="שדה חובה"
                               className={priceClassNames}/>
                           <br />
-                          <TextField id="parentName" label="שם הורה"
-                            onChange={::this.validateGroup}
+                          <TextField id="parentName"
+                              defaultValue={this.state.pupil.parentName}
+                              label="שם הורה"
                               className={priceClassNames}/>
+
                           <br />
                           <TextField id="phoneNumber" label="טלפון הורה"
                               defaultValue={this.state.pupil.phoneNumber}
-                              onChange={::this.validateGroup}
                               invalidMessage="שדה חובה"
                               className={priceClassNames}/>
                           <br />
                           <TextField id="parentId2" label="ת.ז. הורה נוסף"
-                              onChange={::this.validateGroup}
+                              defaultValue={this.state.pupil.parentId2}
                               className={priceClassNames}/>
                           <br />
                           <TextField id="parentName2" label="שם הורה נוסף"
-                              onChange={::this.validateGroup}
+                              defaultValue={this.state.pupil.parentName2}
                               className={priceClassNames}/>
                           <br />
                           <TextField id="phoneNumber2" label="טלפון נוסף"
-                              onChange={::this.validateGroup}
+                              defaultValue={this.state.pupil.phoneNumber2}
                               className={priceClassNames}/>
                           <br />
                           <Row>
                             <Col md={{ size: 2, offset: 2 }} className="text-right my-auto">
                               <div className='info-text'>תשלום טלפוני</div>
                             </Col>
-                        
+
                             <Col md='1' className="text-right my-auto">
-                              <div className='form-check'>
-                                <label className='form-check-label'>
+                              <div className='form-check'  >
+                                <label className='form-check-label'
+                                  style={{
+                                    paddingLeft: '0px',
+                                    paddingBottom: '30px'
+                                  }}>
                                   <Input  className='form-check-input checkbox'
-                                      id="paymentTypeCredit" 
-                                      type="checkbox" 
+                                      id="paymentTypeCredit"
+                                      type="checkbox"
                                       className='checkbox'
                                       onChange={::this.paymentTypeChanged}
                                       checked={!this.state.paymentTypeCredit}
@@ -660,36 +655,46 @@ class AddPupil extends React.Component<{}, State> {
                                 </label>
                               </div>
                             </Col>
-                            <Col >
+                            <Col md='5'>
                               <TextField id="paymentApprovalNumber"
                                 label="אישור תשלום"
-                                onChange={::this.validateGroup}
                                 className={priceClassNames}
                                 disabled={this.state.paymentTypeCredit}/>
                             </Col>
+                            <Col md='2'>
+
+                            </Col>
                             </Row>
                             <Row>
-                            <Col md={{ size: 2, offset: 2 }} className="text-right my-auto">
-                              <div className='info-text'>תשלום במשרד</div>
-                            </Col>
-                            <Col md={{ size: 1 }} >
-                              <Input  className='form-check-input'
-                                  id="paymentTypeCash" 
-                                  type="checkbox" 
-                                  className='checkbox'
-                                  onChange={::this.paymentTypeChanged}
-                                  checked={this.state.paymentTypeCredit}
-                                  disabled={this.state.paymentTypeCredit}/>
-                            </Col>
-                            <Col md='5'>
-                              <TextField id="paymentApprovalNumber"
-                                label="מס' קבלה"
-                                onChange={::this.validateGroup}
-                                className={priceClassNames}
-                                disabled={!this.state.paymentTypeCredit}/>
-                            </Col>
+                              <Col md={{ size: 2, offset: 2 }} className="text-right my-auto">
+                                <div className='info-text'>תשלום במשרד</div>
+                              </Col>
+                              <Col md='1' className="text-right my-auto">
+                                <div className='form-check'>
+                                  <label className='form-check-label'
+                                    style={{
+                                      paddingLeft: '0px',
+                                      paddingBottom: '30px'
+                                    }}>
+                                    <Input  className='form-check-input checkbox'
+                                    id="paymentTypeCash"
+                                    type="checkbox"
+                                    className='checkbox'
+                                    onChange={::this.paymentTypeChanged}
+                                    checked={this.state.paymentTypeCredit}
+                                    disabled={this.state.paymentTypeCredit}/>
+                                    <span className='form-check-sign'></span>
+                                  </label>
+                                </div>
+                              </Col>
+                              <Col md='5'>
+                                <TextField id="receiveNumber"
+                                  label="מס' קבלה"
+                                  className={priceClassNames}
+                                  disabled={!this.state.paymentTypeCredit}/>
+                              </Col>
                             </Row>
-                           
+
                           <br />
                           <Row>
                             <Col md={{ size: 2, offset: 2 }} className="text-right my-auto">
@@ -703,10 +708,10 @@ class AddPupil extends React.Component<{}, State> {
                                   }}>
                                   <label className='form-check-label'>
                                   <Input  className='form-check-input'
-                                    id="waitingList" 
-                                    type="checkbox" 
+                                    id="waitingList"
+                                    type="checkbox"
                                     className='checkbox'/>
-                                    
+
                                     <span className='form-check-sign'></span>
                                   </label>
                                 </div>
@@ -716,7 +721,7 @@ class AddPupil extends React.Component<{}, State> {
                           <br/>
                           <Row>
                             <Col md={{ size: 1, offset: 10}}>
-                              <Button type="submit" color='primary'>הוסף</Button>
+                              <Button type="submit" color='primary'>שמור</Button>
                             </Col>
                           </Row>
                           <br/>
