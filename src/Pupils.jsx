@@ -139,11 +139,11 @@ class Pupils extends React.Component<{}, State> {
                                             const id = pupil.id;
 
                                             _pupils.push({
-                                                id: id,
+                                                id: id,//firestore id
                                                 groupId: groupId,
                                                 groupSymbol: groupSymbol,
                                                 unitId: unitId,
-                                                pupilId: pupilData.pupilId,
+                                                pupilId: pupilData.pupilId, //ת.ז.
                                                 unitName: unitName,
                                                 authority: authority,
                                                 groupName: groupName,
