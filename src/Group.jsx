@@ -124,7 +124,8 @@ class Group extends React.Component<{}, State> {
 
     if( _pupils.length == 0 ) {
       this.setState({
-          dataStatus: 'עדיין לא נרשם אף אחד'
+          dataStatus: 'עדיין לא נרשם אף אחד',
+          pupils: _pupils
       });
     } else {
       this.setState({
