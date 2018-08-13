@@ -138,7 +138,7 @@ class AddPupil extends React.Component<{}, State> {
     disabledUnit: false,
     disabledGroup: false,
     formInalid: false,
-    paymentTypeCredit: true
+    paymentTypeCash: false
   }
 
   async loadAuthorities() {
@@ -341,7 +341,7 @@ class AddPupil extends React.Component<{}, State> {
             disabledUnit: true,
             disabledGroup: true,
             formInalid: false,
-            paymentTypeCredit: true
+            paymentTypeCash: true
           })
         })
       }
@@ -377,8 +377,8 @@ class AddPupil extends React.Component<{}, State> {
       parentId2: (event.target.parentId.value) ? event.target.parentId.value: undefined ,
       parentName2: (event.target.parentName.value) ? event.target.parentName.value: undefined ,
       phoneNumber2: (event.target.phoneNumber.value) ? event.target.phoneNumber.value: undefined ,
-      paymentApprovalNumber: (event.target.paymentApprovalNumber.value) ? event.target.paymentApprovalNumber.value: event.target.receiveNumber.value ,
-      paymentType: (event.target.paymentTypeCash.checked) ? "cash": "credit" ,
+      paymentApprovalNumber: (event.target.paymentApprovalNumber.value) ? event.target.paymentApprovalNumber.value: undefined ,
+      receiveNumber: (event.target.paymentTypeCash.checked) ? event.target.receiveNumber.value : undefined ,
       waitingList: (event.target.waitingList.checked)? true : false,
     }
 
@@ -405,7 +405,8 @@ class AddPupil extends React.Component<{}, State> {
         (_state.pupil.lastName)&&
         (_state.pupil.birthDay)&&
         (_state.pupil.parentId)&&
-        (_state.pupil.phoneNumber))) {
+        (_state.pupil.phoneNumber)&&
+        (!event.target.paymentTypeCash.checked || !!event.target.receiveNumber.value))) {
           _state.formInalid = true;
           this.setState(_state)
           return;
@@ -548,7 +549,7 @@ class AddPupil extends React.Component<{}, State> {
 
   paymentTypeChanged = (e) => {
     this.setState({
-      paymentTypeCredit: !this.state.paymentTypeCredit
+      paymentTypeCash: !this.state.paymentTypeCash
     })
   }
 
@@ -714,7 +715,7 @@ class AddPupil extends React.Component<{}, State> {
                                   type="checkbox"
                                   className='checkbox'
                                   onChange={::this.paymentTypeChanged}
-                                  checked={this.state.paymentTypeCredit}/>
+                                  checked={this.state.paymentTypeCash}/>
                                   <span className='form-check-sign'></span>
                                 </label>
                               </div>
@@ -722,11 +723,15 @@ class AddPupil extends React.Component<{}, State> {
                             <Col md='5'>
                               <TextField id="receiveNumber"
                                 label="מס' קבלה"
+                                defaultValue={this.state.pupil.receiveNumber}
                                 className={priceClassNames}
-                                disabled={!this.state.paymentTypeCredit}/>
+                                disabled={!this.state.paymentTypeCash}/>
+                            </Col>
+                            <Col md='2'
+                              className={priceClassNames}>
+                                  {(this.state.paymentTypeCash) ? "שדה חובה" : undefined}
                             </Col>
                           </Row>
-
                           <br />
                           <Row>
                             <Col md={{ size: 2, offset: 2 }} className="text-right my-auto">
