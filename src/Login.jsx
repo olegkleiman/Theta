@@ -24,7 +24,8 @@ class Login extends React.PureComponent {
 
   // Listen to the Firebase Auth state and set the local state.
    componentDidMount() {
-     firebaseApp.auth().onAuthStateChanged(
+     this.unregisterAuthObserver =
+      firebaseApp.auth().onAuthStateChanged(
          (user) => {
 
            if( user ) {
@@ -51,6 +52,11 @@ class Login extends React.PureComponent {
        }
      );
    }
+
+  // Make sure we un-register Firebase observers when the component unmounts.
+  componentWillUnmount() {
+    this.unregisterAuthObserver();
+  }
 
   render() {
 
