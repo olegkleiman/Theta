@@ -26,7 +26,7 @@ type Pupil = {
     groupId: String,
     groupName: String,
     pupilId: String,
-    firstName: String,
+    name: String,
     lastName: String,
     birthDay: Date,
     medicalLimitations:Boolean,
@@ -80,7 +80,7 @@ const DatePicker = ({label, defaultValue, onChange, invalid, invalidMessage, cla
     )
 }
 
-const AutoComplete = ({lable, data, value, onChange ,busy, groupBy, textField, disabled}) => {
+const AutoComplete = ({lable, data, value, onChange ,busy, groupBy, textField, disabled, invalid, invalidMessage, className}) => {
   let filterGroupName = (item, value) => {
     const groupSymbol = item[textField].substr(0, item[textField].length);
     return groupSymbol.indexOf(value) === 0;
@@ -98,6 +98,7 @@ const AutoComplete = ({lable, data, value, onChange ,busy, groupBy, textField, d
       </Col>
       <Col md='4'>
         <DropdownList
+            disabled={disabled}
             groupBy={groupBy}
             textField={textField}
             busy={busy}
@@ -110,6 +111,10 @@ const AutoComplete = ({lable, data, value, onChange ,busy, groupBy, textField, d
                   emptyFilter: 'לא נמצאו תוצאות סינון'
                 }
             }/>
+        </Col>
+        <Col md='4'
+            className={className}>
+            {!invalid ? invalidMessage : undefined}
         </Col>
       </Row>)
 }
@@ -129,8 +134,11 @@ class AddPupil extends React.Component<{}, State> {
   state = {
     invalidField: '',
     status: '',
+    disabledAuthority: false,
+    disabledUnit: false,
+    disabledGroup: false,
     formInalid: false,
-    paymentTypeCredit: true
+    paymentTypeCash: false
   }
 
   async loadAuthorities() {
@@ -211,6 +219,18 @@ class AddPupil extends React.Component<{}, State> {
           self.setState({
             groups: _groups,
             groupsLoaded: true
+          },()=>{
+            if(self.state.selectedAuthority !== 'אנא בחר רשות'){
+              let authority = {};
+              authority.name = self.state.selectedAuthority;
+              self.authorityChanged(authority);
+            }
+            if(self.state.selectedUnit !== 'אנא בחר מוסד'){
+              self.unitChanged(self.state.selectedUnit);
+            }
+            if(self.state.selectedGroup !== 'אנא בחר כיתה'){
+              self.groupChanged(self.state.selectedGroup);
+            }
           })
         });
       });
@@ -232,7 +252,14 @@ class AddPupil extends React.Component<{}, State> {
       const groupId = this.props.match.params.groupid;
       const pupilId = this.props.match.params.pupilid;
 
-      if( unitId != 0 && groupId  != 0 ){
+      if( unitId != 0 ) {
+        this.setState({componnentHeader: "עריכת פרטי תלמיד"})
+      } else {
+        this.setState({componnentHeader: "הוספת תלמיד"})
+      }
+
+      if( unitId != 0 && groupId  != 0 ) {
+
 
         promises.push(firebase.firestore().collection('units')
         .doc(unitId).get().then((_unit) => {
@@ -259,7 +286,7 @@ class AddPupil extends React.Component<{}, State> {
         }));
       }
 
-      if(unitId != 0 && groupId  != 0 && pupilId != 0 ) {
+      if( pupilId != 0 ) {
 
             try {
 
@@ -270,11 +297,6 @@ class AddPupil extends React.Component<{}, State> {
                 .get().then(( _pupil) => {
                   if( _pupil.exists ) {
                     let pupilData = _pupil.data();
-                    // Object.keys(pupilData).forEach(key => {
-                    //   if(pupilData[key] === null || pupilData[key] === undefined){
-                    //     delete pupilData[key];
-                    //   }
-                    //  })
                      pupilData.birthDay = moment.unix(pupilData.birthDay.seconds).format('DD/MM/YYYY');
                      this.setState({
                       pupil: pupilData
@@ -284,15 +306,18 @@ class AddPupil extends React.Component<{}, State> {
               );
 
               Promise.all(promises).then( () => {
+                let componnentHeader = "עריכת פרטי תלמיד: " + this.state.pupil.name + " " + this.state.pupil.lastName;
                 let authority ={};
                 authority.name = unit.authority;
                 this.setState({
                   componentState: 'edit',
-                  defaultAuthority: authority,
-                  defaultUnit:  unit,
-                  defaultGroup:  group,
+                  componnentHeader: componnentHeader,
+                  disabledAuthority: true,
+                  disabledUnit: false,
+                  disabledGroup: false,
                   selectedAuthority: unit.authority,
                   selectedUnit: unit,
+                  formInalid: false,
                   selectedGroup: group
 
                 })
@@ -312,8 +337,11 @@ class AddPupil extends React.Component<{}, State> {
             selectedAuthority: (unit) ? unit.authority : 'אנא בחר רשות' ,
             selectedUnit: (unit) ? unit : 'אנא בחר מוסד' ,
             selectedGroup: (group) ? group :'אנא בחר כיתה' ,
+            disabledAuthority: false,
+            disabledUnit: true,
+            disabledGroup: true,
             formInalid: false,
-            paymentTypeCredit: true
+            paymentTypeCash: true
           })
         })
       }
@@ -338,20 +366,20 @@ class AddPupil extends React.Component<{}, State> {
 
     let pupil = {
       pupilId: (event.target.pupilId.value) ? event.target.pupilId.value: undefined,
-      firstName:(event.target.firstName.value) ? event.target.firstName.value: undefined,
+      name:(event.target.name.value) ? event.target.name.value: undefined,
       lastName: (event.target.lastName.value) ? event.target.lastName.value: undefined ,
       birthDay: (this.state.pupil.birthDay) ? this.state.pupil.birthDay: undefined ,
       medicalLimitations: (event.target.medicalLimitations.checked) ? true : false,
-      address:  (event.target.address.value) ? event.target.address.value: undefined ,
-      parentId:  (event.target.parentId.value) ? event.target.parentId.value: undefined ,
+      address: (event.target.address.value) ? event.target.address.value: undefined ,
+      parentId: (event.target.parentId.value) ? event.target.parentId.value: undefined ,
       parentName: (event.target.parentName.value) ? event.target.parentName.value: undefined  ,
-      phoneNumber:  (event.target.phoneNumber.value) ? event.target.phoneNumber.value: undefined ,
-      parentId2:  (event.target.parentId.value) ? event.target.parentId.value: undefined ,
-      parentName2:  (event.target.parentName.value) ? event.target.parentName.value: undefined ,
-      phoneNumber2:  (event.target.phoneNumber.value) ? event.target.phoneNumber.value: undefined ,
-      paymentApprovalNumber: (event.target.paymentApprovalNumber.value) ? event.target.paymentApprovalNumber.value: event.target.receiveNumber.value ,
-      paymentType:  (event.target.paymentTypeCash.checked) ? "cash": "credit" ,
-      waitingList: (event.target.waitingList.value.checked)? true : false,
+      phoneNumber: (event.target.phoneNumber.value) ? event.target.phoneNumber.value: undefined ,
+      parentId2: (event.target.parentId.value) ? event.target.parentId.value: undefined ,
+      parentName2: (event.target.parentName.value) ? event.target.parentName.value: undefined ,
+      phoneNumber2: (event.target.phoneNumber.value) ? event.target.phoneNumber.value: undefined ,
+      paymentApprovalNumber: (event.target.paymentApprovalNumber.value) ? event.target.paymentApprovalNumber.value: undefined ,
+      receiveNumber: (event.target.paymentTypeCash.checked) ? event.target.receiveNumber.value : undefined ,
+      waitingList: (event.target.waitingList.checked)? true : false,
     }
 
     Object.keys(pupil).forEach(key => {
@@ -369,15 +397,16 @@ class AddPupil extends React.Component<{}, State> {
 
     //validation
     if( !(_state.pupil &&
-        (this.state.selectedAuthority)  &&
-        (this.state.selectedUnit) &&
-        (this.state.selectedGroup)&&
+        (this.state.selectedAuthority !== 'אנא בחר רשות' )&&
+        (this.state.selectedUnit !==  'אנא בחר מוסד')&&
+        (this.state.selectedGroup !== 'אנא בחר כיתה')&&
         (_state.pupil.pupilId)&&
-        (_state.pupil.firstName)&&
+        (_state.pupil.name)&&
         (_state.pupil.lastName)&&
         (_state.pupil.birthDay)&&
         (_state.pupil.parentId)&&
-        (_state.pupil.phoneNumber))) {
+        (_state.pupil.phoneNumber)&&
+        (!event.target.paymentTypeCash.checked || !!event.target.receiveNumber.value))) {
           _state.formInalid = true;
           this.setState(_state)
           return;
@@ -387,7 +416,7 @@ class AddPupil extends React.Component<{}, State> {
 
       try {
         _state.formInalid = false;
-        _state.status = 'נתוני ,תלמיד מתווספים למערכת. נא להמתין...';
+        _state.status = 'נתוני ,תלמיד מתעדכנים למערכת. נא להמתין...';
         this.setState(_state)
 
         const toastId = toast.success('פרטי התלמיד מתעדכנים במערכת', {
@@ -402,19 +431,40 @@ class AddPupil extends React.Component<{}, State> {
             const unitId = this.state.selectedUnit.unitId;
             const groupId = this.state.selectedGroup.groupId;
 
-            if(this.props.match.params.pupilid != 0){
-              // update pupil in Firestore
-              const doc = await firebase.firestore().collection('units')
-              .doc(unitId).collection('groups')
-              .doc(groupId).collection('pupils')
-              .doc(this.props.match.params.pupilid)
-              .update(pupil);
-            }else{
+            if(this.props.match.params.pupilid != 0) {
+
+              if(groupId !== this.props.match.params.groupid) {
+                await firebase.firestore().collection('units')
+                  .doc(unitId).collection('groups')
+                  .doc(groupId).collection('pupils')
+                  .add(pupil)
+                  .then(( ) =>{
+                      // delete pupil from group
+                      firebase.firestore().collection('units')
+                      .doc(this.props.match.params.unitid).collection('groups')
+                      .doc(this.props.match.params.groupid).collection('pupils')
+                      .doc(this.props.match.params.pupilid)
+                      .delete()
+                      .then(function() {
+                          console.log("Document successfully deleted!");
+                      }).catch(function(error) {
+                          console.error("Error removing document: ", error);
+                      });
+                  });
+              }else{
+
+                await firebase.firestore().collection('units')
+                  .doc(this.props.match.params.unitid).collection('groups')
+                  .doc(this.props.match.params.groupid).collection('pupils')
+                  .doc(this.props.match.params.pupilid)
+                  .update(pupil);
+              }
+            } else {
               // Add new pupil to Firestore
-              const doc = await firebase.firestore().collection('units')
-              .doc(unitId).collection('groups')
-              .doc(groupId).collection('pupils')
-              .add(pupil);
+              await firebase.firestore().collection('units')
+                .doc(unitId).collection('groups')
+                .doc(groupId).collection('pupils')
+                .add(pupil);
             }
 
 
@@ -461,9 +511,12 @@ class AddPupil extends React.Component<{}, State> {
 
     this.state.pupil.authority = authority.name;
     this.setState({
+      disabledUnit: false,
       filterdUnits: _units,
       filterdGroups: _groups,
       selectedAuthority: authority,
+      selectedUnit: 'אנא בחר מוסד',
+      selectedGroup: 'אנא בחר כיתה',
       pupil: this.state.pupil
     });
   }
@@ -477,8 +530,10 @@ class AddPupil extends React.Component<{}, State> {
     this.state.pupil.unitId = unit.unitId;
     this.state.pupil.unitName = unit.unitName;
     this.setState({
+      disabledGroup: false,
       filterdGroups: _groups,
       selectedUnit: unit,
+      selectedGroup: 'אנא בחר כיתה',
       pupil: this.state.pupil
     });
   }
@@ -494,7 +549,7 @@ class AddPupil extends React.Component<{}, State> {
 
   paymentTypeChanged = (e) => {
     this.setState({
-      paymentTypeCredit: !this.state.paymentTypeCredit
+      paymentTypeCash: !this.state.paymentTypeCash
     })
   }
 
@@ -527,7 +582,7 @@ class AddPupil extends React.Component<{}, State> {
           <Col className='col-md-12'>
             <Card body className="text-center">
               <div className='card-header'>
-                <h5 className='title'>הוספת תלמיד</h5>
+                <h5 className='title'>{this.state.componnentHeader}</h5>
               </div>
               <CardBody>
                 <Card>
@@ -538,22 +593,28 @@ class AddPupil extends React.Component<{}, State> {
                             lable="רשות" data={this.state.authorities} groupBy="region"
                             value={this.state.selectedAuthority}
                             busy={!this.state.authoritiesLoaded}
-                            invalid={(!this.state.selectedAuthority).toString()}
-                            textField="name"/>
+                            textField="name"
+                            invalidMessage="שדה חובה"
+                            className={priceClassNames}
+                            disabled={this.state.disabledAuthority}/>
                           <br />
                           <AutoComplete onChange={::this.unitChanged}
                             lable="מוסד" data={this.state.filterdUnits} groupBy="authority"
                             value={this.state.selectedUnit}
                             busy={!this.state.unitsLoaded}
-                            invalid={(!this.state.selectedUnit).toString()}
-                            textField="unitName" disabled/>
+                            textField="unitName"
+                            invalidMessage="שדה חובה"
+                            className={priceClassNames}
+                            disabled={this.state.disabledUnit}/>
                           <br />
                           <AutoComplete onChange={::this.groupChanged}
                             lable="כיתה" data={this.state.filterdGroups} groupBy="unitName"
                             value={this.state.selectedGroup}
                             busy={!this.state.groupsLoaded}
-                            invalid={(!this.state.selectedGroup).toString()}
-                            textField="groupName" disabled/>
+                            textField="groupName"
+                            invalidMessage="שדה חובה"
+                            className={priceClassNames}
+                            disabled={this.state.disabledGroup}/>
                           <br />
                           <TextField id="pupilId" label="ת.ז."
                             defaultValue={this.state.pupil.pupilId}
@@ -561,7 +622,7 @@ class AddPupil extends React.Component<{}, State> {
                             className={priceClassNames}>
                           </TextField>
                           <br />
-                          <TextField id="firstName" label="שם פרטי"
+                          <TextField id="name" label="שם פרטי"
                               defaultValue={this.state.pupil.name}
                               invalidMessage="שדה חובה"
                               className={priceClassNames}/>
@@ -632,69 +693,45 @@ class AddPupil extends React.Component<{}, State> {
                               defaultValue={this.state.pupil.phoneNumber2}
                               className={priceClassNames}/>
                           <br />
+                          <TextField id="paymentApprovalNumber"
+                            label="אישור תשלום טלפוני"
+                            defaultValue={this.state.pupil.paymentApprovalNumber}
+                            className={priceClassNames}
+                            disabled={true}/>
+                          <br/>
                           <Row>
                             <Col md={{ size: 2, offset: 2 }} className="text-right my-auto">
-                              <div className='info-text'>תשלום טלפוני</div>
+                              <div className='info-text'>תשלום במשרד</div>
                             </Col>
-
                             <Col md='1' className="text-right my-auto">
-                              <div className='form-check'  >
+                              <div className='form-check'>
                                 <label className='form-check-label'
                                   style={{
                                     paddingLeft: '0px',
                                     paddingBottom: '30px'
                                   }}>
                                   <Input  className='form-check-input checkbox'
-                                      id="paymentTypeCredit"
-                                      type="checkbox"
-                                      className='checkbox'
-                                      onChange={::this.paymentTypeChanged}
-                                      checked={!this.state.paymentTypeCredit}
-                                      disabled={!this.state.paymentTypeCredit}/>
+                                  id="paymentTypeCash"
+                                  type="checkbox"
+                                  className='checkbox'
+                                  onChange={::this.paymentTypeChanged}
+                                  checked={this.state.paymentTypeCash}/>
                                   <span className='form-check-sign'></span>
                                 </label>
                               </div>
                             </Col>
                             <Col md='5'>
-                              <TextField id="paymentApprovalNumber"
-                                label="אישור תשלום"
+                              <TextField id="receiveNumber"
+                                label="מס' קבלה"
+                                defaultValue={this.state.pupil.receiveNumber}
                                 className={priceClassNames}
-                                disabled={this.state.paymentTypeCredit}/>
+                                disabled={!this.state.paymentTypeCash}/>
                             </Col>
-                            <Col md='2'>
-
+                            <Col md='2'
+                              className={priceClassNames}>
+                                  {(this.state.paymentTypeCash) ? "שדה חובה" : undefined}
                             </Col>
-                            </Row>
-                            <Row>
-                              <Col md={{ size: 2, offset: 2 }} className="text-right my-auto">
-                                <div className='info-text'>תשלום במשרד</div>
-                              </Col>
-                              <Col md='1' className="text-right my-auto">
-                                <div className='form-check'>
-                                  <label className='form-check-label'
-                                    style={{
-                                      paddingLeft: '0px',
-                                      paddingBottom: '30px'
-                                    }}>
-                                    <Input  className='form-check-input checkbox'
-                                    id="paymentTypeCash"
-                                    type="checkbox"
-                                    className='checkbox'
-                                    onChange={::this.paymentTypeChanged}
-                                    checked={this.state.paymentTypeCredit}
-                                    disabled={this.state.paymentTypeCredit}/>
-                                    <span className='form-check-sign'></span>
-                                  </label>
-                                </div>
-                              </Col>
-                              <Col md='5'>
-                                <TextField id="receiveNumber"
-                                  label="מס' קבלה"
-                                  className={priceClassNames}
-                                  disabled={!this.state.paymentTypeCredit}/>
-                              </Col>
-                            </Row>
-
+                          </Row>
                           <br />
                           <Row>
                             <Col md={{ size: 2, offset: 2 }} className="text-right my-auto">
