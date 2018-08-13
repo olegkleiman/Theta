@@ -26,7 +26,7 @@ type Pupil = {
     groupId: String,
     groupName: String,
     pupilId: String,
-    firstName: String,
+    name: String,
     lastName: String,
     birthDay: Date,
     medicalLimitations:Boolean,
@@ -286,7 +286,7 @@ class AddPupil extends React.Component<{}, State> {
         }));
       }
 
-      if( unitId != 0 ) {
+      if( pupilId != 0 ) {
 
             try {
 
@@ -366,7 +366,7 @@ class AddPupil extends React.Component<{}, State> {
 
     let pupil = {
       pupilId: (event.target.pupilId.value) ? event.target.pupilId.value: undefined,
-      firstName:(event.target.firstName.value) ? event.target.firstName.value: undefined,
+      name:(event.target.name.value) ? event.target.name.value: undefined,
       lastName: (event.target.lastName.value) ? event.target.lastName.value: undefined ,
       birthDay: (this.state.pupil.birthDay) ? this.state.pupil.birthDay: undefined ,
       medicalLimitations: (event.target.medicalLimitations.checked) ? true : false,
@@ -401,7 +401,7 @@ class AddPupil extends React.Component<{}, State> {
         (this.state.selectedUnit !==  'אנא בחר מוסד')&&
         (this.state.selectedGroup !== 'אנא בחר כיתה')&&
         (_state.pupil.pupilId)&&
-        (_state.pupil.firstName)&&
+        (_state.pupil.name)&&
         (_state.pupil.lastName)&&
         (_state.pupil.birthDay)&&
         (_state.pupil.parentId)&&
@@ -433,32 +433,37 @@ class AddPupil extends React.Component<{}, State> {
             if(this.props.match.params.pupilid != 0) {
 
               if(groupId !== this.props.match.params.groupid) {
-                const doc = await firebase.firestore().collection('units')
-                .doc(unitId).collection('groups')
-                .doc(groupId).collection('pupils')
-                .add(pupil);
-                
-                // delete pupil from group
-                const doc2 = await firebase.firestore().collection('units')
-                .doc(unitId).collection('groups')
-                .doc(groupId).collection('pupils')
-                .doc(this.props.match.params.pupilid)
-                .delete();
-                console.log(doc2);
+                await firebase.firestore().collection('units')
+                  .doc(unitId).collection('groups')
+                  .doc(groupId).collection('pupils')
+                  .add(pupil)
+                  .then(( ) =>{
+                      // delete pupil from group
+                      firebase.firestore().collection('units')
+                      .doc(this.props.match.params.unitid).collection('groups')
+                      .doc(this.props.match.params.groupid).collection('pupils')
+                      .doc(this.props.match.params.pupilid)
+                      .delete()
+                      .then(function() {
+                          console.log("Document successfully deleted!");
+                      }).catch(function(error) {
+                          console.error("Error removing document: ", error);
+                      });
+                  });
               }else{
               
-                const doc = await firebase.firestore().collection('units')
-                .doc(unitId).collection('groups')
-                .doc(groupId).collection('pupils')
-                .doc(this.props.match.params.pupilid)
-                .update(pupil);
+                await firebase.firestore().collection('units')
+                  .doc(this.props.match.params.unitid).collection('groups')
+                  .doc(this.props.match.params.groupid).collection('pupils')
+                  .doc(this.props.match.params.pupilid)
+                  .update(pupil);
               }
             } else {
               // Add new pupil to Firestore
-              const doc = await firebase.firestore().collection('units')
-              .doc(unitId).collection('groups')
-              .doc(groupId).collection('pupils')
-              .add(pupil);
+              await firebase.firestore().collection('units')
+                .doc(unitId).collection('groups')
+                .doc(groupId).collection('pupils')
+                .add(pupil);
             }
 
 
@@ -509,6 +514,8 @@ class AddPupil extends React.Component<{}, State> {
       filterdUnits: _units,
       filterdGroups: _groups,
       selectedAuthority: authority,
+      selectedUnit: 'אנא בחר מוסד',
+      selectedGroup: 'אנא בחר כיתה',
       pupil: this.state.pupil
     });
   }
@@ -525,6 +532,7 @@ class AddPupil extends React.Component<{}, State> {
       disabledGroup: false,
       filterdGroups: _groups,
       selectedUnit: unit,
+      selectedGroup: 'אנא בחר כיתה',
       pupil: this.state.pupil
     });
   }
@@ -613,7 +621,7 @@ class AddPupil extends React.Component<{}, State> {
                             className={priceClassNames}>
                           </TextField>
                           <br />
-                          <TextField id="firstName" label="שם פרטי"
+                          <TextField id="name" label="שם פרטי"
                               defaultValue={this.state.pupil.name}
                               invalidMessage="שדה חובה"
                               className={priceClassNames}/>
