@@ -46,12 +46,21 @@ class UnitGroups extends React.Component<Props, State> {
 
     if( prevProps.docId !== this.props.docId) {
 
-      ::this._loadAsyncData(this.props.docId)
+      ::this._loadcData(this.props.docId)
     }
 
   }
 
-  async _loadAsyncData(docId: String) {
+  componentWillUnmount() { // is called upon closing 
+                           // each expander in Units.jsx
+
+    if( this.unregisterCollectionObserver ) {
+      this.unregisterCollectionObserver();
+    }
+
+  }
+
+  _loadcData(docId: String) {
 
     const userRoles = this.props.secRoles;
 
@@ -59,13 +68,19 @@ class UnitGroups extends React.Component<Props, State> {
       source: 'server'
     }
 
+    this.unregisterCollectionObserver = firebase.firestore().collection('units')
+                       .doc(this.props.docId).collection('groups')
+                       .onSnapshot( snapShot => {
+                          ::this.groupsFromDocs(snapShot.docs);
+                        });
+
+  }
+
+  groupsFromDocs(docs) {
+
     let _groups: Group[] = [];
 
-    const resp = await firebase.firestore().collection('units')
-                       .doc(this.props.docId).collection('groups')
-                       .get(getOptions);
-
-    resp.docs.forEach( (group, index) => {
+    docs.forEach( (group, index) => {
 
       let data = group.data();
       // const secRole = data.sec_role;
@@ -108,7 +123,6 @@ class UnitGroups extends React.Component<Props, State> {
                                       : this.state.dataStatus
 
     });
-
 
   }
 
