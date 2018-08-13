@@ -95,7 +95,7 @@ class Unit extends React.Component<Props, State> {
     if( docId !== this.props.id ) {
 
       const getOptions = {
-        source: 'cache'
+        source: 'server'
       }
 
       const self = this;
