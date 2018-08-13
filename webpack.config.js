@@ -17,6 +17,8 @@ var config = {
     reasons: true,
     chunks: true
   },
+  target: 'web',
+  devtool: 'source-map',
   resolve: {
       extensions: ['*', '.js', '.jsx']
   },
