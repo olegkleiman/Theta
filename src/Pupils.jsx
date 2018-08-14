@@ -10,8 +10,10 @@ import firebase from './firebase.js';
 import Pagination from './TablePagination';
 import { Container, Button,
   Row, Col, Card, CardHeader, CardBody,
-  Tooltip
+  Tooltip,
+  Modal, ModalHeader, ModalBody, ModalFooter
 } from 'reactstrap';
+import withAuth from './FirebaseAuth';
 
 type Pupil = {
     id: String,
@@ -35,19 +37,32 @@ type State = {
   selectedAuthorities: String[],
   loading: Boolean,
   displayedPupils: Pupil[],
-  tooltipOpen: Boolean
+  tooltipOpen: Boolean,
+  modal: Boolean,
+  unitId: String,
+  groupId: String,
+  pupilId2Delete: String
 }
 
+@withAuth
+@withRouter
+export default
 class Pupils extends React.Component<{}, State> {
 
   state = {
     pupils: [],
     authorities: [],
+    unitsLoaded: false,
     authoritiesLoaded: false,
     loading: true,
     selectedAuthorities: [],
+    selectedUnits: [],
     displayedPupils: [],
-    tooltipOpen: false
+    tooltipOpen: false,
+    modal: false,
+    unitId: '',
+    groupId: '',
+    pupilId2Delete: ''
   }
 
   constructor(props) {
@@ -75,8 +90,8 @@ class Pupils extends React.Component<{}, State> {
       const _authorities = authoritiesDocs.map( doc => {
         const docData = doc.data();
         return {
-          name: docData.name,
-          region: docData.region
+          name: docData.name.trim(),
+          region: docData.region.trim()
         }
       });
 
@@ -91,9 +106,7 @@ class Pupils extends React.Component<{}, State> {
 
   }
 
-
-
-  async loadPupils() {
+  async loadPupils(isAdmin: Boolean) {
 
     try {
 
@@ -114,20 +127,21 @@ class Pupils extends React.Component<{}, State> {
                 units.docs.forEach( unit => {
                     const unitData = unit.data();
                     const unitId = unit.id;
-                    const unitName = unitData.name_he;
-                    const unitSymbol = unitData.symbol;
-                    const authority = unitData.authority;
-                    _units.push({unitName, unitSymbol})
+                    const unitName = unitData.name_he.trim();
+                    const unitSymbol = unitData.symbol.trim();
+                    const authority = unitData.authority.trim();
+                    _units.push({unitName, unitSymbol, unitId, authority})
 
                     promises2.push(firebase.firestore().collection('units')
                         .doc(unit.id).collection('groups')
                         .get(getOptions)
-                        .then( groups =>{
+                        .then( groups => {
+
                             groups.docs.forEach( group => {
                                 const groupData = group.data();
                                 const groupId = group.id;
-                                const groupSymbol = groupData.symbol;
-                                const groupName = groupData.name;
+                                const groupSymbol = groupData.symbol.trim();
+                                const groupName = groupData.name.trim();
 
                                 promises3.push(firebase.firestore().collection('units')
                                     .doc(unitId).collection('groups')
@@ -143,15 +157,16 @@ class Pupils extends React.Component<{}, State> {
                                                 groupId: groupId,
                                                 groupSymbol: groupSymbol,
                                                 unitId: unitId,
-                                                pupilId: pupilData.pupilId,
+                                                pupilId: pupilData.pupilId.trim(),
                                                 unitName: unitName,
                                                 authority: authority,
                                                 groupName: groupName,
-                                                name: pupilData.name,
-                                                lastName: pupilData.lastName,
+                                                name: pupilData.name.trim(),
+                                                lastName: pupilData.lastName.trim(),
                                                 birthDay: pupilData.birthDay ? moment.unix(pupilData.birthDay.seconds).format('DD/MM/YYYY') : '',
-                                                phoneNumber: pupilData.phoneNumber,
-                                                medicalLimitations: pupilData.medicalLimitations
+                                                phoneNumber: pupilData.phoneNumber.trim(),
+                                                medicalLimitations: pupilData.medicalLimitations,
+                                                isAdmin: isAdmin
                                             });
 
                                         });
@@ -163,11 +178,18 @@ class Pupils extends React.Component<{}, State> {
         }));
         Promise.all(promises)
         .then(() => {
+          self.setState({
+              units: _units,
+              selectedUnits: _units,
+              _units: _units,
+              unitsLoaded: true
+          })
             Promise.all(promises2)
             .then(() => {
                 Promise.all(promises3)
                 .then(() => {
                     self.setState({
+                        units: _units,
                         pupils: _pupils,
                         displayedPupils: _pupils ,
                         loading: false
@@ -181,12 +203,37 @@ class Pupils extends React.Component<{}, State> {
 
   }
 
-  async componentDidMount() {
+  componentDidUpdate(prevProps: Props, prevState: State) {
 
-    this.loadAuthorities();
+    if( prevProps.userEMail !== this.props.userEMail) {
 
-    this.loadPupils();
+      const isAdmin = this.props.isAdmin;
 
+      this.loadAuthorities();
+      this.loadPupils(isAdmin);
+    }
+
+  }
+
+  renderCheckable(cellInfo) {
+
+    const pupilData = this.state.pupils[cellInfo.index];
+    const _medicalLimitations = pupilData.medicalLimitations;
+
+    return (
+      <div className='form-check'
+        style={{
+          marginTop: '-16px'
+        }}>
+        <label className='form-check-label'>
+          <input className='form-check-input'
+            type='checkbox'
+            className='checkbox'
+            checked={_medicalLimitations}
+          />
+          <span className='form-check-sign'></span>
+       </label>
+     </div>)
   }
 
   toggle() {
@@ -195,10 +242,48 @@ class Pupils extends React.Component<{}, State> {
     });
   }
 
+  editPupil(unitId: String,
+            groupId: String,
+            pupilId: String) {
+    this.props.history.push(`/dashboard/addpupil/${unitId}/${groupId}/${pupilId}`);
+  }
+
+  async deletePupil() {
+
+    if( this.state.unitId !== ''
+      && this.state.groupId !== ''
+      && this.state.pupilId2Delete !== '' ) {
+
+      await firebase.firestore().collection('units').doc(this.state.unitId)
+          .collection('groups').doc(this.state.groupId)
+          .collection('pupils').doc(this.state.pupilId2Delete)
+          .delete();
+
+      this.setState({
+        modal: !this.state.modal,
+        unitId: '',
+        groupId: '',
+        pupilId2Delete: ''
+      });
+
+   }
+  }
+
+  toggleModal(unitId: String,
+              groupId: String,
+              pupilRecordId: String) {
+
+      this.setState({
+        modal: !this.state.modal,
+        unitId: unitId,
+        groupId: groupId,
+        pupilId2Delete: pupilRecordId
+      });
+  }
 
   columns =[
     {
-       Header:'תז',
+       Header:'ת.ז.',
        accessor:'pupilId',
        style:{
           lineHeight:'3em'
@@ -240,11 +325,46 @@ class Pupils extends React.Component<{}, State> {
        }
     },
     {
-       Header:'מגבלות רפואיות',
+       Header: 'מגבלות רפואיות',
        accessor:'medicalLimitations',
-       style:{
-          overflow:'visible'
+       Cell: ::this.renderCheckable,
+       style: {
+         lineHeight: '3em'
        }
+    }, {
+      Header: '',
+      accessor: 'editors',
+      width: 80,
+      Cell: row => {
+
+        const unitId = row.original.unitId;
+        const groupId = row.original.groupId;
+        const pupilRecordId = row.original.id;
+
+        return <Row>
+          <Col md='4'>
+            <Button disabled={!row.original.isAdmin}
+                    className='btn-round btn-icon btn btn-info btn-sm'
+                    id='btnEditPupil'
+                    style={{
+                      'padding': '0'
+                    }}
+                    onClick={ () => ::this.editPupil(unitId, groupId, pupilRecordId) } >
+                    <i className='fa fa-edit'></i>
+            </Button>
+          </Col>
+          <Col md='4'>
+              <Button disabled={!row.original.isAdmin}
+                      className='btn-round btn-icon btn btn-danger btn-sm'
+                      style={{
+                        'padding': '0'
+                      }}
+                      onClick={ () => ::this.toggleModal(unitId, groupId, pupilRecordId) } >
+                    <i className='fa fa-times'></i>
+              </Button>
+          </Col>
+        </Row>
+      }
     }];
 
   exportExcel() {
@@ -280,7 +400,6 @@ class Pupils extends React.Component<{}, State> {
 
   }
 
-
   async updateFirestore(pupilIndex: Number,
                         pupilId: String,
                         groupId: String,
@@ -310,34 +429,61 @@ class Pupils extends React.Component<{}, State> {
 
   }
 
+
+  onUnitChanged = (units) => {
+
+    const _units = ( units.length !== 0 ) ? units : this.state.units;
+
+    this.setState({
+      selectedUnits: _units
+    });
+    this.filerPupils(this.state._units, _units)
+    // this.filerPupils(this.state._units, this.state.selectedAuthorities.length, _units , _units.length)
+  }
+
+
   onAuthorityChanged = (authorities) => {
 
-    if ( authorities != [] ) {
-        const _authorities = authorities.map( authority => {
-            return authority.name
-          });
+    const _units = ( authorities.length !== 0 ) ?
+                    ( this.state.units.filter( unit => {
+                        return authorities.find( authority => {
+                          return authority.name === unit.authority}
+                        )
+                      })) : this.state.units;
 
-          const _pupils = this.state.pupils.filter( pupils => {
-            return _authorities.find( authorityName => {
-              return authorityName === pupils.authority}
-            )
-          });
+    this.setState({
+      selectedAuthorities: authorities,
+      _units: _units
+    });
+    this.filerPupils(_units, this.state.selectedUnits);
 
+    // this.filerPupils(_units, authorities.length, this.state.selectedUnits, this.state.selectedUnits.length)
+  }
+
+  // filerPupils(unitsFromAuthorities, selectedAuthorities_length , unitsFromUnits, UFU_length){
+  //   if (selectedAuthorities_length === 0 && UFU_length === 0) {
+  filerPupils(unitsFromAuthorities , unitsFromUnits){
+    if (this.state.selectedAuthorities.length === 0 && this.state.selectedUnits.length === 0) {
           this.setState({
-            selectedAuthorities: _authorities,
-            displayedPupils : _pupils
-
-          });
-    }
-    else {
-        this.setState({
-            selectedAuthorities: authorities,
             displayedPupils : this.state.pupils
+        });
+    } else {
+        const incision = unitsFromAuthorities.filter( a_unit => {
+          return unitsFromUnits.find( u_unit => {
+            return a_unit.unitId === u_unit.unitId}
+          )
+        });
 
-          });
+        const _pupils = this.state.pupils.filter( pupils => {
+          return incision.find( unit => {
+            return unit.unitId === pupils.unitId}
+          )
+        });
+
+        this.setState({
+          displayedPupils : _pupils
+      });
     }
-
-
   }
 
   render() {
@@ -362,20 +508,20 @@ class Pupils extends React.Component<{}, State> {
                               groupBy='region'
                               textField='name'
                               isRtl={true}
-                              placeholder='סנן לפי הרשיות'
+                              placeholder='סנן לפי רשויות'
                               data={this.state.authorities}
                               onChange={ value => ::this.onAuthorityChanged(value) }
                             />
                           </Col>
                           <Col md='3'>
                             <Multiselect
-                              busy={!this.state.authoritiesLoaded}
-                              groupBy='region'
-                              textField='name'
+                              busy={!this.state.unitsLoaded}
+                              groupBy='authority'
+                              textField='unitName'
                               isRtl={true}
                               placeholder='סנן לפי מוסדות'
-                              data={this.state.authorities}
-
+                              data={this.state._units}
+                              onChange={ value => ::this.onUnitChanged(value) }
                             />
                           </Col>
                           <Col md={{ size: 2, offset: 10 }}
@@ -401,6 +547,18 @@ class Pupils extends React.Component<{}, State> {
                         </Row>
                         <Row>
                           <Col md='12'>
+                            <Modal isOpen={this.state.modal}>
+                              <ModalHeader>
+                                מחיקת הנרשם
+                              </ModalHeader>
+                              <ModalBody>
+                                אישור לפעולה זו תגרום לחיקה מוחלטת של כל נתוני הנרשם. זאת פעולה לא הפיכה.
+                              </ModalBody>
+                              <ModalFooter>
+                                <Button color="primary" onClick={::this.deletePupil}>אישור</Button>{' '}
+                                <Button color="secondary" onClick={() => ::this.toggleModal('', '', '')}>ביטול</Button>
+                              </ModalFooter>
+                            </Modal>
                             <ReactTable
                               filterable
                               PaginationComponent={Pagination}
@@ -433,5 +591,3 @@ class Pupils extends React.Component<{}, State> {
   }
 
 }
-
-export default withRouter(Pupils)
