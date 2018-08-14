@@ -73,7 +73,7 @@ class Sidebar extends React.Component<{}, State> {
 
                             <NavLink to={prop.path} className="nav-link"
                               onClick={ () => ::this.linkClicked(index+1, prop.name) }>
-                              <i className={"now-ui-icons "+prop.icon}></i>
+                              <i className={prop.icon}></i>
                               <p className='sidebar_item'>{prop.name}</p>
                             </NavLink>
 
