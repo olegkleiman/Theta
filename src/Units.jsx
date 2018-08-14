@@ -174,6 +174,7 @@ class Units extends React.Component<{}, State> {
                           <Col md='12' className='d-flex justify-content-end'>
                             <Button color='primary'
                                     className='align-self-end'
+                                    disabled={!this.props.isAdmin}
                                     onClick={::this.addUnit}>
                                   <span>הוסף מוסד </span>&nbsp;<i className="fa fa-plus-circle" aria-hidden="true"></i>
                             </Button>
