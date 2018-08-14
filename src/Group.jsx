@@ -84,11 +84,13 @@ class Group extends React.Component<{}, State> {
           groupData: _groupData
         })
 
+        const isAdmin = this.props.isAdmin;
+
         this.observer = firebase.firestore().collection('units')
                         .doc(unitId).collection('groups')
                         .doc(groupId).collection('pupils')
                         .onSnapshot( snapShot => {
-                          ::this.pupilsFromDocs(snapShot.docs);
+                          ::this.pupilsFromDocs(snapShot.docs, isAdmin);
                         });
        //}
 
@@ -102,7 +104,8 @@ class Group extends React.Component<{}, State> {
       this.observer();
   }
 
-  pupilsFromDocs(docs) {
+  pupilsFromDocs(docs,
+                 isAdmin: Boolean) {
 
     const _pupils = [];
     docs.forEach( (pupilDoc) => {
@@ -117,7 +120,8 @@ class Group extends React.Component<{}, State> {
                                pupilData.birthDay,
                                pupilData.whenRegistered,
                                pupilData.parentId,
-                               pupilData.address);
+                               pupilData.address,
+                               isAdmin);
 
       _pupils.push(_pupil);
     })
@@ -303,6 +307,7 @@ class Group extends React.Component<{}, State> {
                     </Col>
                     <Col md='2' className='text-right my-auto' >
                       <Button color='primary'
+                              disabled={!this.props.isAdmin}
                               onClick={::this.addPupil}>
                           <span>הוסף תלמיד</span>&nbsp;<i className="fa fa-plus-circle" aria-hidden="true"></i>
                       </Button>
@@ -402,7 +407,8 @@ class Group extends React.Component<{}, State> {
                             const pupilRecordId = row.original.recordId;
                             return <Row>
                                       <Col md='4'>
-                                        <Button className='btn-round btn-icon btn btn-info btn-sm'
+                                        <Button disabled={!row.original.isAdmin}
+                                                className='btn-round btn-icon btn btn-info btn-sm'
                                                 id='btnEditPupil'
                                                 style={{
                                                   'padding': '0'
@@ -412,7 +418,8 @@ class Group extends React.Component<{}, State> {
                                         </Button>
                                       </Col>
                                       <Col md='4'>
-                                        <Button className='btn-round btn-icon btn btn-danger btn-sm'
+                                        <Button disabled={!row.original.isAdmin}
+                                                className='btn-round btn-icon btn btn-danger btn-sm'
                                                 style={{
                                                   'padding': '0'
                                                 }}
