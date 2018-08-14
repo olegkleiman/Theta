@@ -457,6 +457,9 @@ class AddGroup extends React.Component<{}, State> {
       'invisible': !isThisField
     })
 
+    const groupSymbolDisabled = this.props.match.params.groupid !== '0' ?
+                                true : false;
+
     return (<div>
       <ToastContainer
           position="top-right"
@@ -503,6 +506,7 @@ class AddGroup extends React.Component<{}, State> {
                             </Col>
                             <Col md='4'>
                                 <Input id='symbol' name='symbol'
+                                       disabled={groupSymbolDisabled}
                                        value={this.state.groupData.symbol}
                                        type='number' placeholder="רק מספרים שלמים"
                                        onChange={::this.handleSymbolChange}/>
