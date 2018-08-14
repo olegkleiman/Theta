@@ -51,7 +51,7 @@ class UnitGroups extends React.Component<Props, State> {
 
   }
 
-  componentWillUnmount() { // is called upon closing 
+  componentWillUnmount() { // is called upon closing
                            // each expander in Units.jsx
 
     if( this.unregisterCollectionObserver ) {
@@ -68,15 +68,18 @@ class UnitGroups extends React.Component<Props, State> {
       source: 'server'
     }
 
+    const isAdmin = this.props.isAdmin;
+
     this.unregisterCollectionObserver = firebase.firestore().collection('units')
                        .doc(this.props.docId).collection('groups')
                        .onSnapshot( snapShot => {
-                          ::this.groupsFromDocs(snapShot.docs);
+                          ::this.groupsFromDocs(snapShot.docs, isAdmin);
                         });
 
   }
 
-  groupsFromDocs(docs) {
+  groupsFromDocs(docs,
+                 isAdmin: Boolean) {
 
     let _groups: Group[] = [];
 
@@ -111,7 +114,8 @@ class UnitGroups extends React.Component<Props, State> {
           isClosed: _isClosed,
           price: data.price + ' ₪',
           capacity: data.capacity,
-          registeredPupils: registeredPupils
+          registeredPupils: registeredPupils,
+          isAdmin: isAdmin
         });
       //}
 
@@ -367,7 +371,8 @@ class UnitGroups extends React.Component<Props, State> {
             const groupId = row.original.id;
             return <Row>
                       <Col md='4'>
-                        <Button className='btn-round btn-icon btn btn-info btn-sm'
+                        <Button disabled={!row.original.isAdmin}
+                                className='btn-round btn-icon btn btn-info btn-sm'
                                 style={{
                                   'padding': '0'
                                 }}
@@ -376,7 +381,8 @@ class UnitGroups extends React.Component<Props, State> {
                         </Button>
                      </Col>
                      <Col md='4'>
-                      <Button className='btn-round btn-icon btn btn-danger btn-sm'
+                      <Button disabled={!row.original.isAdmin}
+                              className='btn-round btn-icon btn btn-danger btn-sm'
                                 style={{
                                   'padding': '0'
                                 }}
