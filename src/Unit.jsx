@@ -9,6 +9,7 @@ import { Button, Row, Col, Input,
 
 import UnitUpdates from './UnitUpdates';
 import UnitGroups from './UnitGroups';
+import withAuth from './FirebaseAuth';
 
 type State = {
   docData: {
@@ -28,6 +29,7 @@ type Props = {
   docId: String
 }
 
+@withAuth
 @withRouter
 @connect()
 export default
@@ -213,9 +215,10 @@ class Unit extends React.Component<Props, State> {
                               <div className='col col-12 d-flex justify-content-end'>
                               <Button color='primary'
                                       className='align-self-end'
-                                      onClick={::this.addGroup}>
+                                      onClick={::this.addGroup}
+                                      disabled={!this.props.isAdmin}>
                                       <span>הוסף כיתה </span><i className="fa fa-plus-circle" aria-hidden="true"></i>
-                                      </Button>
+                              </Button>
                               </div>
                           </div>
                           <UnitGroups docId={this.state.docId} />
