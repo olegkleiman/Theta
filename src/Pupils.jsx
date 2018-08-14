@@ -222,11 +222,10 @@ class Pupils extends React.Component<{}, State> {
       && this.state.groupId !== ''
       && this.state.pupilId2Delete !== '' ) {
 
-      // const deleteDoc = await firebase.firestore().collection('units').doc(this.state.unitId)
-      //     .collection('groups').doc(this.state.groupId)
-      //     .collection('pupils').doc(this.state.pupilId2Delete)
-      //     .delete();
-      // console.log(deleteDoc);
+      await firebase.firestore().collection('units').doc(this.state.unitId)
+          .collection('groups').doc(this.state.groupId)
+          .collection('pupils').doc(this.state.pupilId2Delete)
+          .delete();
 
       this.setState({
         modal: !this.state.modal,
