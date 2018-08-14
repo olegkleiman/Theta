@@ -248,16 +248,17 @@ class Group extends React.Component<{}, State> {
   }
 
   async deletePupil() {
+
+    await firebase.firestore().collection('units').doc(this.props.match.params.unitid)
+        .collection('groups').doc(this.props.match.params.groupid)
+        .collection('pupils').doc(this.state.pupilId2Delete)
+        .delete();
+
     this.setState({
       modal: !this.state.modal,
       pupilId2Delete: ''
     });
 
-    const deleteDoc = await firebase.firestore().collection('units').doc(this.props.match.params.unitid)
-        .collection('groups').doc(this.props.match.params.groupid)
-        .collection('pupils').doc(this.state.pupilId2Delete)
-        .delete();
-    console.log(deleteDoc);
   }
 
   toggleModal(pupilRecordId: String) {
