@@ -41,7 +41,7 @@ let withAuth = (WrappedComponent) => class extends React.Component<{}, State> {
       const docSnapshot = response.docs[0];
       const docData = docSnapshot.data()
       let userRoles = docData.sec_roles;
-      const role = docData.role;
+      const role = docData.role.toLowerCase();
 
       if( !userRoles ) {
         userRoles = ['']; // assign empty roles
@@ -67,7 +67,7 @@ let withAuth = (WrappedComponent) => class extends React.Component<{}, State> {
                 <WrappedComponent
                   secRoles={this.state.secRoles}
                   userEMail={this.state.email}
-                  isAdmin={ this.state.role.toLowerCase() === 'admin'}
+                  isAdmin={this.state.isAdmin}
                   {...this.props} />
               </React.Fragment>
             )
