@@ -10,8 +10,10 @@ import firebase from './firebase.js';
 import Pagination from './TablePagination';
 import { Container, Button,
   Row, Col, Card, CardHeader, CardBody,
-  Tooltip
+  Tooltip,
+  Modal, ModalHeader, ModalBody, ModalFooter
 } from 'reactstrap';
+import withAuth from './FirebaseAuth';
 
 type Pupil = {
     id: String,
@@ -35,9 +37,14 @@ type State = {
   selectedAuthorities: String[],
   loading: Boolean,
   displayedPupils: Pupil[],
-  tooltipOpen: Boolean
+  tooltipOpen: Boolean,
+  modal: Boolean,
+  unitId: String,
+  groupId: String,
+  pupilId2Delete: String
 }
 
+@withAuth
 class Pupils extends React.Component<{}, State> {
 
   state = {
@@ -47,7 +54,11 @@ class Pupils extends React.Component<{}, State> {
     loading: true,
     selectedAuthorities: [],
     displayedPupils: [],
-    tooltipOpen: false
+    tooltipOpen: false,
+    modal: false,
+    unitId: '',
+    groupId: '',
+    pupilId2Delete: ''
   }
 
   constructor(props) {
@@ -91,9 +102,7 @@ class Pupils extends React.Component<{}, State> {
 
   }
 
-
-
-  async loadPupils() {
+  async loadPupils(isAdmin: Boolean) {
 
     try {
 
@@ -122,7 +131,8 @@ class Pupils extends React.Component<{}, State> {
                     promises2.push(firebase.firestore().collection('units')
                         .doc(unit.id).collection('groups')
                         .get(getOptions)
-                        .then( groups =>{
+                        .then( groups => {
+
                             groups.docs.forEach( group => {
                                 const groupData = group.data();
                                 const groupId = group.id;
@@ -151,7 +161,8 @@ class Pupils extends React.Component<{}, State> {
                                                 lastName: pupilData.lastName,
                                                 birthDay: pupilData.birthDay ? moment.unix(pupilData.birthDay.seconds).format('DD/MM/YYYY') : '',
                                                 phoneNumber: pupilData.phoneNumber,
-                                                medicalLimitations: pupilData.medicalLimitations
+                                                medicalLimitations: pupilData.medicalLimitations,
+                                                isAdmin: isAdmin
                                             });
 
                                         });
@@ -181,11 +192,15 @@ class Pupils extends React.Component<{}, State> {
 
   }
 
-  async componentDidMount() {
+  componentDidUpdate(prevProps: Props, prevState: State) {
 
-    this.loadAuthorities();
+    if( prevProps.userEMail !== this.props.userEMail) {
 
-    this.loadPupils();
+      const isAdmin = this.props.isAdmin;
+
+      this.loadAuthorities();
+      this.loadPupils(isAdmin);
+    }
 
   }
 
@@ -195,10 +210,49 @@ class Pupils extends React.Component<{}, State> {
     });
   }
 
+  editPupil(unitId: String,
+            groupId: String,
+            pupilId: String) {
+    this.props.history.push(`/dashboard/addpupil/${unitId}/${groupId}/${pupilId}`);
+  }
+
+  async deletePupil() {
+
+    if( this.state.unitId !== ''
+      && this.state.groupId !== ''
+      && this.state.pupilId2Delete !== '' ) {
+
+      // const deleteDoc = await firebase.firestore().collection('units').doc(this.state.unitId)
+      //     .collection('groups').doc(this.state.groupId)
+      //     .collection('pupils').doc(this.state.pupilId2Delete)
+      //     .delete();
+      // console.log(deleteDoc);
+
+      this.setState({
+        modal: !this.state.modal,
+        unitId: '',
+        groupId: '',
+        pupilId2Delete: ''
+      });
+
+   }
+  }
+
+  toggleModal(unitId: String,
+              groupId: String,
+              pupilRecordId: String) {
+
+      this.setState({
+        modal: !this.state.modal,
+        unitId: unitId,
+        groupId: groupId,
+        pupilId2Delete: pupilRecordId
+      });
+  }
 
   columns =[
     {
-       Header:'תז',
+       Header:'ת.ז.',
        accessor:'pupilId',
        style:{
           lineHeight:'3em'
@@ -240,11 +294,45 @@ class Pupils extends React.Component<{}, State> {
        }
     },
     {
-       Header:'מגבלות רפואיות',
+       Header: 'מגבלות רפואיות',
        accessor:'medicalLimitations',
        style:{
           overflow:'visible'
        }
+    }, {
+      Header: '',
+      accessor: 'editors',
+      width: 80,
+      Cell: row => {
+
+        const unitId = row.original.unitId;
+        const groupId = row.original.groupId;
+        const pupilRecordId = row.original.id;
+
+        return <Row>
+          <Col md='4'>
+            <Button disabled={!row.original.isAdmin}
+                    className='btn-round btn-icon btn btn-info btn-sm'
+                    id='btnEditPupil'
+                    style={{
+                      'padding': '0'
+                    }}
+                    onClick={ () => ::this.editPupil(unitId, groupId, pupilRecordId) } >
+                    <i className='fa fa-edit'></i>
+            </Button>
+          </Col>
+          <Col md='4'>
+              <Button disabled={!row.original.isAdmin}
+                      className='btn-round btn-icon btn btn-danger btn-sm'
+                      style={{
+                        'padding': '0'
+                      }}
+                      onClick={ () => ::this.toggleModal(unitId, groupId, pupilRecordId) } >
+                    <i className='fa fa-times'></i>
+              </Button>
+          </Col>
+        </Row>
+      }
     }];
 
   exportExcel() {
@@ -279,7 +367,6 @@ class Pupils extends React.Component<{}, State> {
     XLSX.writeFile(workbook, 'pupils.xlsx');
 
   }
-
 
   async updateFirestore(pupilIndex: Number,
                         pupilId: String,
@@ -375,7 +462,6 @@ class Pupils extends React.Component<{}, State> {
                               isRtl={true}
                               placeholder='סנן לפי מוסדות'
                               data={this.state.authorities}
-
                             />
                           </Col>
                           <Col md={{ size: 2, offset: 10 }}
@@ -401,6 +487,18 @@ class Pupils extends React.Component<{}, State> {
                         </Row>
                         <Row>
                           <Col md='12'>
+                            <Modal isOpen={this.state.modal}>
+                              <ModalHeader>
+                                מחיקת הנרשם
+                              </ModalHeader>
+                              <ModalBody>
+                                אישור לפעולה זו תגרום לחיקה מוחלטת של כל נתוני הנרשם. זאת פעולה לא הפיכה.
+                              </ModalBody>
+                              <ModalFooter>
+                                <Button color="primary" onClick={::this.deletePupil}>אישור</Button>{' '}
+                                <Button color="secondary" onClick={() => ::this.toggleModal('', '', '')}>ביטול</Button>
+                              </ModalFooter>
+                            </Modal>
                             <ReactTable
                               filterable
                               PaginationComponent={Pagination}
