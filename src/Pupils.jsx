@@ -405,7 +405,7 @@ class Pupils extends React.Component<{}, State> {
 
           const _pupils = this.state.pupils.filter( pupils => {
             return _authorities.find( authorityName => {
-              return authorityName === pupils.authority}
+              return authorityName === pupils.authority.trim()}
             )
           });
 
@@ -451,16 +451,6 @@ class Pupils extends React.Component<{}, State> {
                               placeholder='סנן לפי הרשיות'
                               data={this.state.authorities}
                               onChange={ value => ::this.onAuthorityChanged(value) }
-                            />
-                          </Col>
-                          <Col md='3'>
-                            <Multiselect
-                              busy={!this.state.authoritiesLoaded}
-                              groupBy='region'
-                              textField='name'
-                              isRtl={true}
-                              placeholder='סנן לפי מוסדות'
-                              data={this.state.authorities}
                             />
                           </Col>
                           <Col md={{ size: 2, offset: 10 }}
