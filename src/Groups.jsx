@@ -135,7 +135,8 @@ class Groups extends React.Component<{}, State> {
                 openFrom: moment.unix(groupData.openFrom.seconds).format('DD/MM/YYYY'),
                 openTill: openTill,
                 price: groupData.price,
-                capacity: groupData.capacity
+                capacity: groupData.capacity,
+                isAdmin: this.props.isAdmin
               });
             }
 
@@ -375,7 +376,8 @@ class Groups extends React.Component<{}, State> {
         const unitId = row.original.unitId;
         return <Row>
           <Col md='4'>
-            <Button className='btn-round btn-icon btn btn-info btn-sm'
+            <Button disabled={!row.original.isAdmin}
+                    className='btn-round btn-icon btn btn-info btn-sm'
                     style={{
                       'padding': '0'
                     }}
@@ -384,7 +386,8 @@ class Groups extends React.Component<{}, State> {
             </Button>
           </Col>
           <Col md='4'>
-            <Button className='btn-round btn-icon btn btn-danger btn-sm'
+            <Button disabled={!row.original.isAdmin}
+                    className='btn-round btn-icon btn btn-danger btn-sm'
                     style={{
                       'padding': '0'
                     }}
