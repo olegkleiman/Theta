@@ -481,8 +481,15 @@ class AddPupil extends React.Component<{}, State> {
                     })
                   });
 
-                setTimeout( () => this.props.history.push(`/dashboard/units`),
-                           1500);
+                setTimeout( () => {
+                    if (this.props.match.params.groupid != 0) {
+                      this.props.history.push(`/dashboard/pupils`);
+                    } else {
+                      this.props.history.push(`/dashboard/pupils`);
+                    }
+                  }, 1500);
+
+
             } catch( err ) {
               console.error(err);
               toast.update(this.toastId,
