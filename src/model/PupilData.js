@@ -13,6 +13,7 @@ class Pupil {
   whenRegistered: Timestamp;
   parentId: String;
   address: String;
+  isAdmin: Boolean;
 
   constructor(recordId: String,
               name: String,
@@ -23,7 +24,8 @@ class Pupil {
               birthDay: String,
               whenRegistered: Timestamp,
               parentId: String,
-              address: String) {
+              address: String,
+              isAdmin: Boolean) {
 
     this.recordId = ( recordId ||  '');
     this.name = ( name ||  '');
@@ -42,5 +44,6 @@ class Pupil {
                           null;
     this.parentId = ( parentId || '');
     this.address = ( address ||  '');
+    this.isAdmin = isAdmin;
   }
 }

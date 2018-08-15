@@ -259,7 +259,7 @@ class AddPupil extends React.Component<{}, State> {
       }
 
       if( unitId != 0 && groupId  != 0 ) {
-        
+
 
         promises.push(firebase.firestore().collection('units')
         .doc(unitId).get().then((_unit) => {
@@ -452,7 +452,7 @@ class AddPupil extends React.Component<{}, State> {
                       });
                   });
               }else{
-              
+
                 await firebase.firestore().collection('units')
                   .doc(this.props.match.params.unitid).collection('groups')
                   .doc(this.props.match.params.groupid).collection('pupils')
@@ -602,7 +602,7 @@ class AddPupil extends React.Component<{}, State> {
                             lable="מוסד" data={this.state.filterdUnits} groupBy="authority"
                             value={this.state.selectedUnit}
                             busy={!this.state.unitsLoaded}
-                            textField="unitName" 
+                            textField="unitName"
                             invalidMessage="שדה חובה"
                             className={priceClassNames}
                             disabled={this.state.disabledUnit}/>

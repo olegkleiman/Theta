@@ -71,7 +71,7 @@ class Header extends React.Component<{}, State> {
                           <NavbarBrand className='navbar-item'>ברוכים הבאים {this.props.userName}</NavbarBrand>
                           <Dropdown nav isOpen={this.state.dropdownOpen} toggle={(e) => this.dropdownToggle(e)}>
                               <DropdownToggle caret nav>
-                                  <i className="now-ui-icons users_single-02"></i>
+                                  <i className="fas fa-user"></i>&nbsp;
                                   <p>
                                     <span>חשבון משתמש</span>
                                   </p>

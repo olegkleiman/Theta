@@ -30,7 +30,6 @@ type Group = {
 
 type State = {
   groups: Group[],
-  displayedGroups: [],
   authorities: String[],
   authoritiesLoaded: Boolean,
   selectedAuthorities: String[],
@@ -45,14 +44,15 @@ class Groups extends React.Component<{}, State> {
 
   state = {
     groups: [],
-    displayedGroups: [],
     authorities: [],
     authoritiesLoaded: false,
     selectedAuthorities: [],
     loading: true,
     tooltipOpen: false,
     modal: false,
-    groupId2Delete: ''}
+    groupId2Delete: ''
+
+  }
 
   async loadAuthorities() {
 
@@ -135,7 +135,8 @@ class Groups extends React.Component<{}, State> {
                 openFrom: moment.unix(groupData.openFrom.seconds).format('DD/MM/YYYY'),
                 openTill: openTill,
                 price: groupData.price,
-                capacity: groupData.capacity
+                capacity: groupData.capacity,
+                isAdmin: this.props.isAdmin
               });
             }
 
@@ -145,8 +146,7 @@ class Groups extends React.Component<{}, State> {
 
       this.setState({
         loading: false,
-        groups: _groups,
-        displayedGroups: _groups
+        groups: _groups
       })
 
 
@@ -194,8 +194,7 @@ class Groups extends React.Component<{}, State> {
 
         self.setState({
           loading: false,
-          groups: _groups,
-          displayedGroups: _groups
+          groups: _groups
         })
     })
     .catch( error =>
@@ -283,14 +282,6 @@ class Groups extends React.Component<{}, State> {
 
   onAuthorityChanged = (authorities) => {
 
-    if( authorities.length === 0 ) {
-      this.setState({
-        selectedAuthorities: _authorities,
-        displayedGroups: this.state.groups
-      });
-      return;
-    }
-
     const _authorities = authorities.map( authority => {
       return authority.name
     });
@@ -303,7 +294,7 @@ class Groups extends React.Component<{}, State> {
 
     this.setState({
       selectedAuthorities: _authorities,
-      displayedGroups: _groups
+      groups: _groups
     });
   }
 
@@ -385,7 +376,8 @@ class Groups extends React.Component<{}, State> {
         const unitId = row.original.unitId;
         return <Row>
           <Col md='4'>
-            <Button className='btn-round btn-icon btn btn-info btn-sm'
+            <Button disabled={!row.original.isAdmin}
+                    className='btn-round btn-icon btn btn-info btn-sm'
                     style={{
                       'padding': '0'
                     }}
@@ -394,7 +386,8 @@ class Groups extends React.Component<{}, State> {
             </Button>
           </Col>
           <Col md='4'>
-            <Button className='btn-round btn-icon btn btn-danger btn-sm'
+            <Button disabled={!row.original.isAdmin}
+                    className='btn-round btn-icon btn btn-danger btn-sm'
                     style={{
                       'padding': '0'
                     }}
@@ -484,7 +477,7 @@ class Groups extends React.Component<{}, State> {
                               pageText = 'עמוד'
                               ofText = 'מתוך'
                               rowsText = 'שורות'
-                              data={this.state.displayedGroups}
+                              data={this.state.groups}
                               columns={columns}/>
                           </Col>
                         </Row>
