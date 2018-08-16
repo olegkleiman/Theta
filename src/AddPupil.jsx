@@ -311,6 +311,7 @@ class AddPupil extends React.Component<{}, State> {
                 authority.name = unit.authority;
                 this.setState({
                   componentState: 'edit',
+                  disabledPupilId: true,
                   componnentHeader: componnentHeader,
                   disabledAuthority: true,
                   disabledUnit: false,
@@ -333,6 +334,7 @@ class AddPupil extends React.Component<{}, State> {
         Promise.all(promises).then( () => {
           this.setState({
             componentState: 'new',
+            disabledPupilId: false,
             pupil : {},
             selectedAuthority: (unit) ? unit.authority : 'אנא בחר רשות' ,
             selectedUnit: (unit) ? unit : 'אנא בחר מוסד' ,
@@ -374,7 +376,7 @@ class AddPupil extends React.Component<{}, State> {
       parentId: (event.target.parentId.value) ? event.target.parentId.value: undefined ,
       parentName: (event.target.parentName.value) ? event.target.parentName.value: undefined  ,
       phoneNumber: (event.target.phoneNumber.value) ? event.target.phoneNumber.value: undefined ,
-      parentId2: (event.target.parentId.value) ? event.target.parentId.value: undefined ,
+      parentId2: (event.target.parentId2.value) ? event.target.parentId.value: undefined ,
       parentName2: (event.target.parentName.value) ? event.target.parentName.value: undefined ,
       phoneNumber2: (event.target.phoneNumber.value) ? event.target.phoneNumber.value: undefined ,
       paymentApprovalNumber: (event.target.paymentApprovalNumber.value) ? event.target.paymentApprovalNumber.value: undefined ,
@@ -626,8 +628,8 @@ class AddPupil extends React.Component<{}, State> {
                           <TextField id="pupilId" label="ת.ז."
                             defaultValue={this.state.pupil.pupilId}
                             invalidMessage="שדה חובה"
-                            className={priceClassNames}>
-                          </TextField>
+                            className={priceClassNames}
+                            disabled={this.state.disabledPupilId}/>
                           <br />
                           <TextField id="name" label="שם פרטי"
                               defaultValue={this.state.pupil.name}
