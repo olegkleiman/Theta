@@ -106,9 +106,9 @@ app.post('/pupil', (req, res) => {
   // format date to unix epoch milliseconds in order to comply
   // with Firebase 'timestamp' type
   const birthDay = moment(req.body.DateOfBirth, "YYYY-MM-DD HH:mm:ss");
-  console.log('Birthday: ' + birthDay);
+  //console.log('Birthday: ' + birthDay);
   const when = moment(req.body.whenRegistered, "YYYY-MM-DD HH:mm:ss");
-  console.log('When: ' + when);
+  //console.log('When: ' + when);
   const pupil = {
     name: req.body.name,
     lastName: req.body.family,
@@ -224,8 +224,12 @@ exports.unregisterPupil  = functions.firestore
       .then( _doc => {
          const docData = _doc.data();
 
-         doc.update({
-           registeredPupils: docData.registeredPupils - 1
+         const value = docData.registeredPupils - 1;
+         return doc.update({
+           registeredPupils: value
+         })
+         .then( res => {
+           console.log(`RegisteredPupils=${value}`);
          })
       })
 
@@ -247,10 +251,13 @@ exports.registerPupil = functions.firestore
      .then( _doc => {
         const docData = _doc.data();
 
-        console.log(`Prev. counter: ${docData.registeredPupils}`);
+        const value = docData.registeredPupils + 1;
 
         return doc.update({
-          registeredPupils: docData.registeredPupils + 1
+          registeredPupils:
+        })
+        .then( res => {
+          console.log(`RegisteredPupils=${docData.registeredPupils}`);
         })
      })
      .then( res => {
