@@ -55,6 +55,7 @@ app.post('/pupil', (req, res) => {
   if( !req.is('application/json') ) {
     var header = JSON.stringify(req.headers['content-type']);
     console.log(`Incoming header: ${header}`);
+    console.log(`Content-Type header ${header} is not supported`);
     return res.status(406) //Not Acceptable
            .send(`Content-Type header ${header} is not supported`);
   }
@@ -67,6 +68,7 @@ app.post('/pupil', (req, res) => {
   var secret = req.query.secret;
 
   if( secret == 'undefined' ) {
+    console.log( `Not authorized. Provide 'secret' parameter in url`);
     return res.status(401)
            .json({
              errorCode: 401,
@@ -74,6 +76,7 @@ app.post('/pupil', (req, res) => {
            })
   }
   if( secret !== 'Day1!' && secret !== 'Ep$ilon' ) {
+    console.log( `Not authorized. 'secret' parameter is not valid`);
     return res.status(401)
            .json({
              errorCode: 401,
@@ -82,6 +85,7 @@ app.post('/pupil', (req, res) => {
   }
 
   if( !groupSymbol ) {
+    console.log( `Can't find expected parameter - groupSymbol - in request body`);
     return res.status(200)
     .json({
       errorCode: 3,
@@ -168,8 +172,7 @@ app.post('/pupil', (req, res) => {
 
   })
   .catch( err => {
-
-    //console.log(`Catched ${err.message}`);
+    console.error(`Error catched ${err.message}`);
     return res.status(200)
           .json({
               errorCode: 2,
@@ -231,6 +234,8 @@ exports.unregisterPupil  = functions.firestore
          .then( res => {
            console.log(`RegisteredPupils=${value}`);
          })
+      }).catch( err => {
+          console.error(`Error catched ${err.message}`);
       })
 
       return true;
@@ -263,6 +268,8 @@ exports.registerPupil = functions.firestore
      .then( res => {
       const _json = JSON.stringify(res);
        console.log(`Update result: ${_json}`);
+     }).catch( err => {
+         console.error(`Error catched ${err.message}`);
      })
 
      return true;
