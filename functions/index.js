@@ -9,7 +9,7 @@ admin.initializeApp();
 const firestore = admin.firestore();
 
 const express = require('express');
-const cookieParser = require('cookie-parser')();
+// const cookieParser = require('cookie-parser')();
 var bodyParser = require('body-parser');
 const cors = require('cors')({origin: true});
 
@@ -130,6 +130,21 @@ app.post('/pupil', (req, res) => {
     whenRegistered: new Date(when.valueOf()) // valueOf() is actually unix() * 1000
   }
 
+  console.log(`Received pupil: {
+                name: ${pupil.name},
+                lastName: ${pupil.lastName},
+                pupilId: ${pupil.pupilId},
+                address: ${pupil.address},
+                birthDay: ${pupil.birthDay},
+                parentId: ${pupil.parentId},
+                paymentApprovalNumber: ${pupil.paymentApprovalNumber},
+                payerName: ${pupil.payerName},
+                status: ${pupil.status},
+                registrationSource: ${pupil.registrationSource},
+                phoneNumber:${pupil.phoneNumber},
+                medicalLimitations: ${pupil.medicalLimitations},
+                whenRegistered:${pupil.whenRegistered}
+              }`);
   return getGroups(req, res)
   .then( groups => {
 
@@ -154,7 +169,7 @@ app.post('/pupil', (req, res) => {
   })
   .then( groupParams => {
 
-    console.log(`Processing group ${groupParams}`);
+    console.log(`Processing group: ${groupParams.groupdId}, in  unit: ${groupParams.unitId}`);
 
     return firestore.collection('units/' + groupParams.unitId + '/groups/' + groupParams.groupdId + '/pupils/')
 
@@ -165,7 +180,7 @@ app.post('/pupil', (req, res) => {
 
   })
   .then( ref => {
-
+    console.log(`Create pupil with id: ${ref.id}`);
     return res.status(200).json({
       id: ref.id
     });
@@ -259,7 +274,7 @@ exports.registerPupil = functions.firestore
         const value = docData.registeredPupils + 1;
 
         return doc.update({
-          registeredPupils:
+          registeredPupils: value
         })
         .then( res => {
           console.log(`RegisteredPupils=${docData.registeredPupils}`);

@@ -5,7 +5,7 @@
 
 ## Insert new pupil registration
 
-This function is not Firebase trigger, it is intended for explicit invokation from external clients
+This function is not a Firebase trigger, it is intended for explicit invocation from external clients
 
 POST https://us-central1-theta-1524876066401.cloudfunctions.net/api/pupil?secret=[secret]
 
