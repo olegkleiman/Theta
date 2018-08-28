@@ -42,45 +42,35 @@ type Pupil = {
     waitingList: Boolean
 }
 
-const TextField = ({id, defaultValue, label, onChange, invalid, invalidMessage, className, disabled})  => {
-  return(
-    <Row>
-      <Col md={{ size: 2, offset: 2 }} className="text-right my-auto">
-        <div className='info-text'>{label}</div>
-      </Col>
-      <Col md={{ size: 4 }}>
-        <Input id={id} name={label} disabled={disabled} defaultValue={defaultValue} onChange={onChange}></Input>
-      </Col>
-      <Col md='4'
-        className={className}>
-            {!invalid ? invalidMessage : undefined}
-      </Col>
-    </Row>)
+const InputField = ({id, defaultValue, label, onChange,
+                    invalid, invalidMessage, className, disabled})  => {
+  return (
+    <React.Fragment>
+        <Input id={id} name={label} disabled={disabled}
+               defaultValue={defaultValue} onChange={onChange}></Input>
+        <label className={className}>{invalidMessage}</label>
+    </React.Fragment>
+  )
 }
 
-const DatePicker = ({label, defaultValue, onChange, invalid, invalidMessage, className}) => {
+const DatePicker = ({label, defaultValue, onChange,
+                    invalid, invalidMessage, className}) => {
     return(
-      <Row>
-        <Col md={{ size: 2, offset: 2}} className="text-right my-auto">
-            {label}
-        </Col>
-        <Col md='4'>
+      <React.Fragment>
           <Datetime id="datetime_test"
                     defaultValue={defaultValue}
                     closeOnSelect={true}
                     onChange={onChange}
                     timeFormat={false}
                     local='he' />
-        </Col>
-        <Col md='4'
-            className={className}>
-            {!invalid ? invalidMessage : undefined}
-        </Col>
-      </Row>
+           <label className={className}>{invalidMessage}</label>
+      </React.Fragment>
     )
 }
 
-const AutoComplete = ({lable, data, value, onChange ,busy, groupBy, textField, disabled, invalid, invalidMessage, className}) => {
+const AutoComplete = ({lable, data, value, onChange ,busy, groupBy, textField,
+                      disabled, invalid, invalidMessage, className}) => {
+
   let filterGroupName = (item, value) => {
     const groupSymbol = item[textField].substr(0, item[textField].length);
     return groupSymbol.indexOf(value) === 0;
@@ -91,13 +81,8 @@ const AutoComplete = ({lable, data, value, onChange ,busy, groupBy, textField, d
       <strong>{item.name}</strong>
     </span>
   );
-  return(
-    <Row>
-      <Col md={{ size: 2, offset: 2}} className="text-right my-auto">
-          {lable}
-      </Col>
-      <Col md='4'>
-        <DropdownList
+  return <React.Fragment>
+      <DropdownList
             disabled={disabled}
             groupBy={groupBy}
             textField={textField}
@@ -107,18 +92,14 @@ const AutoComplete = ({lable, data, value, onChange ,busy, groupBy, textField, d
             data={data}
             value={value}
             onChange={onChange}
+            isRtl={true}
             messages={ {
                   emptyFilter: 'לא נמצאו תוצאות סינון'
                 }
             }/>
-        </Col>
-        <Col md='4'
-            className={className}>
-            {!invalid ? invalidMessage : undefined}
-        </Col>
-      </Row>)
+        <label className={className}>{invalidMessage}</label>
+    </React.Fragment>
 }
-
 
 type State = {
   units: Unit[],
@@ -393,8 +374,6 @@ class AddPupil extends React.Component<{}, State> {
        _state.pupil = pupil;
     }
 
-
-
     //validation
     if( !(_state.pupil &&
         (this.state.selectedAuthority !== 'אנא בחר רשות' )&&
@@ -481,7 +460,7 @@ class AddPupil extends React.Component<{}, State> {
                     })
                   });
 
-                setTimeout( () => this.props.history.push(`/dashboard/units`),
+                setTimeout( () => this.props.history.push(`/dashboard/pupils`),
                            1500);
             } catch( err ) {
               console.error(err);
@@ -555,12 +534,12 @@ class AddPupil extends React.Component<{}, State> {
 
   render() {
 
-    let inalid = this.state.formInalid;
-    const priceClassNames = classNames({
+    let invalid = this.state.formInalid;
+    const validationErrorClassNames = classNames({
       'text-left my-auto' : true,
-      'text-danger': inalid,
-      'visible': inalid,
-      'invisible': !inalid
+      'text-danger': invalid,
+      'visible': invalid,
+      'invisible': !invalid
     })
 
 
@@ -589,173 +568,226 @@ class AddPupil extends React.Component<{}, State> {
 {this.state.pupil && <CardBody>
                       <Form onSubmit={::this.onFormSubmit}>
                         <Container>
-                          <AutoComplete onChange={::this.authorityChanged}
-                            lable="רשות" data={this.state.authorities} groupBy="region"
-                            value={this.state.selectedAuthority}
-                            busy={!this.state.authoritiesLoaded}
-                            textField="name"
-                            invalidMessage="שדה חובה"
-                            className={priceClassNames}
-                            disabled={this.state.disabledAuthority}/>
-                          <br />
-                          <AutoComplete onChange={::this.unitChanged}
-                            lable="מוסד" data={this.state.filterdUnits} groupBy="authority"
-                            value={this.state.selectedUnit}
-                            busy={!this.state.unitsLoaded}
-                            textField="unitName"
-                            invalidMessage="שדה חובה"
-                            className={priceClassNames}
-                            disabled={this.state.disabledUnit}/>
-                          <br />
-                          <AutoComplete onChange={::this.groupChanged}
-                            lable="כיתה" data={this.state.filterdGroups} groupBy="unitName"
-                            value={this.state.selectedGroup}
-                            busy={!this.state.groupsLoaded}
-                            textField="groupName"
-                            invalidMessage="שדה חובה"
-                            className={priceClassNames}
-                            disabled={this.state.disabledGroup}/>
-                          <br />
-                          <TextField id="pupilId" label="ת.ז."
-                            defaultValue={this.state.pupil.pupilId}
-                            invalidMessage="שדה חובה"
-                            className={priceClassNames}>
-                          </TextField>
-                          <br />
-                          <TextField id="name" label="שם פרטי"
-                              defaultValue={this.state.pupil.name}
-                              invalidMessage="שדה חובה"
-                              className={priceClassNames}/>
-                          <br />
-                          <TextField id="lastName" label="שם משפחה"
-                              defaultValue={this.state.pupil.lastName}
-                              invalidMessage="שדה חובה"
-                              className={priceClassNames}/>
-                          <br />
-                          <DatePicker label="תאריך לידה"
-                              defaultValue={this.state.pupil.birthDay}
-                              onChange={::this.birthDayChanged}
-                              invalidMessage="שדה חובה"
-                              className={priceClassNames}/>
-                          <br/>
-                          <Row>
-                            <Col md={{ size: 2, offset: 2 }} className="text-right my-auto">
-                              <div className='info-text'>מגבלות רפואיות</div>
-                            </Col>
-                            <Col md='1' className="text-right my-auto">
-                                <div className='form-check'
-                                  style={{
-                                    marginTop: '-16px'
-                                  }}>
-                                  <label className='form-check-label'>
-                                    <Input className='form-check-input'
-                                      id="medicalLimitations"
-                                      type='checkbox'
-                                      className='checkbox'
-                                      defaultChecked={this.state.pupil.medicalLimitations}
-                                    />
-                                    <span className='form-check-sign'></span>
-                                  </label>
-                                </div>
-                            </Col>
-                          </Row>
-                          <br/>
-                          <TextField id="address"
-                              defaultValue={this.state.pupil.address}
-                              label="כתובת"
-                              className={priceClassNames}/>
-                          <br />
-                          <TextField id="parentId" label="ת.ז. הורה"
-                              defaultValue={this.state.pupil.parentId}
-                              invalidMessage="שדה חובה"
-                              className={priceClassNames}/>
-                          <br />
-                          <TextField id="parentName"
-                              defaultValue={this.state.pupil.parentName}
-                              label="שם הורה"
-                              className={priceClassNames}/>
+                          <Card>
+                            <CardTitle className="text-left my-auto m-3">
+                              <div>פרטי ילד</div>
+                            </CardTitle>
+                            <CardBody>
+                               <Row>
+                                 <Col md='4' className='pr-1 text-left'>
+                                   <div>
+                                     <label className='form-control-label'>רשות</label>
+                                      <AutoComplete onChange={::this.authorityChanged}
+                                        lable="רשות" data={this.state.authorities} groupBy="region"
+                                        value={this.state.selectedAuthority}
+                                        busy={!this.state.authoritiesLoaded}
+                                        textField="name"
+                                        invalidMessage="שדה חובה"
+                                        className={validationErrorClassNames}
+                                        disabled={this.state.disabledAuthority}/>
+                                   </div>
+                                 </Col>
+                                 <Col md='4' className='pr-1 text-left'>
+                                    <label className='form-control-label'>מוסד</label>
+                                    <AutoComplete onChange={::this.unitChanged}
+                                      lable="מוסד" data={this.state.filterdUnits} groupBy="authority"
+                                      value={this.state.selectedUnit}
+                                      busy={!this.state.unitsLoaded}
+                                      textField="unitName"
+                                      invalidMessage="שדה חובה"
+                                      className={validationErrorClassNames}
+                                      disabled={this.state.disabledUnit}/>
+                                 </Col>
+                                 <Col md='4' className='pr-1 text-left'>
+                                   <label className='form-control-label'>כיתה</label>
+                                    <AutoComplete onChange={::this.groupChanged}
+                                      lable="כיתה" data={this.state.filterdGroups} groupBy="unitName"
+                                      value={this.state.selectedGroup}
+                                      busy={!this.state.groupsLoaded}
+                                      textField="groupName"
+                                      invalidMessage="שדה חובה"
+                                      className={validationErrorClassNames}
+                                      disabled={this.state.disabledGroup}/>
+                                 </Col>
+                               </Row>
+                               <br />
+                               <Row>
+                                 <Col md='4' className='pr-1 text-left'>
+                                   <label className='form-control-label'>ת.ז.</label>
+                                   <InputField id="pupilId" label="ת.ז."
+                                     defaultValue={this.state.pupil.pupilId}
+                                     invalidMessage="שדה חובה"
+                                     className={validationErrorClassNames} />
+                                 </Col>
+                                 <Col md='4' className='pr-1 text-left'>
+                                   <label className='form-control-label'>שם פרטי</label>
+                                   <InputField id="name" label="שם פרטי"
+                                       defaultValue={this.state.pupil.name}
+                                       invalidMessage="שדה חובה"
+                                       className={validationErrorClassNames} />
+                                 </Col>
+                                 <Col md='4' className='pr-1 text-left'>
+                                    <label className='form-control-label'>שם משפחה</label>
+                                    <InputField id="lastName" label="שם משפחה"
+                                        defaultValue={this.state.pupil.lastName}
+                                        invalidMessage="שדה חובה"
+                                        className={validationErrorClassNames}/>
+                                 </Col>
+                               </Row>
+                               <br />
+                               <Row>
+                                 <Col md='4' className='pr-1 text-left'>
+                                   <label className='form-control-label'>תאריך לידה</label>
+                                   <DatePicker label="תאריך לידה"
+                                       defaultValue={this.state.pupil.birthDay}
+                                       onChange={::this.birthDayChanged}
+                                       invalidMessage="שדה חובה"
+                                       className={validationErrorClassNames}/>
 
-                          <br />
-                          <TextField id="phoneNumber" label="טלפון הורה"
-                              defaultValue={this.state.pupil.phoneNumber}
-                              invalidMessage="שדה חובה"
-                              className={priceClassNames}/>
-                          <br />
-                          <TextField id="parentId2" label="ת.ז. הורה נוסף"
-                              defaultValue={this.state.pupil.parentId2}
-                              className={priceClassNames}/>
-                          <br />
-                          <TextField id="parentName2" label="שם הורה נוסף"
-                              defaultValue={this.state.pupil.parentName2}
-                              className={priceClassNames}/>
-                          <br />
-                          <TextField id="phoneNumber2" label="טלפון נוסף"
-                              defaultValue={this.state.pupil.phoneNumber2}
-                              className={priceClassNames}/>
-                          <br />
-                          <TextField id="paymentApprovalNumber"
-                            label="אישור תשלום טלפוני"
-                            defaultValue={this.state.pupil.paymentApprovalNumber}
-                            className={priceClassNames}
-                            disabled={true}/>
-                          <br/>
-                          <Row>
-                            <Col md={{ size: 2, offset: 2 }} className="text-right my-auto">
-                              <div className='info-text'>תשלום במשרד</div>
-                            </Col>
-                            <Col md='1' className="text-right my-auto">
-                              <div className='form-check'>
-                                <label className='form-check-label'
-                                  style={{
-                                    paddingLeft: '0px',
-                                    paddingBottom: '30px'
-                                  }}>
-                                  <Input  className='form-check-input checkbox'
-                                  id="paymentTypeCash"
-                                  type="checkbox"
-                                  className='checkbox'
-                                  onChange={::this.paymentTypeChanged}
-                                  checked={this.state.paymentTypeCash}/>
-                                  <span className='form-check-sign'></span>
-                                </label>
-                              </div>
-                            </Col>
-                            <Col md='5'>
-                              <TextField id="receiveNumber"
-                                label="מס' קבלה"
-                                defaultValue={this.state.pupil.receiveNumber}
-                                className={priceClassNames}
-                                disabled={!this.state.paymentTypeCash}/>
-                            </Col>
-                            <Col md='2'
-                              className={priceClassNames}>
-                                  {(this.state.paymentTypeCash) ? "שדה חובה" : undefined}
-                            </Col>
-                          </Row>
-                          <br />
-                          <Row>
-                            <Col md={{ size: 2, offset: 2 }} className="text-right my-auto">
-                              <div className='info-text'>רשימת המתנה</div>
-                            </Col>
-                            <Col md='1' className="text-right my-auto">
-
-                                <div className='form-check'
-                                  style={{
-                                    marginTop: '-16px'
-                                  }}>
-                                  <label className='form-check-label'>
-                                  <Input  className='form-check-input'
-                                    id="waitingList"
-                                    type="checkbox"
-                                    className='checkbox'/>
-
-                                    <span className='form-check-sign'></span>
-                                  </label>
-                                </div>
-
-                            </Col>
-                          </Row>
-                          <br/>
+                                 </Col>
+                                 <Col md='4' className='pr-1 text-left'>
+                                   <label className='form-control-label'>כתובת</label>
+                                   <InputField id="address"
+                                       defaultValue={this.state.pupil.address}
+                                       label="כתובת"
+                                       className={validationErrorClassNames}/>
+                                 </Col>
+                                 <Col md='4' className='pr-1 text-left'>
+                                   <label className='form-control-label'>מגבלות רפואיות</label>
+                                   <div className='form-check'
+                                     style={{
+                                       marginTop: '-16px'
+                                     }}>
+                                     <label className='form-check-label'>
+                                       <Input className='form-check-input'
+                                         id="medicalLimitations"
+                                         type='checkbox'
+                                         className='checkbox'
+                                         defaultChecked={this.state.pupil.medicalLimitations}
+                                       />
+                                       <span className='form-check-sign'></span>
+                                     </label>
+                                   </div>
+                                 </Col>
+                               </Row>
+                           </CardBody>
+                          </Card>
+                          <Card>
+                            <CardTitle className="text-left my-auto m-3">
+                                <div>פרטי הורים</div>
+                            </CardTitle>
+                            <CardBody>
+                              <Row>
+                                <Col md='4' className='pr-1 text-left'>
+                                  <label className='form-control-label'>ת.ז. הורה</label>
+                                  <InputField id="parentId" label="ת.ז. הורה"
+                                      defaultValue={this.state.pupil.parentId}
+                                      invalidMessage="שדה חובה"
+                                      className={validationErrorClassNames}/>
+                                </Col>
+                                <Col md='4' className='pr-1 text-left'>
+                                  <label className='form-control-label'>שם הורה</label>
+                                  <InputField id="parentName"
+                                      defaultValue={this.state.pupil.parentName}
+                                      label="שם הורה"
+                                      className={validationErrorClassNames}/>
+                                </Col>
+                                <Col md='4' className='pr-1 text-left'>
+                                  <label className='form-control-label'>טלפון הורה</label>
+                                  <InputField id="phoneNumber" label="טלפון הורה"
+                                      defaultValue={this.state.pupil.phoneNumber}
+                                      invalidMessage="שדה חובה"
+                                      className={validationErrorClassNames}/>
+                               </Col>
+                              </Row>
+                              <br />
+                              <Row>
+                                <Col md='4' className='pr-1 text-left'>
+                                  <label className='form-control-label'>ת.ז. הורה נוסף</label>
+                                  <InputField id="parentId2" label="ת.ז. הורה נוסף"
+                                      defaultValue={this.state.pupil.parentId2}
+                                      className={validationErrorClassNames}/>
+                                </Col>
+                                <Col md='4' className='pr-1 text-left'>
+                                  <label className='form-control-label'>שם הורה נוסף</label>
+                                  <InputField id="parentName2" label="שם הורה נוסף"
+                                      defaultValue={this.state.pupil.parentName2}
+                                      className={validationErrorClassNames}/>
+                                </Col>
+                                <Col md='4' className='pr-1 text-left'>
+                                  <label className='form-control-label'>טלפון נוסף</label>
+                                  <InputField id="phoneNumber2" label="טלפון נוסף"
+                                      defaultValue={this.state.pupil.phoneNumber2}
+                                      className={validationErrorClassNames}/>
+                                </Col>
+                              </Row>
+                            </CardBody>
+                          </Card>
+                          <Card>
+                            <CardTitle className="text-left my-auto m-3">
+                              <div>תשלום</div>
+                            </CardTitle>
+                            <CardBody>
+                              <Row>
+                                <Col md='4' className='pr-1 text-left'>
+                                  <label className='form-control-label'>אישור תשלום טלפוני</label>
+                                  <InputField id="paymentApprovalNumber"
+                                    label="אישור תשלום טלפוני"
+                                    defaultValue={this.state.pupil.paymentApprovalNumber}
+                                    className={validationErrorClassNames}
+                                    disabled={true}/>
+                                </Col>
+                              </Row>
+                              <br/>
+                              <Row>
+                                <Col md='2' className="pr-1 text-left">
+                                  <label className='info-text'>תשלום במשרד</label>
+                                  <div className='form-check'>
+                                    <label className='form-check-label'
+                                      style={{
+                                        paddingLeft: '0px',
+                                        paddingBottom: '30px'
+                                      }}>
+                                      <Input className='form-check-input checkbox'
+                                        id="paymentTypeCash"
+                                        type="checkbox"
+                                        className='checkbox'
+                                        onChange={::this.paymentTypeChanged}
+                                        checked={this.state.paymentTypeCash}/>
+                                      <span className='form-check-sign'></span>
+                                    </label>
+                                  </div>
+                                </Col>
+                                <Col md='2' className="pr-1 text-left">
+                                  <label className='info-text'>מספר קבלה</label>
+                                  <InputField id="receiveNumber"
+                                    label="מס' קבלה"
+                                    placeholder="מס' קבלה"
+                                    defaultValue={this.state.pupil.receiveNumber}
+                                    className={validationErrorClassNames}
+                                    disabled={!this.state.paymentTypeCash}/>
+                                </Col>
+                              </Row>
+                              <Row>
+                                <Col md='2' className="pr-1 text-left">
+                                    <label className='info-text'>רשימת המתנה</label>
+                                    <div className='form-check'>
+                                      <label className='form-check-label'
+                                        style={{
+                                          paddingLeft: '0px',
+                                          paddingBottom: '30px'
+                                        }}>
+                                        <Input className='form-check-input checkbox'
+                                          id="waitingList"
+                                          type="checkbox"
+                                          className='checkbox'/>
+                                          <span className='form-check-sign'></span>
+                                        </label>
+                                    </div>
+                                </Col>
+                              </Row>
+                            </CardBody>
+                          </Card>
                           <Row>
                             <Col md={{ size: 1, offset: 10}}>
                               <Button type="submit" color='primary'>שמור</Button>
